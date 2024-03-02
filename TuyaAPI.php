@@ -10,7 +10,7 @@
  * Changes: Adding more API calls and copy functions in one file 
  */
 
-namespace tuyapiphp;
+
 
 class TuyaApi
 {
