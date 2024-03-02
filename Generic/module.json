@@ -1,0 +1,13 @@
+{
+	"id": "{C490FACE-78CD-3AF7-918F-CC33DADD7F07}",
+	"name": "TuyaGeneric",
+	"type": 3,
+	"vendor": "Tuya",
+	"aliases": 
+	[
+	],
+	"parentRequirements": [],
+	"childRequirements": [],
+	"implemented": [],
+	"prefix": "Tuya"
+}
