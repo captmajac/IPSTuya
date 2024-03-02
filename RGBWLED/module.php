@@ -7,9 +7,9 @@ class TuyaLEDRGBW extends TuyaGeneric
 		{
 			//Never delete this line!
 			parent::Create();
-			$this->RegisterPropertyString("DeviceID", "");
-			$this->RegisterPropertyString("DeviceName", "");
-			$this->RegisterPropertyString("LocalKey", "");
+			//$this->RegisterPropertyString("DeviceID", "");
+			//$this->RegisterPropertyString("DeviceName", "");
+			//$this->RegisterPropertyString("LocalKey", "");
 			
 			//Connect to available gateway
 			//$this->ConnectParent("{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}");
