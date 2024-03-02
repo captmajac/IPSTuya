@@ -1,9 +1,12 @@
 {
-	"id": "{2C544BDC-D10F-9256-1F07-BA462CE03C9E}",
-	"author": "captmajac",
-	"name": "IPSTuya",
-	"url": "",
-	"version": "1.0",
-	"build": 0,
-	"date": 0
+    "id": "{47259B70-07DA-788F-7254-8338AD8CB114}",
+    "name": "mac",
+    "author": "captmajac",
+    "url": "https://github.com/captmajac",
+    "compatibility": {
+        "version": "7.0"
+    },
+    "version": "1.0",
+    "build": 0,
+    "date": 0
 }
