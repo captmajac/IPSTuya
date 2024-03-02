@@ -1,0 +1,53 @@
+{
+				"elements":
+				    [
+						{ "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID (22 digit):", "validate":"[0-9A-Z]{22}"},
+            { "name": "DeviceName", "type": "ValidationTextBox", "caption": "DeviceName"},
+            { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey"},
+				
+				    ],
+				    "actions":
+				    [
+					{ "type": "PopupButton",
+					"caption": "Search Device",
+					"onClick":  "GenericEEP_SearchModules($id,'true');",
+					
+					
+					"popup": {
+					    "caption": "Search Device",
+					    "items": [
+							{
+							    "type": "List",
+							    "name": "Devices",
+							    "caption": "Found Devices",
+							    "rowCount": 10,
+							    "add": false,
+							    "delete": false,
+							    "columns": [{
+								"caption": "ID",
+								"name": "ID", 
+								"width": "100px",
+								"add": ""
+							    }, {
+								"caption": "Additional Info",
+								"name": "Reference",
+								"width": "auto",
+								"add": ""
+							    }, {
+								"caption": "Ident",
+								"name": "Ident",
+								"width": "auto",
+								"visible": false,
+								"add": ""
+							    }],
+							    "values": [
+								]
+								},
+								{  "type": "Button", "caption": "Apply selected", "onClick":  "GenericEEP_SetSelectedModul($id, $Actors);"
+								},
+								{  "type": "Label", "name": "TimeLabel", "caption": "Suche läuft..." }
+						    ]
+						}
+				    }
+				    ]
+			}
