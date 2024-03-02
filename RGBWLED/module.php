@@ -1,5 +1,5 @@
 <?
-require_once __DIR__ . '/../GenericTuya.php';  // Base Module.php
+require_once __DIR__ . '/../Generic/GenericTuya.php';  // Base Module.php
 
 class TuyaLEDRGBW extends GenericTuya
 	{
