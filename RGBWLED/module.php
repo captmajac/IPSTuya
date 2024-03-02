@@ -20,7 +20,7 @@ class TuyaLEDRGBW extends GenericTuya
 			//Never delete this line!
 			parent::ApplyChanges();
 			
-			$this->RegisterVariableBoolean("Power", "Power", "~Switch"););
+			$this->RegisterVariableBoolean("Power", "Power", "~Switch");
 			$this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100");
       			$this->RegisterVariableInteger("Color Temperature", "Color Temperature", "~TWColor");
       			$this->RegisterVariableInteger("Color", "Color", "~HexColor");
