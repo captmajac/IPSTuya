@@ -1,4 +1,9 @@
 <?php
+namespace tuyapiphp;
+
+//Tuya Klassen einbinden
+include "../TuyaAPI.php";
+
 class GenericTuya extends IPSModule {
 	
 	// erstellung
