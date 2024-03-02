@@ -22,13 +22,13 @@ class TuyaLEDRGBW extends GenericTuya
 			
 			$this->RegisterVariableBoolean("Power", "Power", "~Switch"););
 			$this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100");
-      $this->RegisterVariableInteger("Color Temperature", "Color Temperature", "~TWColor");
-      $this->RegisterVariableInteger("Color", "Color", "~HexColor");
+      			$this->RegisterVariableInteger("Color Temperature", "Color Temperature", "~TWColor");
+      			$this->RegisterVariableInteger("Color", "Color", "~HexColor");
 			
 			$this->EnableAction("Power");	
-      $this->EnableAction("Intensity");	
-      $this->EnableAction("Color Temperature");	
-      $this->EnableAction("Color");	
+      			$this->EnableAction("Intensity");	
+     			$this->EnableAction("Color Temperature");	
+      			$this->EnableAction("Color");	
 			
 			//$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)hexdec($this->ReadPropertyString("DeviceIDRet")).".*");
 		}
@@ -69,13 +69,13 @@ class TuyaLEDRGBW extends GenericTuya
   			case "Color Temperature":
 			  	// todo
 		  	case "Color":
-	  			// todo
-				}
-						
-				// Neuen Wert in die Statusvariable schreiben, wird über die Rückmeldung korrigiert
-				SetValue($this->GetIDForIdent($Ident), $Value);
-				break;
+	  			// todo	
+			break;
+	
 			}
+			
+			// Neuen Wert in die Statusvariable schreiben, wird über die Rückmeldung korrigiert
+			SetValue($this->GetIDForIdent($Ident), $Value);
 		}
 		
 		protected function RegisterProfileFloat($Name, $Icon, $Prefix, $Suffix, $MinValue, $MaxValue, $StepSize, $Digits)
