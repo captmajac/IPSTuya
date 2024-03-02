@@ -1,5 +1,4 @@
 <?php
-namespace tuyapiphp;
 
 //Tuya Klassen einbinden
 include "/../TuyaAPI.php";
