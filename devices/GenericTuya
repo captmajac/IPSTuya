@@ -6,7 +6,8 @@ class GenericTuya extends IPSModule {
 		// Never delete this line!
 		parent::Create ();
 		$this->RegisterPropertyString ( "DeviceID", "" );
-		$this->RegisterPropertyBoolean ( "DataByte", false);
+		$this->RegisterPropertyString ( "DeviceName", "");
+		$this->RegisterPropertyString ( "LocalKey", "");
 		
 		// modulaufruf ändern
 		$Module = $this->GetBuffer("Module");
@@ -17,32 +18,17 @@ class GenericTuya extends IPSModule {
 		}
 		$this->RegisterTimer("SearchTime",0,$Module."_TimerEvent(\$_IPS['TARGET']);");
 
-		// Connect to available enocean gateway
-		$this->ConnectParent ( "{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}" );
+		// Connect to available gateway
+		// $this->ConnectParent ( "{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}" );
 	}
 	
 	// changes der instanz
 	public function ApplyChanges() {
 		// Never delete this line!
 		parent::ApplyChanges ();
-
-		if ($this->ReadPropertyBoolean("DataByte") == true)
-		{
-			$this->RegisterVariableInteger ( "Data0", "Data0" );
-			$this->RegisterVariableInteger ( "Data1", "Data1" );
-			$this->RegisterVariableInteger ( "Data2", "Data2" );
-			$this->RegisterVariableInteger ( "Data3", "Data3" );
-		}
-		else 
-		{
-			$this->UnregisterVariable("Data0");
-			$this->UnregisterVariable("Data1");
-			$this->UnregisterVariable("Data2");
-			$this->UnregisterVariable("Data3");
-		}
 		
-		// noch bug
-		$this->SetReceiveDataFilter(".*\"DeviceID\":".$this->GetID().".*");
+		// data filter actual not used
+		//$this->SetReceiveDataFilter(".*\"DeviceID\":".$this->GetID().".*");
 		//$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)hexdec($this->ReadPropertyString("DeviceID")).".*");
 
 		
@@ -61,38 +47,15 @@ class GenericTuya extends IPSModule {
 	 */
 	public function ReceiveData($JSONString) {
 		$data = json_decode ( $JSONString );
-		$this->SendDebug ( "EnoceanGatewayData", $JSONString, 0 );
-		
-		if ($this->GetBuffer("Serach")=="true")
-		{
-			// führende Nullen und in 8 Zeichen Grossbuchstaben formatieren
-			//$ValidDevID = strtoupper(str_pad(dechex ( $data->{'DeviceID'}), 8, 0, STR_PAD_LEFT) );
-			
-			// copy from moreenocean
-			$ID = $data->DeviceID - $data->DeviceID%16 + 1;
-			if($ID <= 0)return true;
-			$DeviceID = sprintf('%08X',$ID);
-			$ValidDevID = $DeviceID;
-				
-			$this->updateList($ValidDevID, $data);
-		}
-		else {
-			if ($this->ReadPropertyBoolean("DataByte") == true)
-			{
-				$this->ProcessData ( $data );
-			}
-		}
+		$this->SendDebug ( "TuyaGatewayData", $JSONString, 0 );
 	}
 	
-	// einfache datenauswertung
-	private function ProcessData($data) { 
-	                                      
-		SetValue ( $this->GetIDForIdent ( "Data0" ), $data->{'DataByte0'} );
-		SetValue ( $this->GetIDForIdent ( "Data1" ), $data->{'DataByte1'} );
-		SetValue ( $this->GetIDForIdent ( "Data2" ), $data->{'DataByte2'} );
-		SetValue ( $this->GetIDForIdent ( "Data3" ), $data->{'DataByte3'} );
+	// analyze recieved data
+	private function ProcessData($data) {      
+		// nothing to do
 	}
 
+	// default debug message
 	protected function SendDebug($Message, $Data, $Format) {
 		if (is_array ( $Data )) {
 			foreach ( $Data as $Key => $DebugData ) {
@@ -107,7 +70,7 @@ class GenericTuya extends IPSModule {
 		}
 	}
 	
-	// start/stop der geräte suche
+	// start/stop search device 
 	public function SearchModules(string $state) {
 		
 		if ($state=="true")
@@ -152,7 +115,7 @@ class GenericTuya extends IPSModule {
 
 
 	// ggf. auch entscheiden was in der Liste aufgenommen werden soll
-	// z.b. Filter auf spezielle Geräte oder EEPs dann muss auch $data ausgewertet werden
+	// z.b. Filter auf spezielle Geräte
 	//
 	public function updateList(string $DevID, object $data) {
 		// Device Liste als Buffer 
@@ -214,15 +177,6 @@ class GenericTuya extends IPSModule {
 		return $NewForm;
 	}
 	
-	// fix copied from MoreEnocean, wg. 64 Bit Pi
- 	private function GetID() 
- 	{
-		$ID = hexdec($this->ReadPropertyString("DeviceID"));
-		if(IPS_GetKernelVersion() < 6.3){
-			if($ID & 0x80000000)$ID -=  0x100000000;
-		}
-		return($ID);
- 	}
 	
 }
 ?>
