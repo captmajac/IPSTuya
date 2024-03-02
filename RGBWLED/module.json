@@ -1,8 +1,8 @@
 {
 	"id": "{2C544BDC-D10F-9256-1F07-BA462CE03C9E}",
-	"name": "Tuya Hama GU10 LED RGBW",
+	"name": "Tuya Hama LED RGBW GU10",
 	"type": 3,
-	"vendor": "Tuya Hama GU10 LED RGBW",
+	"vendor": "Tuya",
 	"aliases": 
 	[
 		"Tuya_Hama_176582"
