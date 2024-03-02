@@ -22,12 +22,12 @@ class TuyaLEDRGBW extends TuyaGeneric
 			
 			$this->RegisterVariableBoolean("Power", "Power", "~Switch");
 			$this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100");
-      			$this->RegisterVariableInteger("Color Temperature", "Color Temperature", "~TWColor");
+      			$this->RegisterVariableInteger("ColorTemperature", "Color Temperature", "~TWColor");
       			$this->RegisterVariableInteger("Color", "Color", "~HexColor");
 			
 			$this->EnableAction("Power");	
       			$this->EnableAction("Intensity");	
-     			$this->EnableAction("Color Temperature");	
+     			$this->EnableAction("ColorTemperature");	
       			$this->EnableAction("Color");	
 			
 			//$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)hexdec($this->ReadPropertyString("DeviceIDRet")).".*");
