@@ -1,11 +1,7 @@
 {
   "elements": [
     { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID" },
-    { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" },
-    { "name": "AccessKey", "type": "ValidationTextBox", "caption": "AccessKey" },
-    { "name": "SecretKey", "type": "ValidationTextBox", "caption": "SecretKey" },
-    { "name": "BaseUrl", "type": "ValidationTextBox", "caption": "BaseUrl" },
-    { "name": "AppID", "type": "ValidationTextBox", "caption": "AppID" }
+    { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" }
   ],
   "actions": [
     {
