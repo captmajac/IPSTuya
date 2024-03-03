@@ -27,13 +27,13 @@
               {
                 "caption": "ID",
                 "name": "ID",
-                "width": "70px",
+                "width": "200px",
                 "add": ""
               },
               {
                 "caption": "Online",
                 "name": "Online",
-                "width": "200px",
+                "width": "70px",
                 "add": ""
               },
               {
