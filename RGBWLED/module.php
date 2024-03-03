@@ -96,6 +96,13 @@ class TuyaLEDRGBW extends TuyaGeneric
 			IPS_SetVariableProfileDigits($Name, $Digits);
 			
 		}
+
+		// start/stop search device
+ 	   // TuyaGeneric_SearchModules
+ 	   public function SearchModules(string $state)
+  	  {
+		  parent::SearchModules($state);
+   	 }
 		
 		protected function SendDebug($Message, $Data, $Format)
 		{
