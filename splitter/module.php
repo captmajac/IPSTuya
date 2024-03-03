@@ -3,7 +3,7 @@
 //Tuya Klassen einbinden
 include_once __DIR__ . "/../libs/TuyaAPI.php";
 
-class TuyaSocket extends IPSModule
+class TuyaServer extends IPSModule
 {
     // erstellung
     public function Create()
