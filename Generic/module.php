@@ -1,7 +1,7 @@
 <?php
 
 //Tuya Klassen einbinden
-require_once __DIR__ . '/../libs/TuyaAPI.php';
+require_once __DIR__ . "/../libs/TuyaAPI.php";
 
 class TuyaGeneric extends IPSModule
 {
@@ -16,9 +16,9 @@ class TuyaGeneric extends IPSModule
 
         $this->RegisterPropertyString("AccessKey", "");
         $this->RegisterPropertyString("SecretKey", "");
-        $this->RegisterPropertyString("BaseUrl", "");        // z.b. 'https://openapi.tuyaeu.com'
+        $this->RegisterPropertyString("BaseUrl", ""); // z.b. 'https://openapi.tuyaeu.com'
+        $this->RegisterPropertyString("AppID", "");
 
-        
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
         if ($Module == "") {
@@ -42,14 +42,13 @@ class TuyaGeneric extends IPSModule
         // Never delete this line!
         parent::ApplyChanges();
 
-        $config =
-        [
-        	'accessKey' 	=> $this->ReadPropertyString("AccessKey"),
-        	'secretKey' 	=> $this->ReadPropertyString("SecretKey"),
-        	'baseUrl'		=> $this->ReadPropertyString("BaseUrl"),
+        $config = [
+            "accessKey" => $this->ReadPropertyString("AccessKey"),
+            "secretKey" => $this->ReadPropertyString("SecretKey"),
+            "baseUrl" => $this->ReadPropertyString("BaseUrl"),
         ];
         $tuya = new TuyaApi($config);
-        
+
         // data filter actual not used
         //$this->SetReceiveDataFilter(".*\"DeviceID\":".$this->GetID().".*");
         //$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)hexdec($this->ReadPropertyString("DeviceID")).".*");
@@ -97,10 +96,9 @@ class TuyaGeneric extends IPSModule
     // start/stop search device
     public function SearchModules(string $state)
     {
-            $this->SetBuffer("Serach", "true");            
-            $this->UpdateFormField("Actors", "values", "");
+        $this->SetBuffer("Serach", "true");
+        $this->UpdateFormField("Actors", "values", "");
     }
-
 
     // auswahl aus der search liste
     public function SetSelectedModul(object $List)
@@ -126,20 +124,13 @@ class TuyaGeneric extends IPSModule
         // Device Liste als Buffer
         $values = json_decode($this->GetBuffer("List")); //json_decode( $this );
 
-        $newValue = new stdClass();
-        $newValue->ID = $DevID;
-        $newValue->Name = $DevID; //identifier hier gleich der device id
-        $newValue->Model = $DevID; //identifier hier gleich der device id
-        $newValue->LocalKey = $DevID; //identifier hier gleich der device id
+        $token = $tuya->token->get_new( )->result->access_token;
+        $values = readDeviceList($token, $this->ReadPropertyString("AppID"),);
+        
+        //$newValue->Reference = $AddInfo;
 
-        // Add Info alle Daten anzeigen
-        $AddInfo = "todo";
-        $newValue->Reference = $AddInfo;
-
-        if (
-            @in_array($newValue->Ident, array_column($values, "ID")) == false
-        ) {
-            $values[] = $newValue;
+        if (@in_array($newValue->Ident, array_column($values, "ID")) == false) {
+            //$values[] = $newValue;
 
             $jsValues = json_encode($values);
             $this->SetBuffer("List", $jsValues);
@@ -148,22 +139,22 @@ class TuyaGeneric extends IPSModule
         }
     }
 
-    private function readDeviceList(string $DevID, object $data)
+    private function readDeviceList(string $token, string $app_id)
     {
-        $return = $tuya->devices( $token )->get_app_list( $app_id );
+        $return = $tuya->devices($token)->get_app_list($app_id);
+        $arr = $return->result;
 
-$values = array();
-foreach ($arr as $value) {
-    $newValue =  new \stdClass();
-    $newValue->ID = $value->id;
-    $newValue->LocalKey = $value->local_key;
-    $newValue->Model = $value->model;
-    $newValue->Name = $value->name;
-    $values[] = $newValue;
-}
+        $values = [];
+        foreach ($arr as $value) {
+            $newValue = new \stdClass();
+            $newValue->ID = $value->id;
+            $newValue->LocalKey = $value->local_key;
+            $newValue->Model = $value->model;
+            $newValue->Name = $value->name;
+            $values[] = $newValue;
+        }
+        return $values;
     }
-    
 }
-
 
 ?>
