@@ -43,8 +43,12 @@ class TuyaLEDRGBW extends TuyaGeneric
 			$ret = false;
 			switch($Ident) {
 		  	case "Power":
-				$ret = $this->power($Value);
+				$payload = [ 'code' => 'switch_led' , 'value' => $Value ];
+				$ret = $this->CPost($payload);
 		  	case "Intensity":
+				$Value = $Value *10; 	// *10 {"min":10,"max":1000,"scale":0,"step":1}
+				$payload = [ 'code' => 'bright_value' , 'value' => 100 ];
+				$ret = $this->CPost($payload);
 	  			// todo
   			case "Color Temperature":
 			  	// todo
@@ -82,6 +86,16 @@ class TuyaLEDRGBW extends TuyaGeneric
 		} 
 
 		
+		public function CPost(array $payload)
+    		{
+			$tuya = $this->getTuyaClass();
+			$token = $this->getToken();
+			$device_id = $this->ReadPropertyString("DeviceID");
+			
+   			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
+			return $return->success;
+		}
+		
 		public function power(bool $state)
     		{
 			$tuya = $this->getTuyaClass();
@@ -91,6 +105,7 @@ class TuyaLEDRGBW extends TuyaGeneric
    			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
 			return $return->success;
 		}
-	
+
+		
 	}
 ?>
