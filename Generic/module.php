@@ -1,7 +1,7 @@
 <?php
 
 //Tuya Klassen einbinden
-require_once __DIR__ . "/../libs/TuyaAPI.php";
+include_once __DIR__ . "/../libs/TuyaAPI.php";
 
 class TuyaGeneric extends IPSModule
 {
