@@ -88,8 +88,6 @@ class TuyaGeneric extends IPSModule
         $appID = $this->ReadPropertyString("AppID");
         $token = $this->getToken();
         $list = $this->readDeviceList($token, $appID);
-
-        var_dump($list);
         
         $jsValues = json_encode($list);
         $this->SetBuffer("List", $jsValues);
