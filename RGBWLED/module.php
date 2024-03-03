@@ -125,8 +125,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 			IPS_SetVariableProfileAssociation("Tuya.LightMode", 0, "white", "", -1);
 			IPS_SetVariableProfileAssociation("Tuya.LightMode", 1, "colour", "", -1);
 			IPS_SetVariableProfileAssociation("Tuya.LightMode", 2, "scene", "", -1);
-			IPS_SetVariableProfileAssociation("Tuya.LightMode", 3, "music", "", -1)
+			IPS_SetVariableProfileAssociation("Tuya.LightMode", 3, "music", "", -1);
 		 }
-	}
+		}
 	}
 ?>
