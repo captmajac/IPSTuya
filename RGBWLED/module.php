@@ -78,7 +78,9 @@ class TuyaLEDRGBW extends TuyaGeneric
 			    parent::SendDebug($Message, $Data, $Format);
 			}
 		} 
+
 		
+
 	
 	}
 ?>
