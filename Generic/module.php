@@ -17,10 +17,10 @@ class TuyaGeneric extends IPSModule
         //$this->RegisterPropertyString("DeviceName", "");
         $this->RegisterPropertyString("LocalKey", "");
 
-        $this->RegisterPropertyString("AccessKey", "");
-        $this->RegisterPropertyString("SecretKey", "");
-        $this->RegisterPropertyString("BaseUrl", ""); // z.b. 'https://openapi.tuyaeu.com'
-        $this->RegisterPropertyString("AppID", "");
+        //$this->RegisterPropertyString("AccessKey", "");
+        //$this->RegisterPropertyString("SecretKey", "");
+        //$this->RegisterPropertyString("BaseUrl", ""); // z.b. 'https://openapi.tuyaeu.com'
+        //$this->RegisterPropertyString("AppID", "");
 
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
