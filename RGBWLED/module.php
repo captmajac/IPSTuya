@@ -42,7 +42,6 @@ class TuyaLEDRGBW extends TuyaGeneric
 		{
 			switch($Ident) {
 		  	case "Power":
-			  	// todo
 				$this->getToken($Value);
 		  	case "Intensity":
 	  			// todo
@@ -81,7 +80,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 		} 
 
 		
-		private function power($state)
+		public function power($state)
     		{
 			$tuya = $this->getToken();
 			$payload = [ 'code' => 'switch_led' , 'value' => $state ];
