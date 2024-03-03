@@ -87,10 +87,11 @@ class TuyaGeneric extends IPSModule
     {
         $appID = $this->ReadPropertyString("AppID");
         $token = $this->getToken();
-        $this->readDeviceList($token, $appID);
+        $list = $this->readDeviceList($token, $appID);
             
-                
-        $this->UpdateFormField("Actors", "values", "");
+        $jsValues = json_encode($values);
+        
+        $this->UpdateFormField("Actors", "values", $jsValues);
     }
 
 
@@ -113,19 +114,26 @@ class TuyaGeneric extends IPSModule
     // ggf. auch entscheiden was in der Liste aufgenommen werden soll
     // z.b. Filter auf spezielle Geräte
     //
-    public function updateList(string $DevID, object $data)
+    public function updateList(string $DevID, array $arr)
     {
         // Device Liste als Buffer
         $values = json_decode($this->GetBuffer("List")); //json_decode( $this );
 
-        $token = $tuya->token->get_new( )->result->access_token;
-        $values = readDeviceList($token, $this->ReadPropertyString("AppID"),);
-        
-        //$newValue->Reference = $AddInfo;
+       foreach ($arr as $value) {
+            $newValue = new \stdClass();
+            $newValue->ID = $value->id;
+            $newValue->LocalKey = $value->local_key;
+            $newValue->Model = $value->model;
+            $newValue->Name = $value->name;
+            $values[] = $newValue;
+        }
 
+        $jsValues = json_encode($values);
+        
         if (@in_array($newValue->Ident, array_column($values, "ID")) == false) {
             //$values[] = $newValue;
 
+            // liste zurückschreiben
             $jsValues = json_encode($values);
             $this->SetBuffer("List", $jsValues);
 
