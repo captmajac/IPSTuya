@@ -45,9 +45,8 @@
 							    "values": [
 								]
 								},
-								{  "type": "Button", "caption": "Apply selected", "onClick":  "GenericEEP_SetSelectedModul($id, $Actors);"
-								},
-								{  "type": "Label", "name": "TimeLabel", "caption": "Suche läuft..." }
+								{  "type": "Button", "caption": "Apply selected", "onClick":  "TuyaGeneric_SetSelectedModul($id, $Actors);"
+								}
 						    ]
 						}
 				    }
