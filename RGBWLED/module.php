@@ -57,7 +57,11 @@ class TuyaLEDRGBW extends TuyaGeneric
 				$ret = $this->CPost($payload);
 				break;
   			case "Color Temperature":
-			  	// todo
+ 				$colmin = 2700;									// Geraete spezifisch "min":0,"max":1000,"scale":0,"step":1}" 0=kaltweiss 1000=warmweiss 
+ 				$colmax = 6500;
+ 				$colvalue = intval ( ($Value-$colmin)/($colmax-$colmin)*100 * 10 );		// * 10 tuya spezifisch
+  				$payload = [ 'code' => 'temp_value' , 'value' => $colvalue ];
+  				$ret = $this->CPost($payload);
 				break;
 		  	case "Color":
 				 $ValueHex = $this->colinttohex($Value);
