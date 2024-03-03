@@ -1,59 +1,61 @@
 {
-				"elements":
-				    [
-					 { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID (22 digit):", "validate":"[0-9a-zA-Z]{22}"},
- 					 { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey"},
-					    { "name": "AccessKey", "type": "ValidationTextBox", "caption": "AccessKey"},
-					    { "name": "SecretKey", "type": "ValidationTextBox", "caption": "SecretKey"},
-					    { "name": "BaseUrl", "type": "ValidationTextBox", "caption": "BaseUrl"},
-					    { "name": "AppID", "type": "ValidationTextBox", "caption": "AppID"}
-				    ],
-				    "actions":
-				    [
-					{ "type": "PopupButton",
-					"caption": "Search Device",
-					"onClick":  "Tuya_SearchModules($id);",
-					
-					"popup": {
-					    "caption": "Device List",
-					    "items": [
-							{
-							    "type": "List",
-							    "name": "Devices",
-							    "caption": "Found Devices",
-							    "rowCount": 10,
-							    "add": false,
-							    "delete": false,
-							    "columns": [{
-								"caption": "ID",
-								"name": "ID", 
-								"width": "150px",
-								"add": ""
-							    }, {
-								"caption": "Name",
-								"name": "Name",
-								"width": "150px",
-								"add": ""
-							    }, {
-								"caption": "Model",
-								"name": "Model",
-								"width": "150px",
-								"visible": true,
-								"add": ""
-							    }, {
-								"caption": "LocalKey",
-								"name": "LocalKey",
-								"width": "100px",
-								"visible": true,
-								"add": ""
-							    }],
-							    "values": [
-								]
-								},
-								{  "type": "Button", "caption": "Apply selected", "onClick":  "Tuya_SetSelectedModul($id, $Actors);"
-								}
-						    ]
-						}
-				    }
-				    ]
-			}
+  "elements": [
+    { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID" },
+    { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" },
+    { "name": "AccessKey", "type": "ValidationTextBox", "caption": "AccessKey" },
+    { "name": "SecretKey", "type": "ValidationTextBox", "caption": "SecretKey" },
+    { "name": "BaseUrl", "type": "ValidationTextBox", "caption": "BaseUrl" },
+    { "name": "AppID", "type": "ValidationTextBox", "caption": "AppID" }
+  ],
+  "actions": [
+    {
+      "type": "PopupButton",
+      "caption": "Search Device",
+      "onClick": "Tuya_SearchModules($id);",
+
+      "popup": {
+        "caption": "Device List",
+        "items": [
+          {
+            "type": "List",
+            "name": "Devices",
+            "caption": "Found Devices",
+            "rowCount": 10,
+            "add": false,
+            "delete": false,
+            "columns": [
+              {
+                "caption": "ID",
+                "name": "ID",
+                "width": "200px",
+                "add": ""
+              },
+              {
+                "caption": "Name",
+                "name": "Name",
+                "width": "auto",
+                "add": ""
+              },
+              {
+                "caption": "Model",
+                "name": "Model",
+                "width": "300px",
+                "visible": true,
+                "add": ""
+              },
+              {
+                "caption": "LocalKey",
+                "name": "LocalKey",
+                "width": "200px",
+                "visible": true,
+                "add": ""
+              }
+            ],
+            "values": []
+          },
+          { "type": "Button", "caption": "Apply selected", "onClick": "Tuya_SetSelectedModul($id, $Devices);" }
+        ]
+      }
+    }
+  ]
+}
