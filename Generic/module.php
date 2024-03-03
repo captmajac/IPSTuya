@@ -100,6 +100,7 @@ class TuyaGeneric extends IPSModule
     {
         @$DevID = $List["ID"]; // Kommt ein Error bei keiner Auswahl
         @$LocalKey = $List["LocalKey"]; // Kommt ein Error bei keiner Auswahl
+	@$Name = $List["Name"]; // Kommt ein Error bei keiner Auswahl
 
         $this->SetBuffer("List", "");
 
@@ -107,6 +108,13 @@ class TuyaGeneric extends IPSModule
             IPS_SetProperty($this->InstanceID, "DeviceID", "" . $DevID);
             IPS_SetProperty($this->InstanceID, "LocalKey", "" . $LocalKey);
         }
+	$oldname = IPS_GetName($this->InstanceID);
+	$pos = strpos($oldname, "(");
+	if ($pos <> false)
+		$oldname=substr($oldname,0,$pos);	// alten namen entfernen
+	    
+	IPS_SetName($this->InstanceID, $oldname." (".$Name.")" );
+		    
         // Apply schliesst auch popup
         IPS_ApplyChanges($this->InstanceID);
     }
