@@ -12,7 +12,7 @@
 				    [
 					{ "type": "PopupButton",
 					"caption": "Search Device",
-					"onClick":  "SearchModules($id);",
+					"onClick":  "TuyaGeneric_SearchModules($id);",
 					
 					"popup": {
 					    "caption": "Device List",
