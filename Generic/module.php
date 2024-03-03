@@ -11,8 +11,13 @@ class TuyaGeneric extends IPSModule
         // Never delete this line!
         parent::Create();
         $this->RegisterPropertyString("DeviceID", "");
-        $this->RegisterPropertyString("DeviceName", "");
+        //$this->RegisterPropertyString("DeviceName", "");
         $this->RegisterPropertyString("LocalKey", "");
+
+        $this->RegisterPropertyString("AccessKey", "");
+        $this->RegisterPropertyString("SecretKey", "");
+        $this->RegisterPropertyString("BaseUrl", "");        // z.b. 'https://openapi.tuyaeu.com'
+
 
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
