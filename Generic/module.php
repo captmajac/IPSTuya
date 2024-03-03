@@ -8,6 +8,9 @@ class TuyaGeneric extends IPSModule
     // erstellung
     public function Create()
     {
+	 // tuya socket notwendig für die parameter
+	 $this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
+	    
         // Never delete this line!
         parent::Create();
         $this->RegisterPropertyString("DeviceID", "");
