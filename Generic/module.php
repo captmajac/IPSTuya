@@ -19,6 +19,8 @@ class TuyaGeneric extends IPSModule
         $this->RegisterPropertyString("BaseUrl", ""); // z.b. 'https://openapi.tuyaeu.com'
         $this->RegisterPropertyString("AppID", "");
 
+        $this->RegisterPropertyString("Token", "");
+
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
         if ($Module == "") {
@@ -96,6 +98,11 @@ class TuyaGeneric extends IPSModule
     // start/stop search device
     public function SearchModules()
     {
+        $appID = $this->ReadPropertyString("AppID");
+        $token = $this->ReadPropertyString("Token", $token);
+        readDeviceList($token, $appID);
+            
+                
         $this->UpdateFormField("Actors", "values", "");
     }
 
@@ -104,7 +111,7 @@ class TuyaGeneric extends IPSModule
     public function SetSelectedModul(object $List)
     {
         @$DevID = $List["ID"]; // Kommt ein Error bei keiner Auswahl
-        @LocalKey = $List["LocalKey"]; // Kommt ein Error bei keiner Auswahl
+        @$LocalKey = $List["LocalKey"]; // Kommt ein Error bei keiner Auswahl
 
         $this->SetBuffer("List", "");
 
@@ -154,6 +161,13 @@ class TuyaGeneric extends IPSModule
             $values[] = $newValue;
         }
         return $values;
+    }
+    
+    private function getToken()
+    {
+        $token = $tuya->token->get_new( )->result->access_token;
+        $this->IPS_SetProperty("Token", $token);
+        
     }
 }
 
