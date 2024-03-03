@@ -9,7 +9,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 			parent::Create();
 
 			// tuya socket notwendig für die parameter
-			$this->RequireParent('{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}');
+			//$this->RequireParent('{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}');	// standard client socket
+			$this->RequireParent('{78ABC644-1134-F4E2-3E31-01E45483367B}')
 		}
     
 		public function ApplyChanges()
