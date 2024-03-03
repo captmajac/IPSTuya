@@ -48,9 +48,9 @@ class TuyaGeneric extends IPSModule
 
         $config =
         [
-        	'accessKey' 	=> "".$this->ReadPropertyString("AccessKey");
-        	'secretKey' 	=> "".$this->ReadPropertyString("SecretKey");
-        	'baseUrl'		=> "".$this->ReadPropertyString("BaseUrl");
+        	'accessKey' 	=> $this->ReadPropertyString("AccessKey");
+        	'secretKey' 	=> $this->ReadPropertyString("SecretKey");
+        	'baseUrl'		=> $this->ReadPropertyString("BaseUrl");
         ];
         $tuya = new TuyaApi($config);
         
