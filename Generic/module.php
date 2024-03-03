@@ -79,7 +79,13 @@ class TuyaGeneric extends IPSModule
     // search device
     public function SearchModules()
     {
-        $appID = $this->ReadPropertyString("AppID");
+	$instance = IPS_GetInstance($this->InstanceID);
+	$ret = IPS_GetConfiguration ($instance['ConnectionID']);
+	$para = json_decode($ret); 
+	    
+        //$appID = $this->ReadPropertyString("AppID");
+	$appID = $para->AppID;
+	    
         $token = $this->getToken();
         $list = $this->readDeviceList($token, $appID);
         
