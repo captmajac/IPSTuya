@@ -91,7 +91,7 @@ class TuyaGeneric extends IPSModule
         
         $jsValues = json_encode($list);
         $this->SetBuffer("List", $jsValues);
-        $this->UpdateFormField("Actors", "values", $jsValues);
+        $this->UpdateFormField("Devices", "values", $jsValues);
     }
 
 
