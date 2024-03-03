@@ -90,7 +90,7 @@ class TuyaGeneric extends IPSModule
         $list = $this->readDeviceList($token, $appID);
             
         $jsValues = json_encode($list);
-        
+        $this->SetBuffer("List", $jsValues);
         $this->UpdateFormField("Actors", "values", $jsValues);
     }
 
@@ -116,29 +116,7 @@ class TuyaGeneric extends IPSModule
     //
     public function updateList(string $DevID, array $arr)
     {
-        // Device Liste als Buffer
-        $values = json_decode($this->GetBuffer("List")); //json_decode( $this );
-
-       foreach ($arr as $value) {
-            $newValue = new \stdClass();
-            $newValue->ID = $value->id;
-            $newValue->LocalKey = $value->local_key;
-            $newValue->Model = $value->model;
-            $newValue->Name = $value->name;
-            $values[] = $newValue;
-        }
-
-        $jsValues = json_encode($values);
         
-        if (@in_array($newValue->Ident, array_column($values, "ID")) == false) {
-            //$values[] = $newValue;
-
-            // liste zurückschreiben
-            $jsValues = json_encode($values);
-            $this->SetBuffer("List", $jsValues);
-
-            $this->UpdateFormField("Actors", "values", $jsValues);
-        }
     }
 
     private function readDeviceList(string $token, string $app_id)
