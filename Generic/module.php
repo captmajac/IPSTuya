@@ -41,7 +41,7 @@ class TuyaGeneric extends IPSModule
         // Never delete this line!
         parent::ApplyChanges();
 
-	$ret = $this->IPS_GetParent();
+	$ret = IPS_GetParent();
 	var_dump($ret);    
     }
 
