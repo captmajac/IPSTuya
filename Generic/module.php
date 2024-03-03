@@ -29,12 +29,8 @@ class TuyaGeneric extends IPSModule
             )["prefix"]; // Modul für parent merken
             $this->SetBuffer("Module", $Module);
         }
-        
-        $this->RegisterTimer(
-            "SearchTime",
-            0,
-            $Module . "_TimerEvent(\$_IPS['TARGET']);"
-        );
+
+        //$this->RegisterTimer("SearchTime",0,$Module . "_TimerEvent(\$_IPS['TARGET']);");
 
         // Connect to available gateway
         // $this->ConnectParent ( "{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}" );
@@ -101,25 +97,10 @@ class TuyaGeneric extends IPSModule
     // start/stop search device
     public function SearchModules(string $state)
     {
-        if ($state == "true") {
-            $this->SetBuffer("Serach", "true");
-            
+            $this->SetBuffer("Serach", "true");            
             $this->UpdateFormField("Actors", "values", "");
-            // Timer starten für zeitlich begrenzte Suche
-            $this->SetTimerInterval("SearchTime", 1000 * 60);
-            $this->UpdateFormField("TimeLabel", "caption", "Suche läuft...");
-        } else {
-            $this->SetBuffer("Serach", "");
-            $this->UpdateFormField("TimeLabel", "caption", "Suche abgelaufen");
-            $this->SetTimerInterval("SearchTime", 0);
-        }
     }
 
-    // timer aufruf, geräte suche abgelaufen
-    public function TimerEvent()
-    {
-        $this->SearchModules("false");
-    }
 
     // auswahl aus der search liste
     public function SetSelectedModul(object $List)
@@ -145,41 +126,18 @@ class TuyaGeneric extends IPSModule
         // Device Liste als Buffer
         $values = json_decode($this->GetBuffer("List")); //json_decode( $this );
 
-        // fix 64 bit
-        //$DevIDInt = (int)hexdec($DevID);
-        //if($DevIDInt & 0x80000000)$DevIDInt -=  0x100000000;
-        //$DevID = substr($DevID,8);
-
         $newValue = new stdClass();
         $newValue->ID = $DevID;
-        $newValue->Ident = $DevID; //identifier hier gleich der device id
+        $newValue->Name = $DevID; //identifier hier gleich der device id
+        $newValue->Model = $DevID; //identifier hier gleich der device id
+        $newValue->LocalKey = $DevID; //identifier hier gleich der device id
 
         // Add Info alle Daten anzeigen
-        $AddInfo = strtoupper(
-            str_pad(dechex($data->{'DataByte0'}), 2, 0, STR_PAD_LEFT)
-        );
-        $AddInfo =
-            $AddInfo .
-            "-" .
-            strtoupper(
-                str_pad(dechex($data->{'DataByte1'}), 2, 0, STR_PAD_LEFT)
-            );
-        $AddInfo =
-            $AddInfo .
-            "-" .
-            strtoupper(
-                str_pad(dechex($data->{'DataByte2'}), 2, 0, STR_PAD_LEFT)
-            );
-        $AddInfo =
-            $AddInfo .
-            "-" .
-            strtoupper(
-                str_pad(dechex($data->{'DataByte3'}), 2, 0, STR_PAD_LEFT)
-            );
+        $AddInfo = "todo";
         $newValue->Reference = $AddInfo;
 
         if (
-            @in_array($newValue->Ident, array_column($values, "Ident")) == false
+            @in_array($newValue->Ident, array_column($values, "ID")) == false
         ) {
             $values[] = $newValue;
 
@@ -190,7 +148,20 @@ class TuyaGeneric extends IPSModule
         }
     }
 
+    private function readDeviceList(string $DevID, object $data)
+    {
+        $return = $tuya->devices( $token )->get_app_list( $app_id );
 
+$values = array();
+foreach ($arr as $value) {
+    $newValue =  new \stdClass();
+    $newValue->ID = $value->id;
+    $newValue->LocalKey = $value->local_key;
+    $newValue->Model = $value->model;
+    $newValue->Name = $value->name;
+    $values[] = $newValue;
+}
+    }
     
 }
 
