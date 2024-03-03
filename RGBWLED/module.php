@@ -64,9 +64,9 @@ class TuyaLEDRGBW extends TuyaGeneric
   				$ret = $this->CPost($payload);
 				// Wertbereich begrenzen auf Geraetespezifika 
 				if ($Value > $colmax)
-					$Value = $colmax
+					$Value = $colmax;
 				elseif ($Value < $colmin)
-					$Value = $colmin
+					$Value = $colmin;
 				break;
 		  	case "Color":
 				 $ValueHex = $this->colinttohex($Value);
