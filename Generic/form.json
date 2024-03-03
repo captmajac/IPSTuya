@@ -27,23 +27,23 @@
 							    "columns": [{
 								"caption": "ID",
 								"name": "ID", 
-								"width": "150px",
+								"width": "200px",
 								"add": ""
 							    }, {
 								"caption": "Name",
 								"name": "Name",
-								"width": "150px",
+								"width": "auto",
 								"add": ""
 							    }, {
 								"caption": "Model",
 								"name": "Model",
-								"width": "150px",
+								"width": "auto",
 								"visible": true,
 								"add": ""
 							    }, {
 								"caption": "LocalKey",
 								"name": "LocalKey",
-								"width": "100px",
+								"width": "auto",
 								"visible": true,
 								"add": ""
 							    }],
