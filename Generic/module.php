@@ -42,7 +42,7 @@ class TuyaGeneric extends IPSModule
         parent::ApplyChanges();
 
 	$instance = IPS_GetInstance($this->InstanceID);
-	$ret = IPS_GetConfiguration ($instance['ConnectionID);
+	$ret = IPS_GetConfiguration ($instance['ConnectionID']);
 
 	IPS_LogMessage($ret);
  	
@@ -55,7 +55,7 @@ class TuyaGeneric extends IPSModule
 
     public function Send(string $Text)
 		{
-			//$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', "Buffer" => $Text]));
+			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', "Buffer" => $Text]));
 		}
 
 		public function ReceiveData($JSONString)
