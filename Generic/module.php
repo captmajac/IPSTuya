@@ -94,7 +94,7 @@ class TuyaGeneric extends IPSModule
     {
         if ($state == "true") {
             $this->SetBuffer("Serach", "true");
-            $this->SetReceiveDataFilter("");
+            
             $this->UpdateFormField("Actors", "values", "");
             // Timer starten für zeitlich begrenzte Suche
             $this->SetTimerInterval("SearchTime", 1000 * 60);
@@ -103,9 +103,6 @@ class TuyaGeneric extends IPSModule
             $this->SetBuffer("Serach", "");
             $this->UpdateFormField("TimeLabel", "caption", "Suche abgelaufen");
             $this->SetTimerInterval("SearchTime", 0);
-            $this->SetReceiveDataFilter(
-                ".*\"DeviceID\":" . $this->GetID() . ".*"
-            );
         }
     }
 
@@ -184,55 +181,8 @@ class TuyaGeneric extends IPSModule
         }
     }
 
-    // merge von form.json
-    public function AddConfigurationForm(array $ChildForm, string $NewModule)
-    {
-        // funktionsaufruf in form ändern ändern
-        $Module = json_decode(
-            file_get_contents(__DIR__ . "/module.json"),
-            true
-        );
-        $NewModule = $this->GetBuffer("Module");
 
-        $file = file_get_contents(__DIR__ . "/form.json");
-        $file = str_replace($Module["prefix"] . "_", $NewModule . "_", $file);
-
-        $Form = json_decode($file, true);
-
-        // form merges
-        if (array_key_exists("elements", $ChildForm) == false) {
-            $ChildForm["elements"] = [];
-        }
-        if (array_key_exists("elements", $Form) == false) {
-            $Form["elements"] = [];
-        }
-        if (array_key_exists("status", $ChildForm) == false) {
-            $ChildForm["status"] = [];
-        }
-        if (array_key_exists("status", $Form) == false) {
-            $Form["status"] = [];
-        }
-        if (array_key_exists("actions", $ChildForm) == false) {
-            $ChildForm["actions"] = [];
-        }
-        if (array_key_exists("actions", $Form) == false) {
-            $Form["actions"] = [];
-        }
-
-        // Arrays ersetzen
-        $NewForm = [];
-        $NewForm["elements"] = array_merge(
-            $ChildForm["elements"],
-            $Form["elements"]
-        );
-        $NewForm["status"] = array_merge($ChildForm["status"], $Form["status"]);
-        $NewForm["actions"] = array_merge(
-            $ChildForm["actions"],
-            $Form["actions"]
-        );
-
-        return $NewForm;
-    }
+    
 }
 
 
