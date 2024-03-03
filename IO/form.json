@@ -4,5 +4,13 @@
     { "name": "SecretKey", "type": "ValidationTextBox", "caption": "SecretKey" },
     { "name": "BaseUrl", "type": "ValidationTextBox", "caption": "BaseUrl" },
     { "name": "AppID", "type": "ValidationTextBox", "caption": "AppID" }
-  ],
+    ],
+    "actions":
+    [
+        ... //Hier Formularfelder einfügen
+    ],
+    "status":
+    [
+        ... //Hier Statusmeldungen einfügen
+    ]
 }
