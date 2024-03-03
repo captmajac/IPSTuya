@@ -99,6 +99,10 @@ class TuyaGeneric extends IPSModule
         $this->SetBuffer("Serach", "true");
         $this->UpdateFormField("Actors", "values", "");
     }
+    public function SearchModules()
+    {}
+    public function SearchModules(string $id, string $state)
+    {}
 
     // auswahl aus der search liste
     public function SetSelectedModul(object $List)
