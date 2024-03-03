@@ -9,8 +9,7 @@
 	"parentRequirements": [
 
     ],
-    "childRequirements": [
-        null
+    "childRequirements": ["{C8361181-FB39-72D4-A3BD-B203806D4E4C"}
     ],
     "implemented": [
         null,
