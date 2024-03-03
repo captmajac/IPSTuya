@@ -18,7 +18,7 @@ class TuyaGeneric extends IPSModule
         $this->RegisterPropertyString("SecretKey", "");
         $this->RegisterPropertyString("BaseUrl", "");        // z.b. 'https://openapi.tuyaeu.com'
 
-        /*
+        
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
         if ($Module == "") {
@@ -28,7 +28,7 @@ class TuyaGeneric extends IPSModule
                 true
             )["prefix"]; // Modul für parent merken
             $this->SetBuffer("Module", $Module);
-        }*/
+        }
         
         $this->RegisterTimer(
             "SearchTime",
