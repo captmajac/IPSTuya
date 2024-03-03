@@ -94,9 +94,8 @@ class TuyaGeneric extends IPSModule
     }
 
     // start/stop search device
-    public function SearchModules(string $state)
+    public function SearchModules()
     {
-        $this->SetBuffer("Serach", "true");
         $this->UpdateFormField("Actors", "values", "");
     }
 
@@ -106,7 +105,6 @@ class TuyaGeneric extends IPSModule
     {
         @$DevID = $List["ID"]; // Kommt ein Error bei keiner Auswahl
 
-        $this->SetBuffer("Serach", "");
         $this->SetBuffer("List", "");
         $this->SetTimerInterval("SearchTime", 0);
 
