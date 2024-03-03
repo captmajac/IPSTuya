@@ -36,22 +36,17 @@ class TuyaServer extends IPSModule
         parent::ApplyChanges();
     }
 
-    /*
-     * This function will be available automatically after the module is imported with the module control.
-     * Using the custom prefix this function will be callable from PHP and JSON-RPC through:
-     *
-     * IOT_Send($id, $text);
-     *
-     * public function Send($Text)
-     * {
-     * $this->SendDataToParent(json_encode(Array("DataID" => "{B87AC955-F258-468B-92FE-F4E0866A9E18}", "Buffer" => $Text)));
-     * }
-     */
-    public function ReceiveData($JSONString)
-    {
-        $data = json_decode($JSONString);
-        $this->SendDebug("TuyaGatewayData", $JSONString, 0);
-    }
+   public function ForwardData($JSONString)
+		{
+			$data = json_decode($JSONString);
+			IPS_LogMessage('IO FRWD', utf8_decode($data->Buffer));
+		}
+
+		public function Send(string $Text)
+		{
+			$this->SendDataToChildren(json_encode(['DataID' => '', 'Buffer' => $Text]));
+		}
+
 
 
     // default debug message
