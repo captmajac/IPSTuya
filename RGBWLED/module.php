@@ -43,6 +43,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 			switch($Ident) {
 		  	case "Power":
 			  	// todo
+				$this->getToken($Value);
 		  	case "Intensity":
 	  			// todo
   			case "Color Temperature":
