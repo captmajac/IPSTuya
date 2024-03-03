@@ -92,6 +92,32 @@ class TuyaBLELock extends TuyaGeneric
    			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
 			return $return->success;
 		}
+
+		public function lock(boolean $value)
+		{
+			// 1. Ticket ID holen
+			$payload = [  ];
+			$return =	$tuya->devices( $token )->post_password_ticket( $device_id , [ 'commands' => [ $payload ] ] );
+			$ticket_ID = $return->result->ticket_id;
+
+			var_dump($return);
+
+			// mit TIcket ID öffnen
+			$payload = [ 'ticket_id' => $ticket_ID ];
+			$return =	$tuya->devices( $token )->post_remote_unlocking( $device_id , $payload);
+			// Antwort prüfen ob msg vorhanden
+			@$msg = $return->msg;
+			//var_dump($msg);
+			if ($msg <> "")
+			{
+			    SetValue(11655,$msg);
+			}
+			else
+			{
+			    SetValue(11655,"");
+			}
+
+		}
 		
 	}
 ?>
