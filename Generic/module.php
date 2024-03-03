@@ -94,7 +94,7 @@ class TuyaGeneric extends IPSModule
     }
 
     // start/stop search device
-    public function SearchModules(string $id, string $state)
+    public function SearchModules(string $state)
     {
         $this->SetBuffer("Serach", "true");
         $this->UpdateFormField("Actors", "values", "");
