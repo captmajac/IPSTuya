@@ -43,12 +43,7 @@ class TuyaGeneric extends IPSModule
 
 	$instance = IPS_GetInstance($this->InstanceID);
 	$ret = IPS_GetConfiguration ($instance['ConnectionID']);
-
-	IPS_LogMessage("MODUL",$ret);
- 	
-    	
-	    
-	//var_dump($ret);    
+	$para = json_decode($ret); 
     }
 
     
@@ -141,11 +136,22 @@ class TuyaGeneric extends IPSModule
 
     public function getTuyaClass()
     {
-         $config = [
+	$instance = IPS_GetInstance($this->InstanceID);
+	$ret = IPS_GetConfiguration ($instance['ConnectionID']);
+	$para = json_decode($ret); 
+	    
+	    $config = [
+            "accessKey" => $para->AccessKey),
+            "secretKey" => $para->SecretKey),
+            "baseUrl" => $para->BaseUrl),
+        ];
+
+	/*
+        $config = [
             "accessKey" => $this->ReadPropertyString("AccessKey"),
             "secretKey" => $this->ReadPropertyString("SecretKey"),
             "baseUrl" => $this->ReadPropertyString("BaseUrl"),
-        ];
+        ];*/
         $tuya = new TuyaApi($config);
         return $tuya;
     }
