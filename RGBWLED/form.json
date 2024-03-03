@@ -11,7 +11,7 @@
 				    [
 					{ "type": "PopupButton",
 					"caption": "Search Device",
-					"onClick":  "GenericEEP_SearchModules($id,'true');",
+					"onClick":  "SearchModules($id,'true');",
 					
 					
 					"popup": {
