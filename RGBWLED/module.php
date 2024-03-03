@@ -65,7 +65,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 				// Wertbereich begrenzen auf Geraetespezifika 
 				if ($Value > $colmax)
 					$Value = $colmax
-				else if ($Value < $colmin)
+				elseif ($Value < $colmin)
 					$Value = $colmin
 				break;
 		  	case "Color":
