@@ -50,7 +50,7 @@
 							    "values": [
 								]
 								},
-								{  "type": "Button", "caption": "Apply selected", "onClick":  "Tuya_SetSelectedModul($id, $Actors);"
+								{  "type": "Button", "caption": "Apply selected", "onClick":  "Tuya_SetSelectedModul($id, $Devices);"
 								}
 						    ]
 						}
