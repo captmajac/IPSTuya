@@ -51,21 +51,24 @@ class TuyaLEDRGBW extends TuyaGeneric
 		  	case "Power":
 				$payload = [ 'code' => 'switch_led' , 'value' => $Value ];
 				$ret = $this->CPost($payload);
+				break;
 		  	case "Intensity":	
 				$payload = [ 'code' => 'bright_value' , 'value' => $Value *10 ];		// *10 {"min":10,"max":1000,"scale":0,"step":1}
 				$ret = $this->CPost($payload);
-	  			// todo
+				break;
   			case "Color Temperature":
 			  	// todo
+				break;
 		  	case "Color":
-	  			// todo	
 				 $ValueHex = $this->colinttohex($Value);
 				 $payload = [ 'code' => 'colour_data' , 'value' => $ValueHex ];
 	 			$ret = $this->CPost($payload);
+				break;
 			case "Mode":
 				$arr = ["white","colour","scene","music"];
 				$payload = [ 'code' => 'work_mode' , 'value' => $arr[$Value] ];		// {"range":["white","colour","scene","music"]}"
 				$ret = $this->CPost($payload);
+				break;
 			break;
 	
 			}
@@ -112,30 +115,30 @@ class TuyaLEDRGBW extends TuyaGeneric
 		// int color to tuya hex value
 		private function colinttohex(int $intval)
     		{
-    $b = ($intval & 255);
-    $g = (($intval >> 8) & 255);
-    $r = (($intval >> 16) & 255);
+    		$b = ($intval & 255);
+    		$g = (($intval >> 8) & 255);
+   		$r = (($intval >> 16) & 255);
 
-    $r = max(0, min((int)$r, 255));
-    $g = max(0, min((int)$g, 255));
-    $b = max(0, min((int)$b, 255));
-    $result = [];
-    $min = min($r, $g, $b);
-    $max = max($r, $g, $b);
-    $delta_min_max = $max - $min;
-    $result_h = 0;
-    if     ($delta_min_max !== 0 && $max === $r && $g >= $b) $result_h = 60 * (($g - $b) / $delta_min_max) +   0;
-    elseif ($delta_min_max !== 0 && $max === $r && $g <  $b) $result_h = 60 * (($g - $b) / $delta_min_max) + 360;
-    elseif ($delta_min_max !== 0 && $max === $g            ) $result_h = 60 * (($b - $r) / $delta_min_max) + 120;
-    elseif ($delta_min_max !== 0 && $max === $b            ) $result_h = 60 * (($r - $g) / $delta_min_max) + 240;
-    $result_s = $max === 0 ? 0 : (1 - ($min / $max));
-    $result_v = $max;
-    $result['h'] = "".substr("000000".dechex( (int)(round($result_h)) ),-4);
-    $result['s'] = "".substr("000000".dechex( (int)($result_s * 100 * 10) ),-4);
-    $result['v'] = "".substr("000000".dechex( (int)($result_v / 2.55) * 10 ),-4);
+   		$r = max(0, min((int)$r, 255));
+    		$g = max(0, min((int)$g, 255));
+      		$b = max(0, min((int)$b, 255));
+      		$result = [];
+      		$min = min($r, $g, $b);
+      		$max = max($r, $g, $b);
+      		$delta_min_max = $max - $min;
+      		$result_h = 0;
+      		if     ($delta_min_max !== 0 && $max === $r && $g >= $b) $result_h = 60 * (($g - $b) / $delta_min_max) +   0;
+      		elseif ($delta_min_max !== 0 && $max === $r && $g <  $b) $result_h = 60 * (($g - $b) / $delta_min_max) + 360;
+      		elseif ($delta_min_max !== 0 && $max === $g            ) $result_h = 60 * (($b - $r) / $delta_min_max) + 120;
+      		elseif ($delta_min_max !== 0 && $max === $b            ) $result_h = 60 * (($r - $g) / $delta_min_max) + 240;
+      		$result_s = $max === 0 ? 0 : (1 - ($min / $max));
+      		$result_v = $max;
+     		$result['h'] = "".substr("000000".dechex( (int)(round($result_h)) ),-4);
+      		$result['s'] = "".substr("000000".dechex( (int)($result_s * 100 * 10) ),-4);
+      		$result['v'] = "".substr("000000".dechex( (int)($result_v / 2.55) * 10 ),-4);
 
-    $value = $result['h'].$result['s'].$result['v'];
-			return $value;
+      		$value = $result['h'].$result['s'].$result['v'];
+		return $value;
 		}
 		
 		// {"range":["white","colour","scene","music"]}"
