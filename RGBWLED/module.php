@@ -59,6 +59,9 @@ class TuyaLEDRGBW extends TuyaGeneric
 			  	// todo
 		  	case "Color":
 	  			// todo	
+				$ValueHex = colinttohex($Value);
+				 $payload = [ 'code' => 'colour_data' , 'value' => $ValueHex ];
+	 			$ret = $this->CPost($payload);
 			case "Mode":
 				$arr = ["white","colour","scene","music"];
 				$payload = [ 'code' => 'work_mode' , 'value' => $arr[$Value] ];		// {"range":["white","colour","scene","music"]}"
@@ -104,15 +107,35 @@ class TuyaLEDRGBW extends TuyaGeneric
    			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
 			return $return->success;
 		}
-		
-		public function power(bool $state)
+	
+
+		// int color to tuya hex value
+		private function colinttohex(int $intval)
     		{
-			$tuya = $this->getTuyaClass();
-			$token = $this->getToken();
-			$device_id = $this->ReadPropertyString("DeviceID");
-			$payload = [ 'code' => 'switch_led' , 'value' => $state ];
-   			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
-			return $return->success;
+    $b = ($intval & 255);
+    $g = (($intval >> 8) & 255);
+    $r = (($intval >> 16) & 255);
+
+    $r = max(0, min((int)$r, 255));
+    $g = max(0, min((int)$g, 255));
+    $b = max(0, min((int)$b, 255));
+    $result = [];
+    $min = min($r, $g, $b);
+    $max = max($r, $g, $b);
+    $delta_min_max = $max - $min;
+    $result_h = 0;
+    if     ($delta_min_max !== 0 && $max === $r && $g >= $b) $result_h = 60 * (($g - $b) / $delta_min_max) +   0;
+    elseif ($delta_min_max !== 0 && $max === $r && $g <  $b) $result_h = 60 * (($g - $b) / $delta_min_max) + 360;
+    elseif ($delta_min_max !== 0 && $max === $g            ) $result_h = 60 * (($b - $r) / $delta_min_max) + 120;
+    elseif ($delta_min_max !== 0 && $max === $b            ) $result_h = 60 * (($r - $g) / $delta_min_max) + 240;
+    $result_s = $max === 0 ? 0 : (1 - ($min / $max));
+    $result_v = $max;
+    $result['h'] = "".substr("000000".dechex( (int)(round($result_h)) ),-4);
+    $result['s'] = "".substr("000000".dechex( (int)($result_s * 100 * 10) ),-4);
+    $result['v'] = "".substr("000000".dechex( (int)($result_v / 2.55) * 10 ),-4);
+
+    $value = $result['h'].$result['s'].$result['v'];
+			return $value;
 		}
 		
 		// {"range":["white","colour","scene","music"]}"
@@ -128,5 +151,9 @@ class TuyaLEDRGBW extends TuyaGeneric
 			IPS_SetVariableProfileAssociation("Tuya.LightMode", 3, "music", "", -1);
 		 }
 		}
+
+
+
+		
 	}
 ?>
