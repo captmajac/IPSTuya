@@ -102,7 +102,7 @@ class TuyaGeneric extends IPSModule
         IPS_ApplyChanges($this->InstanceID);
     }
 
-    private function readDeviceList(string $token, string $app_id)
+    public function readDeviceList(string $token, string $app_id)
     {
         $tuya = $this->getTuyaClass();
         //$token = $tuya->getToken();
@@ -122,7 +122,7 @@ class TuyaGeneric extends IPSModule
         return $values;
     }
     
-    private function getToken()
+    public function getToken()
     {
         $tuya = $this->getTuyaClass();
         
@@ -130,7 +130,7 @@ class TuyaGeneric extends IPSModule
         return $token;
     }
 
-    private function getTuyaClass()
+    public function getTuyaClass()
     {
          $config = [
             "accessKey" => $this->ReadPropertyString("AccessKey"),
