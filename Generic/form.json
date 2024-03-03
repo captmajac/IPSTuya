@@ -27,7 +27,7 @@
 							    "columns": [{
 								"caption": "ID",
 								"name": "ID", 
-								"width": "100px",
+								"width": "auto",
 								"add": ""
 							    }, {
 								"caption": "Name",
