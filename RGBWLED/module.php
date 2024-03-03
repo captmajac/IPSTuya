@@ -46,7 +46,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 				$payload = [ 'code' => 'switch_led' , 'value' => $Value ];
 				$ret = $this->CPost($payload);
 		  	case "Intensity":	
-				$payload = [ 'code' => 'bright_value' , 'value' => $Value *10; ];		// *10 {"min":10,"max":1000,"scale":0,"step":1}
+				$payload = [ 'code' => 'bright_value' , 'value' => $Value *10 ];		// *10 {"min":10,"max":1000,"scale":0,"step":1}
 				$ret = $this->CPost($payload);
 	  			// todo
   			case "Color Temperature":
