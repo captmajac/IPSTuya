@@ -37,10 +37,6 @@ class TuyaGeneric extends IPSModule
     {
         // Never delete this line!
         parent::ApplyChanges();
-
-        // data filter actual not used
-        //$this->SetReceiveDataFilter(".*\"DeviceID\":".$this->GetID().".*");
-        //$this->SetReceiveDataFilter(".*\"DeviceID\":".(int)hexdec($this->ReadPropertyString("DeviceID")).".*");
     }
 
     /*
@@ -60,11 +56,6 @@ class TuyaGeneric extends IPSModule
         $this->SendDebug("TuyaGatewayData", $JSONString, 0);
     }
 
-    // analyze recieved data
-    private function ProcessData($data)
-    {
-        // nothing to do
-    }
 
     // default debug message
     protected function SendDebug($Message, $Data, $Format)
@@ -82,7 +73,7 @@ class TuyaGeneric extends IPSModule
         }
     }
 
-    // start/stop search device
+    // search device
     public function SearchModules()
     {
         $appID = $this->ReadPropertyString("AppID");
@@ -109,14 +100,6 @@ class TuyaGeneric extends IPSModule
         }
         // Apply schliesst auch popup
         IPS_ApplyChanges($this->InstanceID);
-    }
-
-    // ggf. auch entscheiden was in der Liste aufgenommen werden soll
-    // z.b. Filter auf spezielle Geräte
-    //
-    public function updateList(string $DevID, array $arr)
-    {
-        
     }
 
     private function readDeviceList(string $token, string $app_id)
