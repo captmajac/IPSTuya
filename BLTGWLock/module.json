@@ -1,0 +1,14 @@
+{
+	"id": "{3A4F1BCD-C90E-0977-8E7B-6396455735B7}",
+	"name": "TuyaBLELock",
+	"type": 3,
+	"vendor": "Tuya",
+	"aliases": 
+	[
+		"Tuya Lock(BLE via Gateway)"
+	],
+	"parentRequirements": ["{C459F3BF-8570-E12D-9B2A-14F0343C7F37}"],
+    	"childRequirements": [],
+   	"implemented": ["{018EF6B5-AB94-40C6-AA53-46943E824ACF}"],
+	"prefix": "Tuya"
+}
