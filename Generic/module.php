@@ -147,9 +147,9 @@ class TuyaGeneric extends IPSModule
 	$para = json_decode($ret); 
 	    
 	    $config = [
-            "accessKey" => $para->AccessKey),
-            "secretKey" => $para->SecretKey),
-            "baseUrl" => $para->BaseUrl),
+            "accessKey" => $para->AccessKey,
+            "secretKey" => $para->SecretKey,
+            "baseUrl" => $para->BaseUrl
         ];
 
 	/*
