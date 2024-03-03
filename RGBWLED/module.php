@@ -86,7 +86,7 @@ class TuyaLEDRGBW extends TuyaGeneric
     		{
 			$tuya = $this->getTuyaClass();
 			$token = $this->getToken();
-			$device_id = $this->ReadPropertyString("DeviceID"),
+			$device_id = $this->ReadPropertyString("DeviceID");
 			$payload = [ 'code' => 'switch_led' , 'value' => $state ];
    			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
 			return $return->success;
