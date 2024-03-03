@@ -117,6 +117,7 @@ class TuyaGeneric extends IPSModule
             $newValue->LocalKey = $value->local_key;
             $newValue->Model = $value->model;
             $newValue->Name = $value->name;
+            $newValue->Online = $value->Online;
             $values[] = $newValue;
         }
         return $values;
