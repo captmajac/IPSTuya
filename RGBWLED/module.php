@@ -18,8 +18,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 			$this->CreateVarProfileModus();
 			
 			$this->RegisterVariableBoolean("Power", "Power", "~Switch", 10 );
-			$this->RegisterVariableInteger("Mode", "Mode", "Tuya.LightMode", 20);
-			$this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100", 30);
+			$this->RegisterVariableInteger("Mode", "Mode", "Tuya.LightMode", 30);
+			$this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100", 20);
       			$this->RegisterVariableInteger("ColorTemperature", "ColorTemperature", "~TWColor", 40);
       			$this->RegisterVariableInteger("Color", "Color", "~HexColor", 50);
 			
