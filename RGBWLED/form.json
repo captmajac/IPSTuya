@@ -30,13 +30,13 @@
 								"width": "100px",
 								"add": ""
 							    }, {
-								"caption": "Additional Info",
-								"name": "Reference",
+								"caption": "Name",
+								"name": "Name",
 								"width": "auto",
 								"add": ""
 							    }, {
-								"caption": "Ident",
-								"name": "Ident",
+								"caption": "Model",
+								"name": "Model",
 								"width": "auto",
 								"visible": false,
 								"add": ""
