@@ -14,15 +14,21 @@ class TuyaLEDRGBW extends TuyaGeneric
 			//Never delete this line!
 			parent::ApplyChanges();
 			
+			//Variablenprofil anlegen 
+			$this->CreateVarProfileModus();
+			
 			$this->RegisterVariableBoolean("Power", "Power", "~Switch");
+			$this->RegisterVariableInteger("Mode", "Mode", "Tuya.LightMode");
 			$this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100");
       			$this->RegisterVariableInteger("ColorTemperature", "Color Temperature", "~TWColor");
       			$this->RegisterVariableInteger("Color", "Color", "~HexColor");
 			
 			$this->EnableAction("Power");	
       			$this->EnableAction("Intensity");	
+			$this->EnableAction("Mode");	
      			$this->EnableAction("ColorTemperature");	
       			$this->EnableAction("Color");	
+		
 		}
 		
 		/*
@@ -53,6 +59,10 @@ class TuyaLEDRGBW extends TuyaGeneric
 			  	// todo
 		  	case "Color":
 	  			// todo	
+			case "Mode":
+				$arr = ["white","colour","scene","music"];
+				$payload = [ 'code' => 'work_mode' , 'value' => $arr[$Value] ];		// {"range":["white","colour","scene","music"]}"
+				$ret = $this->CPost($payload);
 			break;
 	
 			}
@@ -104,7 +114,19 @@ class TuyaLEDRGBW extends TuyaGeneric
    			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
 			return $return->success;
 		}
-
 		
+		// {"range":["white","colour","scene","music"]}"
+		private function CreateVarProfileModus() {
+		if (!IPS_VariableProfileExists("Tuya.LightMode")) {
+			IPS_CreateVariableProfile("Tuya.LightMode", 1);
+			IPS_SetVariableProfileText("Tuya.LightMode", "", "");
+			IPS_SetVariableProfileValues("Tuya.LightMode", 0, 3, 1);
+			IPS_SetVariableProfileIcon("Tuya.LightMode", "");
+			IPS_SetVariableProfileAssociation("Tuya.LightMode", 0, "white", "", -1);
+			IPS_SetVariableProfileAssociation("Tuya.LightMode", 1, "colour", "", -1);
+			IPS_SetVariableProfileAssociation("Tuya.LightMode", 2, "scene", "", -1);
+			IPS_SetVariableProfileAssociation("Tuya.LightMode", 3, "music", "", -1)
+		 }
+	}
 	}
 ?>
