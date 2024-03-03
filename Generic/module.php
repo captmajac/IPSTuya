@@ -44,7 +44,7 @@ class TuyaGeneric extends IPSModule
 	$instance = IPS_GetInstance($this->InstanceID);
 	$ret = IPS_GetConfiguration ($instance['ConnectionID']);
 
-	IPS_LogMessage($ret);
+	IPS_LogMessage("MODUL",$ret);
  	
     	
 	    
