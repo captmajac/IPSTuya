@@ -104,12 +104,13 @@ class TuyaGeneric extends IPSModule
     public function SetSelectedModul(object $List)
     {
         @$DevID = $List["ID"]; // Kommt ein Error bei keiner Auswahl
+        @LocalKey = $List["LocalKey"]; // Kommt ein Error bei keiner Auswahl
 
         $this->SetBuffer("List", "");
-        $this->SetTimerInterval("SearchTime", 0);
 
         if ($DevID != null) {
             IPS_SetProperty($this->InstanceID, "DeviceID", "" . $DevID);
+            IPS_SetProperty($this->InstanceID, "LocalKey", "" . $LocalKey);
         }
         // Apply schliesst auch popup
         IPS_ApplyChanges($this->InstanceID);
