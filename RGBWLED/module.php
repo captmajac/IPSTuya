@@ -97,12 +97,6 @@ class TuyaLEDRGBW extends TuyaGeneric
 			
 		}
 
-		// start/stop search device
- 	   // TuyaGeneric_SearchModules
- 	   public function SearchModules(string $state)
-  	  {
-		  parent::SearchModules($state);
-   	 }
 		
 		protected function SendDebug($Message, $Data, $Format)
 		{
