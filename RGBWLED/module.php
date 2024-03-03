@@ -62,6 +62,11 @@ class TuyaLEDRGBW extends TuyaGeneric
  				$colvalue = intval ( ($Value-$colmin)/($colmax-$colmin)*100 * 10 );		// * 10 tuya spezifisch
   				$payload = [ 'code' => 'temp_value' , 'value' => $colvalue ];
   				$ret = $this->CPost($payload);
+				// Wertbereich begrenzen auf Geraetespezifika 
+				if ($Value > $colmax)
+					$Value = $colmax
+				else if ($Value < $colmin)
+					$Value = $colmin
 				break;
 		  	case "Color":
 				 $ValueHex = $this->colinttohex($Value);
