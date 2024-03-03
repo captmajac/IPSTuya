@@ -40,6 +40,12 @@
 								"width": "auto",
 								"visible": false,
 								"add": ""
+							    }, {
+								"caption": "LocalKey",
+								"name": "LocalKey",
+								"width": "auto",
+								"visible": false,
+								"add": ""
 							    }],
 							    "values": [
 								]
