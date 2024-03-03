@@ -2,7 +2,6 @@
 				"elements":
 				    [
 					 { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID (22 digit):", "validate":"[0-9a-zA-Z]{22}"},
- 					 { "name": "DeviceName", "type": "ValidationTextBox", "caption": "DeviceName"},
  					 { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey"},
 					    { "name": "AccessKey", "type": "ValidationTextBox", "caption": "AccessKey"},
 					    { "name": "SecretKey", "type": "ValidationTextBox", "caption": "SecretKey"},
