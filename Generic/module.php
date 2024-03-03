@@ -29,11 +29,13 @@ class TuyaGeneric extends IPSModule
             )["prefix"]; // Modul für parent merken
             $this->SetBuffer("Module", $Module);
         }
-
-        //$this->RegisterTimer("SearchTime",0,$Module . "_TimerEvent(\$_IPS['TARGET']);");
-
-        // Connect to available gateway
-        // $this->ConnectParent ( "{A52FEFE9-7858-4B8E-A96E-26E15CB944F7}" );
+    
+        $config = [
+            "accessKey" => $this->ReadPropertyString("AccessKey"),
+            "secretKey" => $this->ReadPropertyString("SecretKey"),
+            "baseUrl" => $this->ReadPropertyString("BaseUrl"),
+        ];
+        $tuya = new TuyaApi($config);
     }
 
     // changes der instanz
@@ -41,13 +43,6 @@ class TuyaGeneric extends IPSModule
     {
         // Never delete this line!
         parent::ApplyChanges();
-
-        $config = [
-            "accessKey" => $this->ReadPropertyString("AccessKey"),
-            "secretKey" => $this->ReadPropertyString("SecretKey"),
-            "baseUrl" => $this->ReadPropertyString("BaseUrl"),
-        ];
-        $tuya = new TuyaApi($config);
 
         // data filter actual not used
         //$this->SetReceiveDataFilter(".*\"DeviceID\":".$this->GetID().".*");
