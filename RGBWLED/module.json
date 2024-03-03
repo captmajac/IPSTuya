@@ -7,7 +7,7 @@
 	[
 		"Hama LED RGBW GU10"
 	],
-	"parentRequirements": [],
+	"parentRequirements": [{78ABC644-1134-F4E2-3E31-01E45483367B}],
 	"childRequirements": [],
 	"implemented": [],
 	"prefix": "Tuya"
