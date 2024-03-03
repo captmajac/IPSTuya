@@ -163,7 +163,7 @@ class TuyaGeneric extends IPSModule
     
     private function getToken()
     {
-        $token = $tuya->token->get_new( )->result->access_token;
+        $token = $this->$tuya->token->get_new( )->result->access_token;
     }
 }
 
