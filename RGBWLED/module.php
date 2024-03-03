@@ -59,7 +59,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 			  	// todo
 		  	case "Color":
 	  			// todo	
-				$ValueHex = colinttohex($Value);
+				 $ValueHex = $this->colinttohex($Value);
 				 $payload = [ 'code' => 'colour_data' , 'value' => $ValueHex ];
 	 			$ret = $this->CPost($payload);
 			case "Mode":
