@@ -40,9 +40,10 @@ class TuyaLEDRGBW extends TuyaGeneric
 
 		public function RequestAction($Ident, $Value)
 		{
+			$ret = false;
 			switch($Ident) {
 		  	case "Power":
-				$this->getToken($Value);
+				$ret = $this->power($Value);
 		  	case "Intensity":
 	  			// todo
   			case "Color Temperature":
@@ -54,7 +55,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 			}
 			
 			// Neuen Wert in die Statusvariable schreiben, wird über die Rückmeldung korrigiert
-			SetValue($this->GetIDForIdent($Ident), $Value);
+			if ($ret <> false)
+				SetValue($this->GetIDForIdent($Ident), $Value);
 		}
 		
 		protected function SendDebug($Message, $Data, $Format)
@@ -85,7 +87,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 			$tuya = $this->getToken();
 			$payload = [ 'code' => 'switch_led' , 'value' => $state ];
    			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
-		
+			return $return->success;
 		}
 	
 	}
