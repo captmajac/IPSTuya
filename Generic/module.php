@@ -30,12 +30,6 @@ class TuyaGeneric extends IPSModule
             $this->SetBuffer("Module", $Module);
         }
     
-        $config = [
-            "accessKey" => $this->ReadPropertyString("AccessKey"),
-            "secretKey" => $this->ReadPropertyString("SecretKey"),
-            "baseUrl" => $this->ReadPropertyString("BaseUrl"),
-        ];
-        $tuya = new TuyaApi($config);
     }
 
     // changes der instanz
@@ -141,6 +135,9 @@ class TuyaGeneric extends IPSModule
 
     private function readDeviceList(string $token, string $app_id)
     {
+        $tuya = $this->getTuyaClass();
+        //$token = $tuya->getToken();
+        
         $return = $tuya->devices($token)->get_app_list($app_id);
         $arr = $return->result;
 
@@ -158,8 +155,23 @@ class TuyaGeneric extends IPSModule
     
     private function getToken()
     {
-        $token = $this->$tuya->token->get_new( )->result->access_token;
+        $tuya = $this->getTuyaClass();
+        
+        $token = $tuya->token->get_new( )->result->access_token;
+        return $token;
     }
+
+    private function getTuyaClass()
+    {
+         $config = [
+            "accessKey" => $this->ReadPropertyString("AccessKey"),
+            "secretKey" => $this->ReadPropertyString("SecretKey"),
+            "baseUrl" => $this->ReadPropertyString("BaseUrl"),
+        ];
+        $tuya = new TuyaApi($config);
+        return $tuya;
+    }
+    
 }
 
 ?>
