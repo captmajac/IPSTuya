@@ -25,8 +25,8 @@ class TuyaBLELock extends TuyaGeneric
 			$this->RegisterVariableBoolean("Lock", "Lock", "~Lock", 10 );
 			$this->RegisterVariableInteger("Message", "Message", "~String", 30);
 			$this->RegisterVariableInteger("Battery", "Battery", "~String", 20);
-      $this->RegisterVariableInteger("Sound", "Sound", "~String", 40);
-      $this->RegisterVariableInteger("Log", "Log", "~HTML", 50);
+      			$this->RegisterVariableInteger("Sound", "Sound", "~String", 40);
+      			$this->RegisterVariableInteger("Log", "Log", "~HTML", 50);
 			
 			$this->EnableAction("Lock");	
 		}
@@ -49,8 +49,8 @@ class TuyaBLELock extends TuyaGeneric
 			$ret = false;
 			switch($Ident) {
 		  	case "Lock":
-				$payload = [ 'code' => 'switch_led' , 'value' => $Value ];
-				$ret = $this->CPost($payload);
+				$ret = $this->unlock();
+				// todo: wenn return false ist dann brauch status log nicht aktualisiert werden
 			break;
 	
 			}
@@ -93,29 +93,28 @@ class TuyaBLELock extends TuyaGeneric
 			return $return->success;
 		}
 
-		public function lock(boolean $value)
+		public function unlock()
 		{
 			// 1. Ticket ID holen
+			$tuya = $this->getTuyaClass();
+			$token = $this->getToken();
+			$device_id = $this->ReadPropertyString("DeviceID");
 			$payload = [  ];
-			$return =	$tuya->devices( $token )->post_password_ticket( $device_id , [ 'commands' => [ $payload ] ] );
+			$return = $tuya->devices( $token )->post_password_ticket( $device_id , [ 'commands' => [ $payload ] ] );
 			$ticket_ID = $return->result->ticket_id;
-
-			var_dump($return);
-
-			// mit TIcket ID öffnen
+		
+			// 2. mit TIcket ID öffnen
 			$payload = [ 'ticket_id' => $ticket_ID ];
-			$return =	$tuya->devices( $token )->post_remote_unlocking( $device_id , $payload);
+			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
+			
 			// Antwort prüfen ob msg vorhanden
 			@$msg = $return->msg;
-			//var_dump($msg);
 			if ($msg <> "")
-			{
-			    SetValue(11655,$msg);
-			}
+				SetValue($this->GetIDForIdent("Message"), $msg);
 			else
-			{
-			    SetValue(11655,"");
-			}
+				SetValue($this->GetIDForIdent("Message"), "");
+
+			return $return->success;
 
 		}
 		
