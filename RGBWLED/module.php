@@ -80,7 +80,13 @@ class TuyaLEDRGBW extends TuyaGeneric
 		} 
 
 		
-
+		private function power($state)
+    		{
+			$tuya = $this->getToken();
+			$payload = [ 'code' => 'switch_led' , 'value' => $state ];
+   			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
+		
+		}
 	
 	}
 ?>
