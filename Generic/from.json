@@ -1,0 +1,55 @@
+{
+				"elements":
+				    [
+					 { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID (22 digit):", "validate":"[0-9a-zA-Z]{22}"},
+ 					 { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey"},
+					    { "name": "AccessKey", "type": "ValidationTextBox", "caption": "AccessKey"},
+					    { "name": "SecretKey", "type": "ValidationTextBox", "caption": "SecretKey"},
+					    { "name": "BaseUrl", "type": "ValidationTextBox", "caption": "BaseUrl"},
+					    { "name": "AppID", "type": "ValidationTextBox", "caption": "AppID"}
+				    ],
+				    "actions":
+				    [
+					{ "type": "PopupButton",
+					"caption": "Search Device",
+					"onClick":  "TuyaGeneric_SearchModules($id,'true');",
+					
+					
+					"popup": {
+					    "caption": "Search Device",
+					    "items": [
+							{
+							    "type": "List",
+							    "name": "Devices",
+							    "caption": "Found Devices",
+							    "rowCount": 10,
+							    "add": false,
+							    "delete": false,
+							    "columns": [{
+								"caption": "ID",
+								"name": "ID", 
+								"width": "100px",
+								"add": ""
+							    }, {
+								"caption": "Name",
+								"name": "Name",
+								"width": "auto",
+								"add": ""
+							    }, {
+								"caption": "Model",
+								"name": "Model",
+								"width": "auto",
+								"visible": false,
+								"add": ""
+							    }],
+							    "values": [
+								]
+								},
+								{  "type": "Button", "caption": "Apply selected", "onClick":  "GenericEEP_SetSelectedModul($id, $Actors);"
+								},
+								{  "type": "Label", "name": "TimeLabel", "caption": "Suche läuft..." }
+						    ]
+						}
+				    }
+				    ]
+			}
