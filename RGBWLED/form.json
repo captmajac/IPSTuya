@@ -1,7 +1,7 @@
 {
 				"elements":
 				    [
-					 { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID (22 digit):", "validate":"[0-9a-zA-Z]{22}"},
+					 { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID",},
  					 { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey"},
 					    { "name": "AccessKey", "type": "ValidationTextBox", "caption": "AccessKey"},
 					    { "name": "SecretKey", "type": "ValidationTextBox", "caption": "SecretKey"},
@@ -12,11 +12,10 @@
 				    [
 					{ "type": "PopupButton",
 					"caption": "Search Device",
-					"onClick":  "TuyaGeneric_SearchModules($id,'true');",
-					
+					"onClick":  "Tuya_SearchModules($id);",
 					
 					"popup": {
-					    "caption": "Search Device",
+					    "caption": "Device List",
 					    "items": [
 							{
 							    "type": "List",
@@ -28,7 +27,7 @@
 							    "columns": [{
 								"caption": "ID",
 								"name": "ID", 
-								"width": "100px",
+								"width": "200px",
 								"add": ""
 							    }, {
 								"caption": "Name",
@@ -38,14 +37,20 @@
 							    }, {
 								"caption": "Model",
 								"name": "Model",
-								"width": "auto",
-								"visible": false,
+								"width": "300px",
+								"visible": true,
+								"add": ""
+							    }, {
+								"caption": "LocalKey",
+								"name": "LocalKey",
+								"width": "200px",
+								"visible": true,
 								"add": ""
 							    }],
 							    "values": [
 								]
 								},
-								{  "type": "Button", "caption": "Apply selected", "onClick":  "TuyaGeneric_SetSelectedModul($id, $Actors);"
+								{  "type": "Button", "caption": "Apply selected", "onClick":  "Tuya_SetSelectedModul($id, $Devices);"
 								}
 						    ]
 						}
