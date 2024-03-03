@@ -80,7 +80,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 		} 
 
 		
-		public function power($state)
+		public function power(bool $state)
     		{
 			$tuya = $this->getToken();
 			$payload = [ 'code' => 'switch_led' , 'value' => $state ];
