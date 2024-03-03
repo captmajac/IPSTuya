@@ -97,8 +97,8 @@ class TuyaGeneric extends IPSModule
     public function SearchModules()
     {
         $appID = $this->ReadPropertyString("AppID");
-        $token = getToken();
-        readDeviceList($token, $appID);
+        $token = $this->getToken();
+        $this->readDeviceList($token, $appID);
             
                 
         $this->UpdateFormField("Actors", "values", "");
