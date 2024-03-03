@@ -20,7 +20,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 			$this->RegisterVariableBoolean("Power", "Power", "~Switch", 10 );
 			$this->RegisterVariableInteger("Mode", "Mode", "Tuya.LightMode", 20);
 			$this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100", 30);
-      			$this->RegisterVariableInteger("ColorTemperature", "Color Temperature", "~TWColor", 40);
+      			$this->RegisterVariableInteger("ColorTemperature", "ColorTemperature", "~TWColor", 40);
       			$this->RegisterVariableInteger("Color", "Color", "~HexColor", 50);
 			
 			$this->EnableAction("Power");	
@@ -55,6 +55,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 		  	case "Intensity":	
 				$payload = [ 'code' => 'bright_value' , 'value' => $Value *10 ];		// *10 {"min":10,"max":1000,"scale":0,"step":1}
 				$ret = $this->CPost($payload);
+				if ($ret <> false)
+					SetValue($this->GetIDForIdent("Mode"), 0);				// spezifisch wenn helligkeit eingestellt wird verändert wird automatsch auf weiss mode geschaltet
 				break;
   			case "ColorTemperature":
  				$colmin = 2700;									// Geraete spezifisch "min":0,"max":1000,"scale":0,"step":1}" 0=kaltweiss 1000=warmweiss 
@@ -67,6 +69,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 					$Value = $colmax;
 				elseif ($Value < $colmin)
 					$Value = $colmin;
+				if ($ret <> false)
+					SetValue($this->GetIDForIdent("Mode"), 0);				// spezifisch wenn farbtemperatur verändert wird automatsch auf weiss mode geschaltet
 				break;
 		  	case "Color":
 				 $ValueHex = $this->colinttohex($Value);
