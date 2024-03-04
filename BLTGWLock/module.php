@@ -62,7 +62,7 @@ class TuyaBLELock extends TuyaGeneric
 			{
 				IPS_LogMessage("BLE","erste".$Value);
 				SetValue($this->GetIDForIdent($Ident), $Value);
-				if ($Ident=="Lock" and $Value == true)
+				if ($Ident=="Lock" and $Value == false)
 				{	
 					IPS_LogMessage("BLE","zerit");
 					// da nur kurz aufgeschlossen wird Status nach 2 Sek. wieder auf geschlossen setzen 
