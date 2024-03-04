@@ -16,7 +16,7 @@ class TuyaGeneric extends IPSModule
         //$this->RegisterPropertyString("DeviceName", "");
         $this->RegisterPropertyString("LocalKey", "");
 
-        $this->RegisterVariableString("Online", "Online", "~HTMLBox", 100);
+        $this->RegisterVariableBoolean("Online", "Online", "~HTMLBox", 100);
 
         $this->CreateVarProfileModus();
 
