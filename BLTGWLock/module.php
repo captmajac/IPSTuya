@@ -57,13 +57,15 @@ class TuyaBLELock extends TuyaGeneric
 	
 			}
 
-			IPS_Logmessage("BLE","*".$ret."*".$Ident);
 			// Neuen Wert in die Statusvariable schreiben, wird über die Rückmeldung korrigiert
-			if ($ret <> false)
+			if ($ret == true)
 			{
+				IPS_LogMessage("BLE,"erste".$Value);
 				SetValue($this->GetIDForIdent($Ident), $Value);
 				if ($Ident=="Lock" and $Value == true)
-				{	// da nur kurz aufgeschlossen wird Status nach 2 Sek. wieder auf geschlossen setzen 
+				{	
+					IPS_LogMessage("BLE,"zerit");
+					// da nur kurz aufgeschlossen wird Status nach 2 Sek. wieder auf geschlossen setzen 
 					IPS_Sleep(2000);
 				 	SetValue($this->GetIDForIdent($Ident), false);
 				 	// todo: status log timer anstelle spleep starten damit das log aktualisiert wird
@@ -128,7 +130,7 @@ class TuyaBLELock extends TuyaGeneric
 			else
 				SetValue($this->GetIDForIdent("Message"), "");
 
-			return $return->success;
+			return boolval($return->success);
 
 		}
 
