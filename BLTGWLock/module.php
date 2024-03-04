@@ -111,8 +111,9 @@ class TuyaBLELock extends TuyaGeneric
 			$tuya = $this->getTuyaClass();
 			$token = $this->getToken();
 			$device_id = $this->ReadPropertyString("DeviceID");
-			//$payload = [  ];
-			$return = $tuya->devices( $token )->post_password_ticket( $device_id ,"" );
+			$payload = [  ];
+			IPS_LogMessage("BLE",$payload."*".$device_id);
+			$return = $tuya->devices( $token )->post_password_ticket( $device_id ,$payload );
 			$ticket_ID = $return->result->ticket_id;
 		
 			// 2. mit TIcket ID öffnen
