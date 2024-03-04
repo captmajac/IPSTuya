@@ -29,7 +29,16 @@ class TuyaBLELock extends TuyaGeneric
       			$this->RegisterVariableString("Sound", "Sound", "", 40);
       			$this->RegisterVariableString("Log", "Log", "~HTMLBox", 50);
 
+			//Default Values
 			$this->setDefaults();
+			
+			// optik
+			//Variablenprofil anlegen 
+			//$this->CreateVarProfileModus()
+			IPS_SetIcon(GetIDForIdent("Message"), "Information");
+			IPS_SetIcon(GetIDForIdent("MotorState"), "Alert");
+			IPS_SetIcon(GetIDForIdent("Sound"), "Speaker");
+			IPS_SetIcon(GetIDForIdent("Log"), "Database");
 			
 			$this->EnableAction("Lock");	
 		}
