@@ -184,8 +184,8 @@ class TuyaGeneric extends IPSModule
             IPS_CreateVariableProfile("Tuya.Online", 0);
             IPS_SetVariableProfileText("Tuya.Online", "", "");
             IPS_SetVariableProfileIcon("Tuya.Online", "Information");
-            IPS_SetVariableProfileAssociation("Tuya.LightMode", 0, "offline", "", -1); // todo farben setzen?
-            IPS_SetVariableProfileAssociation("Tuya.LightMode", 1, "online", "", -1);
+            IPS_SetVariableProfileAssociation("Tuya.Online", 0, "offline", "", -1); // todo farben setzen?
+            IPS_SetVariableProfileAssociation("Tuya.Online", 1, "online", "", -1);
 
         }
     }
