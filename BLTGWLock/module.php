@@ -24,6 +24,7 @@ class TuyaBLELock extends TuyaGeneric
 			
 			$this->RegisterVariableBoolean("Lock", "Lock", "~Lock", 10 );
 			$this->RegisterVariableInteger("Message", "Message", "~String", 30);
+			$this->RegisterVariableInteger("MotorState", "MotorState", "~String", 35);
 			$this->RegisterVariableInteger("Battery", "Battery", "~String", 20);
       			$this->RegisterVariableInteger("Sound", "Sound", "~String", 40);
       			$this->RegisterVariableInteger("Log", "Log", "~HTML", 50);
@@ -50,14 +51,21 @@ class TuyaBLELock extends TuyaGeneric
 			switch($Ident) {
 		  	case "Lock":
 				$ret = $this->unlock();
-				// todo: wenn return false ist dann brauch status log nicht aktualisiert werden
 			break;
 	
 			}
 			
 			// Neuen Wert in die Statusvariable schreiben, wird über die Rückmeldung korrigiert
 			if ($ret <> false)
+			{
 				SetValue($this->GetIDForIdent($Ident), $Value);
+				if ($Ident=="Lock" and $Value == true)
+				{	// da nur kurz aufgeschlossen wird Status nach 2 Sek. wieder auf geschlossen setzen 
+					IPS_Sleep(2000);
+				 	SetValue($this->GetIDForIdent($Ident), false);
+				 	// todo: status log timer starten damit das log  aktualisiert wird
+				}
+			}
 		}
 		
 		protected function SendDebug($Message, $Data, $Format)
@@ -116,6 +124,20 @@ class TuyaBLELock extends TuyaGeneric
 
 			return $return->success;
 
+		}
+
+		public function updateState()
+		{
+			$return = $this->updateState();
+			// motor maybe block state
+			$motorstate = "".$return->result[$key]->value;
+			if ($motorstate == "")
+				$motorstate = "OK";
+			SetValue($this->GetIDForIdent(MotorState), $motorstate);
+			// info sound volume
+			SetValue($this->GetIDForIdent(Sound), "".$return->result[$key]->value);
+			// bat level
+			SetValue($this->GetIDForIdent(Battery), "".$return->result[$key]->value." %");
 		}
 		
 	}
