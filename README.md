@@ -8,8 +8,8 @@ Unterstützt und geprüft sind gerade zwei vorliegende Geräte. Ein BLE Türschl
 
 Dieses Modul nutzt die API der Tuya Cloud. Daher nicht Cloud free und es wird ein Developer Account benötigt. Anleitungen wie man die notwendigen Account Informationen besorgt gibt es viele.
 
-Die SocketKlasse stehht keine Verbidnung im Sinne IPSymcon her, sondern dient nur dazu die Verbindungsparameter einmalig bereit zu stellen. (hier könnte künftig eine bessere Integration erfolgen)
-
-Benötigt aus der Cloud werden folgende Parameter: accessKey, secretKey, baseUrl, appId
+Die SocketKlasse stellt keine Verbindung im Sinne IPSymcon her, sondern dient nur dazu die Verbindungsparameter einmalig bereit zu stellen. (hier könnte künftig eine bessere Integration erfolgen). Benötigt aus der Cloud werden folgende Parameter: accessKey, secretKey, baseUrl, appId
 
 In den Modulen kann über Geräte Suche die Liste in der Tuya Cloud registrierten Geräte angezeigt und ausgewählt werden. Dabei findet aktuell keine Typ Prüfung statt.
+
+Der Status von Modulen ist auch nur als one direction. Also Aktionen über die Tuya App werden aktuell nicht von IPS erkannt. 
