@@ -169,6 +169,13 @@ class TuyaGeneric extends IPSModule
         $tuya = new TuyaApi($config);
         return $tuya;
     }
+
+	public function updateState()
+	{
+		$tuya = $this->getToken();
+		$return = $tuya->devices( $token )->get_status( $device_id );
+		return $return;
+	}
     
 }
 
