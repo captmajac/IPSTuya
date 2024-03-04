@@ -118,7 +118,7 @@ class TuyaBLELock extends TuyaGeneric
 			
 			// 2. mit Ticket ID öffnen
 			$payload = [ 'ticket_id' => $ticket_ID ];
-			$return = $tuya->devices( $token )->post_remote_unlocking( $device_id, [ 'commands' => [ $payload ] ]);
+			$return = $tuya->devices( $token )->post_remote_unlocking( $device_id, $payload);
 			
 			// Antwort prüfen ob msg vorhanden
 			@$msg = $return->msg;
