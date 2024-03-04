@@ -35,10 +35,10 @@ class TuyaBLELock extends TuyaGeneric
 			// optik
 			//Variablenprofil anlegen 
 			//$this->CreateVarProfileModus()
-			IPS_SetIcon(GetIDForIdent("Message"), "Information");
-			IPS_SetIcon(GetIDForIdent("MotorState"), "Alert");
-			IPS_SetIcon(GetIDForIdent("Sound"), "Speaker");
-			IPS_SetIcon(GetIDForIdent("Log"), "Database");
+			IPS_SetIcon($this->GetIDForIdent("Message"), "Information");
+			IPS_SetIcon($this->GetIDForIdent("MotorState"), "Alert");
+			IPS_SetIcon($this->GetIDForIdent("Sound"), "Speaker");
+			IPS_SetIcon($this->GetIDForIdent("Log"), "Database");
 			
 			$this->EnableAction("Lock");	
 		}
