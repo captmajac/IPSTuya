@@ -56,7 +56,8 @@ class TuyaBLELock extends TuyaGeneric
 			break;
 	
 			}
-			
+
+			IPS_Logmessage("BLE","*".$ret."*".$Ident);
 			// Neuen Wert in die Statusvariable schreiben, wird über die Rückmeldung korrigiert
 			if ($ret <> false)
 			{
