@@ -115,10 +115,10 @@ class TuyaBLELock extends TuyaGeneric
 			
 			$return = $tuya->devices( $token )->post_password_ticket( $device_id );
 			$ticket_ID = $return->result->ticket_id;
-			IPS_LogMessage("BLE",$ticket_ID."*".$device_id);
+			
 			// 2. mit Ticket ID öffnen
 			$payload = [ 'ticket_id' => $ticket_ID ];
-			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
+			$return = $tuya->devices( $token )->post_remote_unlocking( $device_id, [ 'commands' => [ $payload ] ]);
 			
 			// Antwort prüfen ob msg vorhanden
 			@$msg = $return->msg;
