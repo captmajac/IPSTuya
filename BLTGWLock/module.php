@@ -143,13 +143,16 @@ class TuyaBLELock extends TuyaGeneric
 			$return = $tuya->devices( $token )->get_status( $device_id );
 
 			// motor maybe block state
+			$key = array_search('lock_motor_state', array_column($return->result, 'code'));
 			$motorstate = "".$return->result[$key]->value;
 			if ($motorstate == "")
 				$motorstate = "OK";
 			SetValue($this->GetIDForIdent("MotorState"), $motorstate);
 			// info sound volume
+			$key = array_search('beep_volume', array_column($return->result, 'code'));
 			SetValue($this->GetIDForIdent("Sound"), "".$return->result[$key]->value);
 			// bat level
+			$key = array_search('residual_electricity', array_column($return->result, 'code'));
 			SetValue($this->GetIDForIdent("Battery"), inval( $return->result[$key]->value) );
 			
 		}
