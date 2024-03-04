@@ -28,6 +28,8 @@ class TuyaBLELock extends TuyaGeneric
 			$this->RegisterVariableInteger("Battery", "Battery", "~Battery.100", 20);
       			$this->RegisterVariableString("Sound", "Sound", "", 40);
       			$this->RegisterVariableString("Log", "Log", "~HTMLBox", 50);
+
+			$this->setDefaults();
 			
 			$this->EnableAction("Lock");	
 		}
@@ -109,8 +111,8 @@ class TuyaBLELock extends TuyaGeneric
 			$tuya = $this->getTuyaClass();
 			$token = $this->getToken();
 			$device_id = $this->ReadPropertyString("DeviceID");
-			$payload = [  ];
-			$return = $tuya->devices( $token )->post_password_ticket( $device_id , [ 'commands' => [ $payload ] ] );
+			//$payload = [  ];
+			$return = $tuya->devices( $token )->post_password_ticket( $device_id ,"" ] );
 			$ticket_ID = $return->result->ticket_id;
 		
 			// 2. mit TIcket ID öffnen
@@ -163,6 +165,13 @@ class TuyaBLELock extends TuyaGeneric
 			    $out = $out.$tmspf." - ".$msg."<br>";   		// html cr
 			}
 			SetValue($this->GetIDForIdent("Log"), $out);
+		}
+		
+		public function setDefaults()
+		{
+			// default lock value
+			SetValue($this->GetIDForIdent("Lock"), true);
+			
 		}
 		
 	}
