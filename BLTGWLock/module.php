@@ -153,7 +153,7 @@ class TuyaBLELock extends TuyaGeneric
 			SetValue($this->GetIDForIdent("Sound"), "".$return->result[$key]->value);
 			// bat level
 			$key = array_search('residual_electricity', array_column($return->result, 'code'));
-			SetValue($this->GetIDForIdent("Battery"), inval( $return->result[$key]->value) );
+			SetValue($this->GetIDForIdent("Battery"), (int)( $return->result[$key]->value) );
 			
 		}
 
