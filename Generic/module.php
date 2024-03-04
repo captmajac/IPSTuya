@@ -10,15 +10,17 @@ class TuyaGeneric extends IPSModule
         // tuya socket notwendig für die parameter
         $this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
 
+        $this->CreateVarProfileModus();
+        
         // Never delete this line!
         parent::Create();
         $this->RegisterPropertyString("DeviceID", "");
         //$this->RegisterPropertyString("DeviceName", "");
         $this->RegisterPropertyString("LocalKey", "");
 
-        $this->RegisterVariableBoolean("Online", "Online", "~HTMLBox", 100);
+        $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);
 
-        $this->CreateVarProfileModus();
+        
 
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
