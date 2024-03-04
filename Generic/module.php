@@ -1,5 +1,4 @@
 <?php
-
 //Tuya Klassen einbinden
 include_once __DIR__ . "/../libs/TuyaAPI.php";
 
@@ -8,31 +7,28 @@ class TuyaGeneric extends IPSModule
     // erstellung
     public function Create()
     {
-	 // tuya socket notwendig für die parameter
-	 $this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
-	    
+        // tuya socket notwendig für die parameter
+        $this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
+
         // Never delete this line!
         parent::Create();
         $this->RegisterPropertyString("DeviceID", "");
         //$this->RegisterPropertyString("DeviceName", "");
         $this->RegisterPropertyString("LocalKey", "");
 
-        //$this->RegisterPropertyString("AccessKey", "");
-        //$this->RegisterPropertyString("SecretKey", "");
-        //$this->RegisterPropertyString("BaseUrl", ""); // z.b. 'https://openapi.tuyaeu.com'
-        //$this->RegisterPropertyString("AppID", "");
+        $this->RegisterVariableString("Online", "Online", "~HTMLBox", 100);
+
+        $this->CreateVarProfileModus();
 
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
-        if ($Module == "") {
+        if ($Module == "")
+        {
             // default this Module
-            $Module = json_decode(
-                file_get_contents(__DIR__ . "/module.json"),
-                true
-            )["prefix"]; // Modul für parent merken
+            $Module = json_decode(file_get_contents(__DIR__ . "/module.json") , true) ["prefix"]; // Modul für parent merken
             $this->SetBuffer("Module", $Module);
         }
-    
+
     }
 
     // changes der instanz
@@ -41,37 +37,42 @@ class TuyaGeneric extends IPSModule
         // Never delete this line!
         parent::ApplyChanges();
 
-	//$instance = IPS_GetInstance($this->InstanceID);
-	//$ret = IPS_GetConfiguration ($instance['ConnectionID']);
-	//$para = json_decode($ret); 
+        //$instance = IPS_GetInstance($this->InstanceID);
+        //$ret = IPS_GetConfiguration ($instance['ConnectionID']);
+        //$para = json_decode($ret);
+        
     }
 
-    
-
     public function Send(string $Text)
-		{
-			$this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', "Buffer" => $Text]));
-		}
+    {
+        $this->SendDataToParent(json_encode(['DataID' => '{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}', "Buffer" => $Text]));
+    }
 
-		public function ReceiveData($JSONString)
-		{
-			$data = json_decode($JSONString);
-			IPS_LogMessage('Device RECV', utf8_decode($data->Buffer));
-		}
-    
+    public function ReceiveData($JSONString)
+    {
+        $data = json_decode($JSONString);
+        IPS_LogMessage('Device RECV', utf8_decode($data->Buffer));
+    }
 
     // default debug message
     protected function SendDebug($Message, $Data, $Format)
     {
-        if (is_array($Data)) {
-            foreach ($Data as $Key => $DebugData) {
+        if (is_array($Data))
+        {
+            foreach ($Data as $Key => $DebugData)
+            {
                 $this->SendDebug($Message . ":" . $Key, $DebugData, 0);
             }
-        } elseif (is_object($Data)) {
-            foreach ($Data as $Key => $DebugData) {
+        }
+        elseif (is_object($Data))
+        {
+            foreach ($Data as $Key => $DebugData)
+            {
                 $this->SendDebug($Message . "." . $Key, $DebugData, 0);
             }
-        } else {
+        }
+        else
+        {
             parent::SendDebug($Message, $Data, $Format);
         }
     }
@@ -79,42 +80,39 @@ class TuyaGeneric extends IPSModule
     // search device
     public function SearchModules()
     {
-	$instance = IPS_GetInstance($this->InstanceID);
-	$ret = IPS_GetConfiguration ($instance['ConnectionID']);
-	$para = json_decode($ret); 
-	    
+        $instance = IPS_GetInstance($this->InstanceID);
+        $ret = IPS_GetConfiguration($instance['ConnectionID']);
+        $para = json_decode($ret);
+
         //$appID = $this->ReadPropertyString("AppID");
-	$appID = $para->AppID;
-	    
+        $appID = $para->AppID;
+
         $token = $this->getToken();
         $list = $this->readDeviceList($token, $appID);
-        
+
         $jsValues = json_encode($list);
         $this->SetBuffer("List", $jsValues);
         $this->UpdateFormField("Devices", "values", $jsValues);
     }
-
 
     // auswahl aus der search liste
     public function SetSelectedModul(object $List)
     {
         @$DevID = $List["ID"]; // Kommt ein Error bei keiner Auswahl
         @$LocalKey = $List["LocalKey"]; // Kommt ein Error bei keiner Auswahl
-	@$Name = $List["Name"]; // Kommt ein Error bei keiner Auswahl
-
+        @$Name = $List["Name"]; // Kommt ein Error bei keiner Auswahl
         $this->SetBuffer("List", "");
 
-        if ($DevID != null) {
+        if ($DevID != null)
+        {
             IPS_SetProperty($this->InstanceID, "DeviceID", "" . $DevID);
             IPS_SetProperty($this->InstanceID, "LocalKey", "" . $LocalKey);
         }
-	$oldname = IPS_GetName($this->InstanceID);
-	$pos = strpos($oldname, "(");
-	if ($pos <> false)
-		$oldname=substr($oldname,0,$pos);	// alten namen entfernen
-	    
-	IPS_SetName($this->InstanceID, $oldname." (".$Name.")" );
-		    
+        $oldname = IPS_GetName($this->InstanceID);
+        $pos = strpos($oldname, "(");
+        if ($pos <> false) $oldname = substr($oldname, 0, $pos); // alten namen entfernen
+        IPS_SetName($this->InstanceID, $oldname . " (" . $Name . ")");
+
         // Apply schliesst auch popup
         IPS_ApplyChanges($this->InstanceID);
     }
@@ -123,12 +121,12 @@ class TuyaGeneric extends IPSModule
     {
         $tuya = $this->getTuyaClass();
         //$token = $tuya->getToken();
-        
         $return = $tuya->devices($token)->get_app_list($app_id);
         $arr = $return->result;
 
         $values = [];
-        foreach ($arr as $value) {
+        foreach ($arr as $value)
+        {
             $newValue = new \stdClass();
             $newValue->ID = $value->id;
             $newValue->LocalKey = $value->local_key;
@@ -139,28 +137,27 @@ class TuyaGeneric extends IPSModule
         }
         return $values;
     }
-    
+
     public function getToken()
     {
         $tuya = $this->getTuyaClass();
-        
-        $token = $tuya->token->get_new( )->result->access_token;
+
+        $token = $tuya
+            ->token
+            ->get_new()
+            ->result->access_token;
         return $token;
     }
 
     public function getTuyaClass()
     {
-	$instance = IPS_GetInstance($this->InstanceID);
-	$ret = IPS_GetConfiguration ($instance['ConnectionID']);
-	$para = json_decode($ret); 
-	    
-	    $config = [
-            "accessKey" => $para->AccessKey,
-            "secretKey" => $para->SecretKey,
-            "baseUrl" => $para->BaseUrl
-        ];
+        $instance = IPS_GetInstance($this->InstanceID);
+        $ret = IPS_GetConfiguration($instance['ConnectionID']);
+        $para = json_decode($ret);
 
-	/*
+        $config = ["accessKey" => $para->AccessKey, "secretKey" => $para->SecretKey, "baseUrl" => $para->BaseUrl];
+
+        /*
         $config = [
             "accessKey" => $this->ReadPropertyString("AccessKey"),
             "secretKey" => $this->ReadPropertyString("SecretKey"),
@@ -170,13 +167,27 @@ class TuyaGeneric extends IPSModule
         return $tuya;
     }
 
-	public function updateState()
-	{
-		$tuya = $this->getToken();
-		$return = $tuya->devices( $token )->get_status( $device_id );
-		return $return;
-	}
-    
+    public function updateState()
+    {
+        $tuya = $this->getToken();
+        $return = $tuya->devices($token)->get_status($device_id);
+        return $return;
+    }
+
+    // online, offline
+    private function CreateVarProfileModus()
+    {
+        if (!IPS_VariableProfileExists("Tuya.Online"))
+        {
+            IPS_CreateVariableProfile("Tuya.Online", 0);
+            IPS_SetVariableProfileText("Tuya.Online", "", "");
+            IPS_SetVariableProfileIcon("Tuya.Online", "Information");
+            IPS_SetVariableProfileAssociation("Tuya.LightMode", 0, "offline", "", -1); // todo farben setzen?
+            IPS_SetVariableProfileAssociation("Tuya.LightMode", 1, "online", "", -1);
+
+        }
+    }
+
 }
 
 ?>
