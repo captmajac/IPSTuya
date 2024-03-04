@@ -63,7 +63,9 @@ class TuyaBLELock extends TuyaGeneric
 				{	// da nur kurz aufgeschlossen wird Status nach 2 Sek. wieder auf geschlossen setzen 
 					IPS_Sleep(2000);
 				 	SetValue($this->GetIDForIdent($Ident), false);
-				 	// todo: status log timer starten damit das log  aktualisiert wird
+				 	// todo: status log timer anstelle spleep starten damit das log aktualisiert wird
+				 	IPS_Sleep(15*1000);		// wait for cloud update log
+				 	$this->readLockLog();
 				}
 			}
 		}
@@ -133,11 +135,34 @@ class TuyaBLELock extends TuyaGeneric
 			$motorstate = "".$return->result[$key]->value;
 			if ($motorstate == "")
 				$motorstate = "OK";
-			SetValue($this->GetIDForIdent(MotorState), $motorstate);
+			SetValue($this->GetIDForIdent("MotorState"), $motorstate);
 			// info sound volume
-			SetValue($this->GetIDForIdent(Sound), "".$return->result[$key]->value);
+			SetValue($this->GetIDForIdent("Sound"), "".$return->result[$key]->value);
 			// bat level
-			SetValue($this->GetIDForIdent(Battery), inval( $return->result[$key]->value) );
+			SetValue($this->GetIDForIdent("Battery"), inval( $return->result[$key]->value) );
+			
+			$this->readLockLog();
+		}
+
+		public function readLockLog()
+		{
+			$tuya = $this->getTuyaClass();
+			$token = $this->getToken();
+			
+			$start_time =time()-7*24*60*60;
+			$end_time = time();
+			$payload = [ 'page_no' => 0 , 'page_size' => 20, 'start_time' => $start_time, 'end_time' => $end_time];
+			$return = $tuya->devices( $token )->get_openlogs( $device_id , $payload);
+			$logs = $return->result->logs;
+
+			$out = "";
+			foreach ($logs as &$value) {
+			    $msg =  $value->status->code ;                  	// message
+			    $tmsp =  $value->update_time ;          		// timestamp 
+			    $tmspf = date("d.m.Y H:i:s", ($tmsp/1000) );	// format
+			    $out = $out.$tmspf." - ".$msg."<br>";   		// html cr
+			}
+			SetValue($this->GetIDForIdent("Log"), $out);
 		}
 		
 	}
