@@ -20,7 +20,7 @@ class TuyaBLELock extends TuyaGeneric
 			parent::ApplyChanges();
 			
 			//Variablenprofil anlegen 
-			$this->CreateVarProfileModus();
+			//$this->CreateVarProfileModus();
 			
 			$this->RegisterVariableBoolean("Lock", "Lock", "~Lock", 10 );
 			$this->RegisterVariableInteger("Message", "Message", "~String", 30);
