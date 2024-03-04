@@ -27,7 +27,7 @@ class TuyaBLELock extends TuyaGeneric
 			$this->RegisterVariableInteger("MotorState", "MotorState", "~String", 35);
 			$this->RegisterVariableInteger("Battery", "Battery", "~String", 20);
       			$this->RegisterVariableInteger("Sound", "Sound", "~String", 40);
-      			$this->RegisterVariableInteger("Log", "Log", "~HTML", 50);
+      			$this->RegisterVariableInteger("Log", "Log", "~HTMLBox", 50);
 			
 			$this->EnableAction("Lock");	
 		}
