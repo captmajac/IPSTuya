@@ -23,11 +23,11 @@ class TuyaBLELock extends TuyaGeneric
 			//$this->CreateVarProfileModus();
 			
 			$this->RegisterVariableBoolean("Lock", "Lock", "~Lock", 10 );
-			$this->RegisterVariableInteger("Message", "Message", "~String", 30);
-			$this->RegisterVariableInteger("MotorState", "MotorState", "~String", 35);
-			$this->RegisterVariableInteger("Battery", "Battery", "~String", 20);
-      			$this->RegisterVariableInteger("Sound", "Sound", "~String", 40);
-      			$this->RegisterVariableInteger("Log", "Log", "~HTMLBox", 50);
+			$this->RegisterVariableString("Message", "Message", "~String", 30);
+			$this->RegisterVariableString("MotorState", "MotorState", "~String", 35);
+			$this->RegisterVariableInteger("Battery", "Battery", "~Battery.100", 20);
+      			$this->RegisterVariableString("Sound", "Sound", "~String", 40);
+      			$this->RegisterVariableString("Log", "Log", "~HTMLBox", 50);
 			
 			$this->EnableAction("Lock");	
 		}
@@ -137,7 +137,7 @@ class TuyaBLELock extends TuyaGeneric
 			// info sound volume
 			SetValue($this->GetIDForIdent(Sound), "".$return->result[$key]->value);
 			// bat level
-			SetValue($this->GetIDForIdent(Battery), "".$return->result[$key]->value." %");
+			SetValue($this->GetIDForIdent(Battery), inval( $return->result[$key]->value) );
 		}
 		
 	}
