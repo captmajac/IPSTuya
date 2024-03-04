@@ -67,10 +67,11 @@ class TuyaBLELock extends TuyaGeneric
 					IPS_LogMessage("BLE","zerit");
 					// da nur kurz aufgeschlossen wird Status nach 2 Sek. wieder auf geschlossen setzen 
 					IPS_Sleep(2000);
-				 	SetValue($this->GetIDForIdent($Ident), false);
+				 	SetValue($this->GetIDForIdent($Ident), true);
 				 	// todo: status log timer anstelle spleep starten damit das log aktualisiert wird
 				 	IPS_Sleep(15*1000);		// wait for cloud update log
-				 	$this->readLockLog();
+				 	$this->updateState();
+					$this->readLockLog();
 				}
 			}
 		}
@@ -136,7 +137,11 @@ class TuyaBLELock extends TuyaGeneric
 
 		public function updateState()
 		{
-			$return = $this->updateState();
+			$tuya = $this->getTuyaClass();
+			$token = $this->getToken();
+			$device_id = $this->ReadPropertyString("DeviceID");
+			$return = $tuya->devices( $token )->get_status( $device_id );
+
 			// motor maybe block state
 			$motorstate = "".$return->result[$key]->value;
 			if ($motorstate == "")
@@ -147,7 +152,6 @@ class TuyaBLELock extends TuyaGeneric
 			// bat level
 			SetValue($this->GetIDForIdent("Battery"), inval( $return->result[$key]->value) );
 			
-			$this->readLockLog();
 		}
 
 		public function readLockLog()
@@ -157,6 +161,8 @@ class TuyaBLELock extends TuyaGeneric
 			
 			$start_time =time()-7*24*60*60;
 			$end_time = time();
+			
+			$device_id = $this->ReadPropertyString("DeviceID");
 			$payload = [ 'page_no' => 0 , 'page_size' => 20, 'start_time' => $start_time, 'end_time' => $end_time];
 			$return = $tuya->devices( $token )->get_openlogs( $device_id , $payload);
 			$logs = $return->result->logs;
