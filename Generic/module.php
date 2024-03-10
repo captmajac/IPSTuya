@@ -32,7 +32,7 @@ class TuyaGeneric extends IPSModule
 	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");
 
 	$instance = IPS_GetInstance($this->InstanceID);
-        $ret = IPS_GetConfiguration($instance['ConnectionID']);
+        $ret = IPS_GetConfiguration($instance['Interval']);
         $para = json_decode($ret);
         $Interval = $para->Interval;  
 	    
