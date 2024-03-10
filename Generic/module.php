@@ -176,6 +176,17 @@ class TuyaGeneric extends IPSModule
         return $return;
     }
 
+    // status lesen
+    public function updateState()
+		{
+			$tuya = $this->getTuyaClass();
+			$token = $this->getToken();
+			$device_id = $this->ReadPropertyString("DeviceID");
+			$return = $tuya->devices( $token )->get_status( $device_id );
+
+			return $return;
+		}
+    
     // online, offline
     private function CreateVarProfileModus()
     {
