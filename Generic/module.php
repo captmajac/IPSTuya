@@ -198,6 +198,7 @@ class TuyaGeneric extends IPSModule
 	// timer aufruf,
 	public function TimerEvent() {
 		$this->updateState();
+		// todo: readDeviceList aufrufen und den online status weitergeben
 	} 
 	
     // online, offline
