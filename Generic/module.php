@@ -213,7 +213,7 @@ class TuyaGeneric extends IPSModule
 		// nothing to update
 		$device_id = $this->ReadPropertyString("DeviceID");
 		$online = $this->GetOnlineStatus($device_id);
-		IPS_SetProperty($this->InstanceID, "Online", $online);
+		SetValue($this->GetIDForIdent("Online"), $online );
 	}
 	
 	// timer aufruf,
