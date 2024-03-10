@@ -146,6 +146,12 @@ class TuyaLEDRGBW extends TuyaGeneric
 		{
 			$return = $this->getState(); 
 			
+			if (is_null($return) == true)
+			{
+				IPS_LogMessage("TuyaDevice","State Error Device=".$this->ReadPropertyString("DeviceID"););
+				return;
+			}
+			
 			// state
 			$key = array_search('switch_led', array_column($return->result, 'code'));
 			$state = "".$return->result[$key]->value;
