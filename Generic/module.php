@@ -20,11 +20,6 @@ class TuyaGeneric extends IPSModule
 
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);
 	
-	// update timer
-	$Module = $this->GetBuffer("Module");
-        $this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");
-	$this->SetTimerInterval("UpdateTimer", 1000*60*2);		// 2 min.
-
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
         if ($Module == "")
@@ -33,6 +28,9 @@ class TuyaGeneric extends IPSModule
             $Module = json_decode(file_get_contents(__DIR__ . "/module.json") , true) ["prefix"]; // Modul für parent merken
             $this->SetBuffer("Module", $Module);
         }
+	// update timer
+	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");
+	$this->SetTimerInterval("UpdateTimer", 1000*60*2);		// 2 min.
 
     }
 
