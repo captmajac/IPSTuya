@@ -31,7 +31,7 @@ class TuyaGeneric extends IPSModule
         }
 	// update timer
 	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");
-	$this->SetTimerInterval("UpdateTimer", $this->ReadPropertyInteger("Interval");		
+	$this->SetTimerInterval("UpdateTimer", $this->ReadPropertyInteger("Interval"));		
 
     }
 
