@@ -145,9 +145,9 @@ class TuyaLEDRGBW extends TuyaGeneric
 			$return = parent::updateState(); 
 			
 			// state
-			$key = array_search('switch_led', array_column($return->result, 'code'));
-			$state = "".$return->result[$key]->value;
-			SetValue($this->GetIDForIdent("Power"), $state);
+			//$key = array_search('switch_led', array_column($return->result, 'code'));
+			//$state = "".$return->result[$key]->value;
+			//SetValue($this->GetIDForIdent("Power"), $state);
 
 			//color modes
 			$key = array_search('work_mode', array_column($return->result, 'code'));
