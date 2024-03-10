@@ -16,6 +16,9 @@ class TuyaClient extends IPSModule
         $this->RegisterPropertyString("BaseUrl", ""); // z.b. 'https://openapi.tuyaeu.com'
         $this->RegisterPropertyString("AppID", "");
 
+	$this->RegisterPropertyInteger("Interval", 30*60);    	// minuten
+
+
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
         if ($Module == "") {

@@ -19,9 +19,7 @@ class TuyaGeneric extends IPSModule
         $this->RegisterPropertyString("LocalKey", "");
 
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);
-
-        
-
+	
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
         if ($Module == "")
@@ -30,6 +28,16 @@ class TuyaGeneric extends IPSModule
             $Module = json_decode(file_get_contents(__DIR__ . "/module.json") , true) ["prefix"]; // Modul für parent merken
             $this->SetBuffer("Module", $Module);
         }
+	// update timer
+	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");
+
+	//$instance = IPS_GetInstance($this->InstanceID);
+        //$ret = IPS_GetConfiguration($instance['Interval']);
+        //$para = json_decode($ret);
+        //$Interval = $para->Interval; 
+	    $Interval = 5*60;
+	    
+	$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
 
     }
 
@@ -169,13 +177,30 @@ class TuyaGeneric extends IPSModule
         return $tuya;
     }
 
-    public function updateState()
-    {
-        $tuya = $this->getToken();
-        $return = $tuya->devices($token)->get_status($device_id);
-        return $return;
-    }
+    // status lesen
+    public function getState()
+		{
+			$tuya = $this->getTuyaClass();
+			$token = $this->getToken();
+			$device_id = $this->ReadPropertyString("DeviceID");
+			//IPS_LogMessage("Generic","update ".$device_id);
+			
+			$return = $tuya->devices( $token )->get_status( $device_id );
 
+			return $return;
+		}
+
+	public function updateState()
+	{
+		// nothing to update
+	}
+	
+	// timer aufruf,
+	public function TimerEvent() {
+		$this->updateState();
+		// todo: readDeviceList aufrufen und den online status weitergeben
+	} 
+	
     // online, offline
     private function CreateVarProfileModus()
     {

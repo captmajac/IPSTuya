@@ -3,6 +3,18 @@ require_once __DIR__ . '/../Generic/module.php';  // Base Module.php
 
 class TuyaLEDRGBW extends TuyaGeneric
 	{
+		// range":["white","colour","scene","music"]}"
+		const CMODES = array(
+		    "white" => 0,
+		    "colour" => 1,
+		    "scene" => 2,
+		    "music" => 3
+		);
+		
+		// Geraete spezifisch "min":0,"max":1000,"scale":0,"step":1}" 0=kaltweiss 1000=warmweiss 
+		const COLMIN = 2700;									
+ 		const COLMAX = 6500;
+		
 		public function Create() 
 		{
 			//Never delete this line!
@@ -66,16 +78,14 @@ class TuyaLEDRGBW extends TuyaGeneric
 					SetValue($this->GetIDForIdent("Mode"), 0);				// spezifisch wenn helligkeit eingestellt wird verändert wird automatsch auf weiss mode geschaltet
 				break;
   			case "ColorTemperature":
- 				$colmin = 2700;									// Geraete spezifisch "min":0,"max":1000,"scale":0,"step":1}" 0=kaltweiss 1000=warmweiss 
- 				$colmax = 6500;
- 				$colvalue = intval ( ($Value-$colmin)/($colmax-$colmin)*100 * 10 );		// * 10 tuya spezifisch
+ 				$colvalue = intval ( ($Value-self::COLMIN)/(self::COLMAX-self::COLMIN)*100 * 10 );		// * 10 tuya spezifisch
   				$payload = [ 'code' => 'temp_value' , 'value' => $colvalue ];
   				$ret = $this->CPost($payload);
 				// Wertbereich begrenzen auf Geraetespezifika 
-				if ($Value > $colmax)
-					$Value = $colmax;
-				elseif ($Value < $colmin)
-					$Value = $colmin;
+				if ($Value > self::COLMAX)
+					$Value = self::COLMAX;
+				elseif ($Value < self::COLMIN)
+					$Value = self::COLMIN;
 				if ($ret <> false)
 					SetValue($this->GetIDForIdent("Mode"), 0);				// spezifisch wenn farbtemperatur verändert wird automatsch auf weiss mode geschaltet
 				break;
@@ -85,8 +95,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 	 			$ret = $this->CPost($payload);
 				break;
 			case "Mode":
-				$arr = ["white","colour","scene","music"];
-				$payload = [ 'code' => 'work_mode' , 'value' => $arr[$Value] ];		// {"range":["white","colour","scene","music"]}"
+				//$arr = ["white","colour","scene","music"];
+				$payload = [ 'code' => 'work_mode' , 'value' => self::CMODES[$Value] ];		// {"range":["white","colour","scene","music"]}"
 				$ret = $this->CPost($payload);
 				break;
 			break;
@@ -130,8 +140,47 @@ class TuyaLEDRGBW extends TuyaGeneric
    			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
 			return $return->success;
 		}
-	
 
+		// rgb spezifische werte
+		public function updateState()
+		{
+			$return = $this->getState(); 
+			
+			if (is_null($return) == true or is_null($return->result) == true)
+			{
+				IPS_LogMessage("TuyaDevice","State Error Device=".$this->ReadPropertyString("DeviceID") );
+				return;
+			}
+			
+			// state
+			$key = array_search('switch_led', array_column($return->result, 'code'));
+			$state = (bool)$return->result[$key]->value;
+			SetValue($this->GetIDForIdent("Power"), $state);
+
+			//color modes
+			$key = array_search('work_mode', array_column($return->result, 'code'));
+			$state = "".$return->result[$key]->value;
+			SetValue($this->GetIDForIdent("Mode"), self::CMODES[$state]);
+
+			//bright
+			$key = array_search('bright_value', array_column($return->result, 'code'));
+			$intensity = "".$return->result[$key]->value;
+			SetValue($this->GetIDForIdent("Intensity"), (int)$intensity/10 );
+
+			//temp
+			$key = array_search('temp_value', array_column($return->result, 'code'));
+			$temp = "".$return->result[$key]->value;
+			$temp = (int) ($temp / 1000 * (self::COLMAX - self::COLMIN) + self::COLMIN );
+			SetValue($this->GetIDForIdent("ColorTemperature"), $temp );
+
+			//color
+			$key = array_search('colour_data', array_column($return->result, 'code'));
+			$col = "".$return->result[$key]->value;
+			// todo hex wert in int umrechnen
+			//SetValue($this->GetIDForIdent("Color"), (int)$temp/10 );			
+		}
+
+		
 		// int color to tuya hex value
 		private function colinttohex(int $intval)
     		{

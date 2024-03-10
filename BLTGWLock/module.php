@@ -144,13 +144,11 @@ class TuyaBLELock extends TuyaGeneric
 
 		}
 
+		// lock spezifische werte
 		public function updateState()
 		{
-			$tuya = $this->getTuyaClass();
-			$token = $this->getToken();
-			$device_id = $this->ReadPropertyString("DeviceID");
-			$return = $tuya->devices( $token )->get_status( $device_id );
-
+			$return = $this->getState();  
+			
 			// motor maybe block state
 			$key = array_search('lock_motor_state', array_column($return->result, 'code'));
 			$motorstate = "".$return->result[$key]->value;
@@ -163,7 +161,9 @@ class TuyaBLELock extends TuyaGeneric
 			// bat level
 			$key = array_search('residual_electricity', array_column($return->result, 'code'));
 			SetValue($this->GetIDForIdent("Battery"), (int)( $return->result[$key]->value) );
-			
+
+			// log nachlesen
+			$return = $this->readLockLog();  
 		}
 
 		public function readLockLog()
