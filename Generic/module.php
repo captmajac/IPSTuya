@@ -19,8 +19,10 @@ class TuyaGeneric extends IPSModule
         $this->RegisterPropertyString("LocalKey", "");
 
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);
-
-        
+	
+	// update timer
+        $this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");
+	$this->SetTimerInterval("SearchTime", 1000*60*2);		// 2 min.
 
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
@@ -186,7 +188,12 @@ class TuyaGeneric extends IPSModule
 
 			return $return;
 		}
-    
+	
+	// timer aufruf,
+	public function TimerEvent() {
+		$this->updateState();
+	} 
+	
     // online, offline
     private function CreateVarProfileModus()
     {
