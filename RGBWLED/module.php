@@ -4,7 +4,7 @@ require_once __DIR__ . '/../Generic/module.php';  // Base Module.php
 class TuyaLEDRGBW extends TuyaGeneric
 	{
 		// range":["white","colour","scene","music"]}"
-		const $cmodes = array(
+		const CMODES = array(
 		    "white" => 0,
 		    "colour" => 1,
 		    "scene" => 2,
@@ -94,7 +94,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 				break;
 			case "Mode":
 				//$arr = ["white","colour","scene","music"];
-				$payload = [ 'code' => 'work_mode' , 'value' => self::$cmodes[$Value] ];		// {"range":["white","colour","scene","music"]}"
+				$payload = [ 'code' => 'work_mode' , 'value' => self::CMODES[$Value] ];		// {"range":["white","colour","scene","music"]}"
 				$ret = $this->CPost($payload);
 				break;
 			break;
@@ -154,7 +154,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 			//color modes
 			$key = array_search('work_mode', array_column($return->result, 'code'));
 			$state = "".$return->result[$key]->value;
-			SetValue($this->GetIDForIdent("Mode"), self::$cmodes[$state]);
+			SetValue($this->GetIDForIdent("Mode"), self::CMODES[$state]);
 
 			//bright
 			$key = array_search('bright_value', array_column($return->result, 'code'));
