@@ -78,14 +78,14 @@ class TuyaLEDRGBW extends TuyaGeneric
 					SetValue($this->GetIDForIdent("Mode"), 0);				// spezifisch wenn helligkeit eingestellt wird verändert wird automatsch auf weiss mode geschaltet
 				break;
   			case "ColorTemperature":
- 				$colvalue = intval ( ($Value-COLMIN)/(COLMAX-COLMIN)*100 * 10 );		// * 10 tuya spezifisch
+ 				$colvalue = intval ( ($Value-self::COLMIN)/(self::COLMAX-self::COLMIN)*100 * 10 );		// * 10 tuya spezifisch
   				$payload = [ 'code' => 'temp_value' , 'value' => $colvalue ];
   				$ret = $this->CPost($payload);
 				// Wertbereich begrenzen auf Geraetespezifika 
-				if ($Value > $colmax)
-					$Value = $colmax;
-				elseif ($Value < $colmin)
-					$Value = $colmin;
+				if ($Value > self::COLMAX)
+					$Value = self::COLMAX;
+				elseif ($Value < self::COLMIN)
+					$Value = self::COLMIN;
 				if ($ret <> false)
 					SetValue($this->GetIDForIdent("Mode"), 0);				// spezifisch wenn farbtemperatur verändert wird automatsch auf weiss mode geschaltet
 				break;
@@ -164,7 +164,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 			//temp
 			$key = array_search('temp_value', array_column($return->result, 'code'));
 			$temp = "".$return->result[$key]->value;
-			$temp = (int) ($temp / 1000 * (COLMAX - COLMIN) + COLMIN );
+			$temp = (int) ($temp / 1000 * (self::COLMAX - self::COLMIN) + self::COLMIN );
 			SetValue($this->GetIDForIdent("ColorTemperature"), $temp );
 
 			//color
