@@ -3,6 +3,14 @@ require_once __DIR__ . '/../Generic/module.php';  // Base Module.php
 
 class TuyaLEDRGBW extends TuyaGeneric
 	{
+		// range":["white","colour","scene","music"]}"
+		$cmodes = array(
+		    "white" => 0,
+		    "colour" => 1,
+		    "scene" => 2,
+		    "music" => 3
+		);
+		
 		public function Create() 
 		{
 			//Never delete this line!
@@ -85,8 +93,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 	 			$ret = $this->CPost($payload);
 				break;
 			case "Mode":
-				$arr = ["white","colour","scene","music"];
-				$payload = [ 'code' => 'work_mode' , 'value' => $arr[$Value] ];		// {"range":["white","colour","scene","music"]}"
+				//$arr = ["white","colour","scene","music"];
+				$payload = [ 'code' => 'work_mode' , 'value' => $cmodes[$Value] ];		// {"range":["white","colour","scene","music"]}"
 				$ret = $this->CPost($payload);
 				break;
 			break;
@@ -130,7 +138,38 @@ class TuyaLEDRGBW extends TuyaGeneric
    			$return = $tuya->devices( $token )->post_commands( $device_id, [ 'commands' => [ $payload ] ]);
 			return $return->success;
 		}
-	
+
+		// rgb spezifische werte
+		public function updateState()
+		{
+			$return = parent::updateState(); 
+			
+			// state
+			$key = array_search('switch_led', array_column($return->result, 'result'));
+			$state = "".$return->result[$key]->value;
+			SetValue($this->GetIDForIdent("Power"), $state);
+
+			//color modes
+			$key = array_search('work_mode', array_column($return->result, 'code'));
+			$state = "".$return->result[$key]->value;
+			SetValue($this->GetIDForIdent("Mode"), $cmodes[$state]);
+
+			//bright
+			$key = array_search('bright_value', array_column($return->result, 'code'));
+			$intensity = "".$return->result[$key]->value;
+			SetValue($this->GetIDForIdent("Intensity"), (int)$intensity/10 );
+
+			//temp
+			$key = array_search('temp_value', array_column($return->result, 'code'));
+			$temp = "".$return->result[$key]->value;
+			SetValue($this->GetIDForIdent("ColorTemperature"), (int)$temp/10 );
+
+			//color
+			$key = array_search('colour_data', array_column($return->result, 'code'));
+			$col = "".$return->result[$key]->value;
+			// todo hex wert in int umrechnen
+			//SetValue($this->GetIDForIdent("Color"), (int)$temp/10 );			
+		}
 
 		// int color to tuya hex value
 		private function colinttohex(int $intval)
