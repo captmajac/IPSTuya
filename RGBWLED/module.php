@@ -144,6 +144,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 		// rgb spezifische werte
 		public function updateState()
 		{
+			parent::updateState();
 			$return = $this->getState(); 
 			
 			if (is_null($return) == true or is_null($return->result) == true)

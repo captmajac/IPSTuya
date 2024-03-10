@@ -147,6 +147,8 @@ class TuyaBLELock extends TuyaGeneric
 		// lock spezifische werte
 		public function updateState()
 		{
+			parent::updateState();
+			
 			$return = $this->getState();  
 			
 			// motor maybe block state

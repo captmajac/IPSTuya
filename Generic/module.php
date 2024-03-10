@@ -87,6 +87,22 @@ class TuyaGeneric extends IPSModule
         }
     }
 
+    // get online status for one device id	todo: besser wäre es einmalig für alle geräte zu lesen z.b. im socket
+    public function GetOnlineStatus(String $device_id)
+    {
+        $instance = IPS_GetInstance($this->InstanceID);
+        $ret = IPS_GetConfiguration($instance['ConnectionID']);
+        $para = json_decode($ret);
+
+        $appID = $para->AppID;
+	$token = $this->getToken();
+        $list = $this->readDeviceList($token, $appID);
+	
+        $key = array_search($device_id, array_column($list, 'ID'));
+	$online = (bool) $list[$key]->Online;
+	return $online;
+    }
+	    
     // search device
     public function SearchModules()
     {
@@ -193,12 +209,14 @@ class TuyaGeneric extends IPSModule
 	public function updateState()
 	{
 		// nothing to update
+		$device_id = $this->ReadPropertyString("DeviceID");
+		$online = $this->GetOnlineStatus($device_id);
+		SetValue($this->GetIDForIdent("Online"), $online );
 	}
 	
 	// timer aufruf,
 	public function TimerEvent() {
 		$this->updateState();
-		// todo: readDeviceList aufrufen und den online status weitergeben
 	} 
 	
     // online, offline
@@ -209,8 +227,8 @@ class TuyaGeneric extends IPSModule
             IPS_CreateVariableProfile("Tuya.Online", 0);
             IPS_SetVariableProfileText("Tuya.Online", "", "");
             IPS_SetVariableProfileIcon("Tuya.Online", "Information");
-            IPS_SetVariableProfileAssociation("Tuya.Online", 0, "offline", "", -1); // todo farben setzen?
-            IPS_SetVariableProfileAssociation("Tuya.Online", 1, "online", "", -1);
+            IPS_SetVariableProfileAssociation("Tuya.Online", 0, "offline", "", 0xFF2600); // todo farben setzen?
+            IPS_SetVariableProfileAssociation("Tuya.Online", 1, "online", "", 0x00F900);
 
         }
     }
