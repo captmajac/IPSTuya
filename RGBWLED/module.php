@@ -4,7 +4,7 @@ require_once __DIR__ . '/../Generic/module.php';  // Base Module.php
 class TuyaLEDRGBW extends TuyaGeneric
 	{
 		// range":["white","colour","scene","music"]}"
-		$cmodes = array(
+		private $cmodes = array(
 		    "white" => 0,
 		    "colour" => 1,
 		    "scene" => 2,
