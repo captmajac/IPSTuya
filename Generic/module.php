@@ -97,6 +97,8 @@ class TuyaGeneric extends IPSModule
         $appID = $para->AppID;
 	$token = $this->getToken();
         $list = $this->readDeviceList($token, $appID);
+	IPS_LogMessage("AppID","".$appID);
+	IPS_LogMessage("DeviceID","".$device_id);
         $key = array_search($device_id, array_column($list->result, 'id'));
         $online = (bool) $return->result[$key]->online;
 	return $online;
