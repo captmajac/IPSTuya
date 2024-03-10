@@ -180,11 +180,6 @@ class TuyaLEDRGBW extends TuyaGeneric
 			//SetValue($this->GetIDForIdent("Color"), (int)$temp/10 );			
 		}
 
-	
-	// timer aufruf,
-	/*public function TimerEvent() {
-		$this->updateState();
-	} */
 		
 		// int color to tuya hex value
 		private function colinttohex(int $intval)
