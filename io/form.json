@@ -4,7 +4,7 @@
     { "name": "SecretKey", "type": "ValidationTextBox", "caption": "SecretKey" },
     { "name": "BaseUrl", "type": "ValidationTextBox", "caption": "BaseUrl" },
     { "name": "AppID", "type": "ValidationTextBox", "caption": "AppID" },
-    { "name": "Interval", "type": "NumberSpinner", "caption": "Interval" }
+    { "name": "Interval", "type": "NumberSpinner", "caption": "Interval Update" }
     ],
     "actions":
     [
