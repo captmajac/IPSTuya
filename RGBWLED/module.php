@@ -142,7 +142,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 		// rgb spezifische werte
 		public function updateState()
 		{
-			$return = parent::updateState(); 
+			$return = this->getState(); 
 			
 			// state
 			$key = array_search('switch_led', array_column($return->result, 'code'));
