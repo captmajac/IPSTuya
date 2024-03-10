@@ -161,7 +161,9 @@ class TuyaBLELock extends TuyaGeneric
 			// bat level
 			$key = array_search('residual_electricity', array_column($return->result, 'code'));
 			SetValue($this->GetIDForIdent("Battery"), (int)( $return->result[$key]->value) );
-			
+
+			// log nachlesen
+			$return = $this->readLockLog();  
 		}
 
 		public function readLockLog()
