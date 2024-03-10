@@ -23,7 +23,7 @@ class TuyaGeneric extends IPSModule
 	// update timer
 	$Module = $this->GetBuffer("Module");
         $this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");
-	$this->SetTimerInterval("SearchTime", 1000*60*2);		// 2 min.
+	$this->SetTimerInterval("UpdateTimer", 1000*60*2);		// 2 min.
 
         // modulaufruf ändern
         $Module = $this->GetBuffer("Module");
