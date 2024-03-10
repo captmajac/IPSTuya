@@ -2,7 +2,6 @@
   "elements": [
     { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID" },
     { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" }
-    { "name": "LocalKey", "type": "NumberSpinner", "caption": "Interval" }
   ],
   "actions": [
     {
