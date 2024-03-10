@@ -146,7 +146,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 		{
 			$return = $this->getState(); 
 			
-			if (is_null($return) == true)
+			if (is_null($return) == true or is_null($return->result) == true)
 			{
 				IPS_LogMessage("TuyaDevice","State Error Device=".$this->ReadPropertyString("DeviceID") );
 				return;
