@@ -12,6 +12,9 @@ Die SocketKlasse stellt keine Verbindung im Sinne IPSymcon her, sondern dient nu
 
 In den Modulen kann über Geräte Suche die Liste in der Tuya Cloud registrierten Geräte angezeigt und ausgewählt werden. Dabei findet aktuell keine Typ Prüfung statt.
 
+Im der Socket kann die Zeit für eine zyklische Statusabfrage festgelegt werden. Dann werden die Variablen eines Gerätes abgefragt.
+
 known issues:
 - Der Status von Modulen ist auch nur als one direction. Also Aktionen über die Tuya App werden nicht nach IPS gehen.
-- Zyklische Statusabfrage ist noch nicht vorhanden.
+- In der zyklsichen Abfrage ist nicht der online Status enthalten
+- Anstelle der Geräte Suche wäre eine Konfigurator Instanz die bessere Wahl 
