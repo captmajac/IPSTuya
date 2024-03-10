@@ -88,7 +88,7 @@ class TuyaGeneric extends IPSModule
     }
 
     // get online status for one device id	todo: besser wäre es einmalig für alle geräte zu lesen z.b. im socket
-    public function GetOnlineStatus($device_id)
+    public function GetOnlineStatus(String $device_id)
     {
         $instance = IPS_GetInstance($this->InstanceID);
         $ret = IPS_GetConfiguration($instance['ConnectionID']);
