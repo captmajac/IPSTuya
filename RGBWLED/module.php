@@ -143,7 +143,6 @@ class TuyaLEDRGBW extends TuyaGeneric
 		public function updateState()
 		{
 			$return = parent::updateState(); 
-			IPS_LogMessage("RGBW","update");
 			
 			// state
 			$key = array_search('switch_led', array_column($return->result, 'code'));
