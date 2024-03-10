@@ -171,7 +171,7 @@ class TuyaGeneric extends IPSModule
     }
 
     // status lesen
-    public function updateState()
+    public function getState()
 		{
 			$tuya = $this->getTuyaClass();
 			$token = $this->getToken();
@@ -182,6 +182,11 @@ class TuyaGeneric extends IPSModule
 
 			return $return;
 		}
+
+	public function updateState()
+	{
+		// nothing to update
+	}
 	
 	// timer aufruf,
 	public function TimerEvent() {
