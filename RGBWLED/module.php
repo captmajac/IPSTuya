@@ -11,6 +11,10 @@ class TuyaLEDRGBW extends TuyaGeneric
 		    "music" => 3
 		);
 		
+		// Geraete spezifisch "min":0,"max":1000,"scale":0,"step":1}" 0=kaltweiss 1000=warmweiss 
+		const COLMIN = 2700;									
+ 		const COLMAX = 6500;
+		
 		public function Create() 
 		{
 			//Never delete this line!
@@ -74,9 +78,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 					SetValue($this->GetIDForIdent("Mode"), 0);				// spezifisch wenn helligkeit eingestellt wird verändert wird automatsch auf weiss mode geschaltet
 				break;
   			case "ColorTemperature":
- 				$colmin = 2700;									// Geraete spezifisch "min":0,"max":1000,"scale":0,"step":1}" 0=kaltweiss 1000=warmweiss 
- 				$colmax = 6500;
- 				$colvalue = intval ( ($Value-$colmin)/($colmax-$colmin)*100 * 10 );		// * 10 tuya spezifisch
+ 				$colvalue = intval ( ($Value-COLMIN)/(COLMAX-COLMIN)*100 * 10 );		// * 10 tuya spezifisch
   				$payload = [ 'code' => 'temp_value' , 'value' => $colvalue ];
   				$ret = $this->CPost($payload);
 				// Wertbereich begrenzen auf Geraetespezifika 
@@ -142,7 +144,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 		// rgb spezifische werte
 		public function updateState()
 		{
-			$return = this->getState(); 
+			$return = $this->getState(); 
 			
 			// state
 			$key = array_search('switch_led', array_column($return->result, 'code'));
@@ -162,7 +164,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 			//temp
 			$key = array_search('temp_value', array_column($return->result, 'code'));
 			$temp = "".$return->result[$key]->value;
-			SetValue($this->GetIDForIdent("ColorTemperature"), (int)$temp/10 );
+			$temp = (int) ($temp / 1000 * (COLMAX - COLMIN) + COLMIN );
+			SetValue($this->GetIDForIdent("ColorTemperature"), $temp );
 
 			//color
 			$key = array_search('colour_data', array_column($return->result, 'code'));
