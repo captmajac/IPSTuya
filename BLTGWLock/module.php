@@ -144,13 +144,11 @@ class TuyaBLELock extends TuyaGeneric
 
 		}
 
+		// lock spezifische werte
 		public function updateState()
 		{
-			$tuya = $this->getTuyaClass();
-			$token = $this->getToken();
-			$device_id = $this->ReadPropertyString("DeviceID");
-			$return = $tuya->devices( $token )->get_status( $device_id );
-
+			$return = parent::updateState(); 
+			
 			// motor maybe block state
 			$key = array_search('lock_motor_state', array_column($return->result, 'code'));
 			$motorstate = "".$return->result[$key]->value;
