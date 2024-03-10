@@ -146,7 +146,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 			IPS_LogMessage("RGBW","update");
 			
 			// state
-			$key = array_search('switch_led', array_column($return->result, 'result'));
+			$key = array_search('switch_led', array_column($return->result, 'code'));
 			$state = "".$return->result[$key]->value;
 			SetValue($this->GetIDForIdent("Power"), $state);
 
