@@ -175,7 +175,7 @@ class TuyaGeneric extends IPSModule
     // status lesen
     public function updateState()
 		{
-			IPS_LogMessage("RGBW","update");
+			IPS_LogMessage("Generic","update");
 			
 			$tuya = $this->getTuyaClass();
 			$token = $this->getToken();
