@@ -47,8 +47,14 @@ class TuyaGeneric extends IPSModule
         parent::ApplyChanges();
 
 	// update timer
-	$Interval = 5*60;
-	this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
+	$Interval = 60*1000 * 15 ; 	// 15 min
+	$Interval = $this->ReadPropertyInteger("Interval");
+	            $instance = IPS_GetInstance($this->InstanceID);
+        $ret = IPS_GetConfiguration($instance['ConnectionID']);
+        $para = json_decode($ret);
+        $Interval = $para->Interval * 60*1000;	// für Minuten
+	    
+	$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
 	    
         //$instance = IPS_GetInstance($this->InstanceID);
         //$ret = IPS_GetConfiguration ($instance['ConnectionID']);
