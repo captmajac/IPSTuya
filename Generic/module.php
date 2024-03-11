@@ -34,22 +34,9 @@ class TuyaGeneric extends IPSModule
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);   
 		    
 	// update timer
-	$Interval = 60*1000 * 15 ; 	// 15 min
-
-	// auslesen aus der IO geht irgendwie nicht
-	/*$instance = IPS_GetInstance($this->InstanceID);
-	print_r($this->InstanceID);
-        $ret = IPS_GetConfiguration($instance['ConnectionID']);
-        $para = json_decode($ret);
-        $Interval = $para->Interval * 60*1000;	// für Minuten*/
-	    
+	// auslesen aus der IO parameter geht irgendwie nicht
+	$Interval = 2*60; 		// starttimer weil getinstance in apply die instanz nicht erstellen lässt
 	$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
-
-	$instance = IPS_GetInstance($this->InstanceID);
-        $ret = IPS_GetConfiguration($instance['ConnectionID']);
-        
-	    
-	IPS_LogMessage("Tuya","instance=".$ret);
     }
 
     public function Send(string $Text)
@@ -216,6 +203,15 @@ class TuyaGeneric extends IPSModule
 	// timer aufruf,
 	public function TimerEvent() {
 		$this->updateState();
+
+		// workaround, starttimerzeit ändern weil getinstance in applychange nicht korrekt aufgerufen werden kann
+		$instance = IPS_GetInstance($this->InstanceID);
+        	$ret = IPS_GetConfiguration($instance['Interval']);
+        	$para = json_decode($ret);
+        	$Interval = $para->Interval; 
+
+		$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
+		
 	} 
 	
     // online, offline
