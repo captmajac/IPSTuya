@@ -21,6 +21,14 @@ class TuyaGeneric extends IPSModule
             $Module = json_decode(file_get_contents(__DIR__ . "/module.json") , true) ["prefix"]; // Modul für parent merken
             $this->SetBuffer("Module", $Module);
         }
+
+	$this->CreateVarProfileModus();    
+        $this->RegisterPropertyString("DeviceID", "");
+        //$this->RegisterPropertyString("DeviceName", "");
+        $this->RegisterPropertyString("LocalKey", "");
+
+	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");    
+	    
     }
 
     // changes der instanz
@@ -29,15 +37,7 @@ class TuyaGeneric extends IPSModule
         // Never delete this line!
         parent::ApplyChanges();
 
-	$this->CreateVarProfileModus();    
-        $this->RegisterPropertyString("DeviceID", "");
-        //$this->RegisterPropertyString("DeviceName", "");
-        $this->RegisterPropertyString("LocalKey", "");
-
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);   
-	// update timer
-	$Module = $this->GetBuffer("Module");
-	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");    
 
 	// update timer
 	$Interval = 60*1000 * 15 ; 	// 15 min
