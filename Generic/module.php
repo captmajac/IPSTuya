@@ -24,7 +24,6 @@ class TuyaGeneric extends IPSModule
 
 	$this->CreateVarProfileModus();    
         $this->RegisterPropertyString("DeviceID", "");
-        //$this->RegisterPropertyString("DeviceName", "");
         $this->RegisterPropertyString("LocalKey", "");
 
 	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");    
