@@ -37,6 +37,8 @@ class TuyaGeneric extends IPSModule
         // Never delete this line!
         parent::ApplyChanges();
 
+	$this->RequireParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
+	    
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);   
 		    
 	// update timer
