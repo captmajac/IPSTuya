@@ -9,18 +9,7 @@ class TuyaBLELock extends TuyaGeneric
 			parent::Create();
 
 			// tuya socket notwendig für die parameter
-			//$this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
-
-						 // modulaufruf ändern
-			$Module = $this->GetBuffer("Module");
-			if ($Module == "")
-			{
-			// default this Module
-			$Module = json_decode(file_get_contents(__DIR__ . "/module.json") , true) ["prefix"]; // Modul für parent merken
-			$this->SetBuffer("Module", $Module);
-			}
-
-			
+			//$this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');	
 		}
     
 		public function ApplyChanges()
