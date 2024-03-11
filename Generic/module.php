@@ -35,7 +35,7 @@ class TuyaGeneric extends IPSModule
 		    
 	// update timer
 	// auslesen aus der IO parameter geht irgendwie nicht
-	$Interval = 2*60; 		// starttimer weil getinstance in apply die instanz nicht erstellen lässt
+	$Interval = 2*60 * 1000; 		// starttimer weil getinstance in apply die instanz nicht erstellen lässt
 	$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
     }
 
@@ -209,7 +209,7 @@ class TuyaGeneric extends IPSModule
         	//$ret = IPS_GetConfiguration($instance['Interval']);
         	//$para = json_decode($ret);
         	//$Interval = $para->Interval; 
-		$Interval = 15 * 60; 
+		$Interval = 15 * 60 * 1000; 
 
 		$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
 		
