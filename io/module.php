@@ -102,7 +102,7 @@ class TuyaClient extends IPSModule
 	//parameter
 	public function GetConfigurationForParent() 
 	{
-		return "{\'accessKey\': \''.$this->ReadPropertyString("AccessKey").'\', \'secretKey\': \''.$this->ReadPropertyString("SecretKey").'\', \'baseUrl\': \''.$this->ReadPropertyString("BaseUrl").'\', \'Interval\': \''.$this->ReadPropertyInteger("Interval"),.'\'}";
+		return 'Interval'.$this->ReadPropertyInteger("Interval");
 	}	
 }
 
