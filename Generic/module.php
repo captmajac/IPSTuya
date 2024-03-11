@@ -27,7 +27,7 @@ class TuyaGeneric extends IPSModule
         //$this->RegisterPropertyString("DeviceName", "");
         $this->RegisterPropertyString("LocalKey", "");
 
-	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");    
+	//$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");    
 	    
     }
 
@@ -39,16 +39,7 @@ class TuyaGeneric extends IPSModule
 
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);   
 
-	// update timer
-	$Interval = 60*1000 * 15 ; 	// 15 min
-
-	$instance = IPS_GetInstance($this->InstanceID);
-        $ret = IPS_GetConfiguration($instance['ConnectionID']);
-        $para = json_decode($ret);
-        $Interval = $para->Interval * 60*1000;	// für Minuten
-	    
-	$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
-	    
+		    
         //$instance = IPS_GetInstance($this->InstanceID);
         //$ret = IPS_GetConfiguration ($instance['ConnectionID']);
         //$para = json_decode($ret);
