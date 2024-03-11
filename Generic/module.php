@@ -206,9 +206,9 @@ class TuyaGeneric extends IPSModule
 
 		// workaround, starttimerzeit ändern weil getinstance in applychange nicht korrekt aufgerufen werden kann
 		$instance = IPS_GetInstance($this->InstanceID);
-        	$ret = IPS_GetConfiguration($instance['Interval']);
+        	$ret = IPS_GetConfiguration($instance['ConnectionID']);
         	$para = json_decode($ret);
-        	$Interval = $para->Interval; 
+        	$Interval = $para->Interval * 60 * 1000; 
 		//$Interval = 15 * 60 * 1000; 
 
 		$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
