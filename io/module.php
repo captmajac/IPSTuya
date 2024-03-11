@@ -17,18 +17,6 @@ class TuyaClient extends IPSModule
         $this->RegisterPropertyString("AppID", "");
 
 	$this->RegisterPropertyInteger("Interval", 15);    	// minuten
-
-
-        // modulaufruf ändern
-        $Module = $this->GetBuffer("Module");
-        if ($Module == "") {
-            // default this Module
-            $Module = json_decode(
-                file_get_contents(__DIR__ . "/module.json"),
-                true
-            )["prefix"]; // Modul für parent merken
-            $this->SetBuffer("Module", $Module);
-        }
     
     }
 
