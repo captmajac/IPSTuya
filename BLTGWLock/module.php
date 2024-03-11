@@ -56,8 +56,8 @@ class TuyaBLELock extends TuyaGeneric
 			// update timer
 			$Interval = 60*1000 * 15 ; 	// 15 min
 
-			$instance = IPS_GetInstance($this->InstanceID);
-			print_r($instance);
+			//$instance = IPS_GetInstance($this->InstanceID);
+			print_r($this->InstanceID);
         		$ret = IPS_GetConfiguration($instance['ConnectionID']);
         		$para = json_decode($ret);
         		$Interval = $para->Interval * 60*1000;	// für Minuten
