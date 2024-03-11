@@ -50,6 +50,12 @@ class TuyaGeneric extends IPSModule
         $Interval = $para->Interval * 60*1000;	// für Minuten*/
 	    
 	$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
+
+	$instance = IPS_GetInstance($this->InstanceID);
+        $ret = IPS_GetConfiguration($instance['ConnectionID']);
+        $para = json_decode($ret);
+        $interval = $para->Interval;
+	IPS_LogMessage("Tuya","Interval=".$interval);
     }
 
     public function Send(string $Text)
