@@ -35,7 +35,7 @@ class TuyaBLELock extends TuyaGeneric
 			
 			$this->RegisterVariableBoolean("Lock", "Lock", "~Lock", 10 );
 			$this->RegisterVariableString("Message", "Message", "", 30);
-			$this->RegisterVariableBoolean("MotorState", "MotorState", "~Lock", 35);
+			$this->RegisterVariableBoolean("MotorState", "MotorState", "~Lock.Reversed", 35);
 			$this->RegisterVariableInteger("Battery", "Battery", "~Battery.100", 20);
       			$this->RegisterVariableString("Sound", "Sound", "", 40);
       			$this->RegisterVariableString("Log", "Log", "~HTMLBox", 50);
