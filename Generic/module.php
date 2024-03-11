@@ -209,7 +209,7 @@ class TuyaGeneric extends IPSModule
         	//$ret = IPS_GetConfiguration($instance['Interval']);
         	//$para = json_decode($ret);
         	//$Interval = $para->Interval; 
-		$Interval = 15 * 60 * 
+		$Interval = 15 * 60; 
 
 		$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
 		
