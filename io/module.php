@@ -55,18 +55,6 @@ class TuyaClient extends IPSModule
             parent::SendDebug($Message, $Data, $Format);
         }
     }
-
-    // Verbindungsprüfung
-    public function CheckConnection()
-    {
-        $tuya = $this->getTuyaClass();
-        $token = $tuya->getToken();
-        // check ob token gültig
-  
-        $appID = $this->ReadPropertyString("AppID");
-        // check ob appid gültig
-    }
-
     
     public function getToken()
     {
@@ -85,13 +73,7 @@ class TuyaClient extends IPSModule
         ];
         $tuya = new TuyaApi($config);
         return $tuya;
-    }
-
-	//parameter
-	public function GetConfigurationForParent() 
-	{
-		return 'Interval'.$this->ReadPropertyInteger("Interval");
-	}	
+    }	
 }
 
 ?>
