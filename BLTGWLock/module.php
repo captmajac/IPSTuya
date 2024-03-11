@@ -210,12 +210,5 @@ class TuyaBLELock extends TuyaGeneric
 			
 		}
 		
-		// timer aufruf,
-		public function TimerEvent() 
-		{
-			parent::TimerEvent();
-			//$this->updateState();
-		} 
-		
 	}
 ?>
