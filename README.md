@@ -16,5 +16,4 @@ Im der Socket kann die Zeit für eine zyklische Statusabfrage festgelegt werden.
 
 known issues:
 - Der Status von Modulen ist auch nur als one direction. Also Aktionen über die Tuya App werden nicht nach IPS gehen.
-- In der zyklsichen Abfrage ist nicht der online Status enthalten
 - Anstelle der Geräte Suche wäre eine Konfigurator Instanz die bessere Wahl 
