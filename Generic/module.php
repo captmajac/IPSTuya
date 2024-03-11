@@ -17,7 +17,9 @@ class TuyaGeneric extends IPSModule
         $this->RegisterPropertyString("DeviceID", "");
         $this->RegisterPropertyString("LocalKey", "");
 
-	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");    
+	//$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");  
+	$Module = json_decode(file_get_contents(__DIR__ . "/module.json") , true) ["prefix"];
+	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");  
 	    
     }
 
