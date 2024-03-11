@@ -20,7 +20,7 @@ class TuyaBLELock extends TuyaGeneric
 			$this->SetBuffer("Module", $Module);
 			}
 
-			$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");   
+			
 		}
     
 		public function ApplyChanges()
@@ -52,18 +52,6 @@ class TuyaBLELock extends TuyaGeneric
 			IPS_SetIcon($this->GetIDForIdent("Log"), "Database");
 			
 			$this->EnableAction("Lock");	
-			
-			// update timer
-			$Interval = 60*1000 * 15 ; 	// 15 min
-
-			/*$instance = IPS_GetInstance($this->InstanceID);
-			print_r($this->InstanceID);
-        		$ret = IPS_GetConfiguration($instance['ConnectionID']);
-        		$para = json_decode($ret);
-        		$Interval = $para->Interval * 60*1000;	// für Minuten*/
-	    
-			$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
-
 		}
 		
 		/*
