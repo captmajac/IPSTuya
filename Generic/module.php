@@ -36,6 +36,7 @@ class TuyaGeneric extends IPSModule
 
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);   
 	// update timer
+	$Module = $this->GetBuffer("Module");
 	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");    
 
 	// update timer
