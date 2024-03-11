@@ -35,7 +35,7 @@ class TuyaBLELock extends TuyaGeneric
 			
 			$this->RegisterVariableBoolean("Lock", "Lock", "~Lock", 10 );
 			$this->RegisterVariableString("Message", "Message", "", 30);
-			$this->RegisterVariableString("MotorState", "MotorState", "", 35);
+			$this->RegisterVariableBoolean("MotorState", "MotorState", "~Lock, 35);
 			$this->RegisterVariableInteger("Battery", "Battery", "~Battery.100", 20);
       			$this->RegisterVariableString("Sound", "Sound", "", 40);
       			$this->RegisterVariableString("Log", "Log", "~HTMLBox", 50);
@@ -166,7 +166,10 @@ class TuyaBLELock extends TuyaGeneric
 			$key = array_search('lock_motor_state', array_column($return->result, 'code'));
 			$motorstate = "".$return->result[$key]->value;
 			if ($motorstate == "")
-				$motorstate = "OK";
+				$motorstate = false;	//unlocked
+			else
+				$motorstate = true;	//locked
+			
 			SetValue($this->GetIDForIdent("MotorState"), $motorstate);
 			// info sound volume
 			$key = array_search('beep_volume', array_column($return->result, 'code'));
