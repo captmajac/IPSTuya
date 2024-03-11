@@ -10,6 +10,17 @@ class TuyaBLELock extends TuyaGeneric
 
 			// tuya socket notwendig für die parameter
 			$this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
+
+						 // modulaufruf ändern
+			$Module = $this->GetBuffer("Module");
+			if ($Module == "")
+			{
+			// default this Module
+			$Module = json_decode(file_get_contents(__DIR__ . "/module.json") , true) ["prefix"]; // Modul für parent merken
+			$this->SetBuffer("Module", $Module);
+			}
+
+			$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");   
 		}
     
 		public function ApplyChanges()
@@ -41,6 +52,17 @@ class TuyaBLELock extends TuyaGeneric
 			IPS_SetIcon($this->GetIDForIdent("Log"), "Database");
 			
 			$this->EnableAction("Lock");	
+			
+			// update timer
+			$Interval = 60*1000 * 15 ; 	// 15 min
+
+			$instance = IPS_GetInstance($this->InstanceID);
+        		$ret = IPS_GetConfiguration($instance['ConnectionID']);
+        		$para = json_decode($ret);
+        		$Interval = $para->Interval * 60*1000;	// für Minuten
+	    
+			$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
+
 		}
 		
 		/*
