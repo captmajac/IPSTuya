@@ -103,7 +103,7 @@ class TuyaGeneric extends IPSModule
     }
 	    
     // search device
-    public function SearchModules()
+    private function SearchModules()
     {
         $instance = IPS_GetInstance($this->InstanceID);
         $ret = IPS_GetConfiguration($instance['ConnectionID']);
@@ -121,7 +121,7 @@ class TuyaGeneric extends IPSModule
     }
 
     // auswahl aus der search liste
-    public function SetSelectedModul(object $List)
+    private function SetSelectedModul(object $List)
     {
         @$DevID = $List["ID"]; // Kommt ein Error bei keiner Auswahl
         @$LocalKey = $List["LocalKey"]; // Kommt ein Error bei keiner Auswahl
@@ -198,7 +198,7 @@ class TuyaGeneric extends IPSModule
 			$tuya = $this->getTuyaClass();
 			$token = $this->getToken();
 			$device_id = $this->ReadPropertyString("DeviceID");
-			IPS_LogMessage("Generic","update ".$device_id);
+			//IPS_LogMessage("Generic","update ".$device_id);
 			
 			$return = $tuya->devices( $token )->get_status( $device_id );
 
@@ -214,7 +214,7 @@ class TuyaGeneric extends IPSModule
 	}
 	
 	// timer aufruf,
-	public function TimerEvent() {
+	private function TimerEvent() {
 		IPS_LogMessage("Tuya", "Timerevent");
 		$this->updateState();
 	} 
