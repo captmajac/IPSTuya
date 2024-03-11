@@ -84,7 +84,6 @@ class TuyaBLELock extends TuyaGeneric
 				SetValue($this->GetIDForIdent($Ident), $Value);
 				if ($Ident=="Lock" and $Value == false)
 				{	
-					IPS_LogMessage("BLE","zerit");
 					// da nur kurz aufgeschlossen wird Status nach 2 Sek. wieder auf geschlossen setzen 
 					IPS_Sleep(2000);
 				 	SetValue($this->GetIDForIdent($Ident), true);
@@ -166,9 +165,9 @@ class TuyaBLELock extends TuyaGeneric
 			$key = array_search('lock_motor_state', array_column($return->result, 'code'));
 			$motorstate = "".$return->result[$key]->value;
 			if ($motorstate == "")
-				$motorstate = false;	//unlocked
+				$motorstate = false;	//locked
 			else
-				$motorstate = true;	//locked
+				$motorstate = true;	//unlocked
 			
 			SetValue($this->GetIDForIdent("MotorState"), $motorstate);
 			// info sound volume
