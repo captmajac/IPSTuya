@@ -214,7 +214,7 @@ class TuyaGeneric extends IPSModule
 	}
 	
 	// timer aufruf,
-	private function TimerEvent() {
+	protected function TimerEvent() {
 		IPS_LogMessage("Tuya", "Timerevent");
 		$this->updateState();
 	} 
