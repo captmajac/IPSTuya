@@ -207,7 +207,8 @@ class Request
             $this->_debug->output('Curl error:', curl_error($ch));
         }
         //echo $result;
-        $return = json_decode($result, $this->_config['associative'], 512, JSON_THROW_ON_ERROR);
+        if ($result <> "")
+            $return = json_decode($result, $this->_config['associative'], 512, JSON_THROW_ON_ERROR);
         $this->_debug->output('Result:', $return);
 
         return $return;
