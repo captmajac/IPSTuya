@@ -95,8 +95,9 @@ class TuyaLEDRGBW extends TuyaGeneric
 	 			$ret = $this->CPost($payload);
 				break;
 			case "Mode":
-				//$arr = ["white","colour","scene","music"];
-				$payload = [ 'code' => 'work_mode' , 'value' => self::CMODES[$Value] ];		// {"range":["white","colour","scene","music"]}"
+				$arr = ["white","colour","scene","music"];
+//				$payload = [ 'code' => 'work_mode' , 'value' => self::CMODES[$Value] ];		// {"range":["white","colour","scene","music"]}"
+				$payload = [ 'code' => 'work_mode' , 'value' => $arr[$Value] ];		// {"range":["white","colour","scene","music"]}"
 				$ret = $this->CPost($payload);
 				break;
 			break;
