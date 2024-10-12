@@ -90,7 +90,7 @@ class TuyaGeneric extends IPSModule
     }
 	    
     // search device
-    private function SearchModules()
+    public function SearchModules()
     {
         $instance = IPS_GetInstance($this->InstanceID);
         $ret = IPS_GetConfiguration($instance['ConnectionID']);
