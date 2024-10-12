@@ -108,7 +108,7 @@ class TuyaGeneric extends IPSModule
     }
 
     // auswahl aus der search liste
-    private function SetSelectedModul(object $List)
+    public function SetSelectedModul(object $List)
     {
         @$DevID = $List["ID"]; // Kommt ein Error bei keiner Auswahl
         @$LocalKey = $List["LocalKey"]; // Kommt ein Error bei keiner Auswahl
