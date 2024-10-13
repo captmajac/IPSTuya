@@ -66,20 +66,22 @@ class TuyaLEDRGBW extends TuyaGeneric
 		public function RequestAction($Ident, $Value)
 		{
 			$ret = false;
+			$version = $this->ReadPropertyString("Version");
+			
 			switch($Ident) {
 		  	case "Power":
 				$payload = [ 'code' => 'switch_led' , 'value' => $Value ];
 				$ret = $this->CPost($payload);
 				break;
 		  	case "Intensity":	
-				$payload = [ 'code' => 'bright_value' , 'value' => $Value *10 ];		// *10 {"min":10,"max":1000,"scale":0,"step":1}
+				$payload = [ 'code' => 'bright_value'.$version , 'value' => $Value *10 ];		// *10 {"min":10,"max":1000,"scale":0,"step":1}
 				$ret = $this->CPost($payload);
 				if ($ret <> false)
 					SetValue($this->GetIDForIdent("Mode"), 0);				// spezifisch wenn helligkeit eingestellt wird verändert wird automatsch auf weiss mode geschaltet
 				break;
   			case "ColorTemperature":
  				$colvalue = intval ( ($Value-self::COLMIN)/(self::COLMAX-self::COLMIN)*100 * 10 );		// * 10 tuya spezifisch
-  				$payload = [ 'code' => 'temp_value' , 'value' => $colvalue ];
+  				$payload = [ 'code' => 'temp_value'.$version , 'value' => $colvalue ];
   				$ret = $this->CPost($payload);
 				// Wertbereich begrenzen auf Geraetespezifika 
 				if ($Value > self::COLMAX)
@@ -91,7 +93,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 				break;
 		  	case "Color":
 				 $ValueHex = $this->colinttohex($Value);
-				 $payload = [ 'code' => 'colour_data' , 'value' => $ValueHex ];
+				 $payload = [ 'code' => 'colour_data'.$version , 'value' => $ValueHex ];
 	 			$ret = $this->CPost($payload);
 				break;
 			case "Mode":
