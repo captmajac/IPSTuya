@@ -94,8 +94,16 @@ class TuyaLEDRGBW extends TuyaGeneric
 				break;
 		  	case "Color":
 				 $ValueHex = $this->colinttohex($Value);
-				 $payload = [ 'code' => 'colour_data'.$version , 'value' => $ValueHex ];
-	 			$ret = $this->CPost($payload);
+				 if ($version == "_v2")
+				 {
+					$payload = [ 'code' => 'colour_data'.$version , 'value' => $ValueHex ];
+	 			 	$ret = $this->CPost($payload);
+				 }
+				 else 
+				 {
+				 	$payload = [ 'code' => 'colour_data' , 'value' => $ValueHex ];
+	 			 	$ret = $this->CPost($payload);
+				 }
 				break;
 			case "Mode":
 				$arr = ["white","colour","scene","music"];
