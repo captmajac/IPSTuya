@@ -4,8 +4,8 @@
     { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" },
     { "type": "Select", "name": "Version", "caption": "version",
         "options": [
-            { "version": "V1", "value": 0 },
-            { "version": "V2", "value": 1 }
+            { "version": "Standard", "value": "_v1" },
+            { "version": "V2", "value": "_v2" }
         ]
     }
   ],
