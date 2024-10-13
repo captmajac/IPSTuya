@@ -2,10 +2,10 @@
   "elements": [
     { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID" },
     { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" },
-    { "type": "Select", "name": "Version", "caption": "version",
+    { "name": "Version", "type": "Select", "caption": "Version",
         "options": [
-            { "version": "Standard", "value": "_v1" },
-            { "version": "V2", "value": "_v2" }
+            { "caption": "Standard", "value": "" },
+            { "caption": "V2", "value": "_v2" }
         ]
     }
   ],
