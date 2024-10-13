@@ -5,7 +5,8 @@
 	"vendor": "Tuya",
 	"aliases": 
 	[
-		"Hama LED RGBW GU10"
+		"Hama LED RGBW GU10",
+		"avator Smart Bulb"
 	],
 	"parentRequirements": ["{C459F3BF-8570-E12D-9B2A-14F0343C7F37}"],
     	"childRequirements": [],
