@@ -197,7 +197,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 			//SetValue($this->GetIDForIdent("Color"), (int)$temp/10 );			
 		}
 
-		// int color to tuya hex value
+		// int color to tuya hsv value
 		private function colinttohsv(int $intval)
     		{
 		$b = ($intval & 255);
@@ -219,10 +219,10 @@ class TuyaLEDRGBW extends TuyaGeneric
       		$result_s = $max === 0 ? 0 : (1 - ($min / $max));
       		$result_v = $max;
 		$h = (int)(round($result_h));
-		$s = (int)($result_s * 100 * 10) );
-		$v = (int)($result_v / 2.55) * 10 );
+		$s = (int)($result_s * 100 * 10) ;
+		$v = (int)($result_v / 2.55) * 10 ;
 
-		return ($h, $v, $s);
+		return [$h, $v, $s];
 		}
 		
 		// int color to tuya hex value
