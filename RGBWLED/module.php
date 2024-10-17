@@ -93,15 +93,19 @@ class TuyaLEDRGBW extends TuyaGeneric
 					SetValue($this->GetIDForIdent("Mode"), 0);				// spezifisch wenn farbtemperatur verändert wird automatsch auf weiss mode geschaltet
 				break;
 		  	case "Color":
-				 $ValueHex = $this->colinttohex($Value);
+				 
 				 if ($version == "_v2")
 				 {
-					$payload = [ 'code' => 'colour_data'.$version , 'value' => $ValueHex ];
+					$ValueHSV = $this->colinttohsv($Value);
+					// {"h":259,"s":570,"v":1000}
+					$val = '{"h":'.$ValueHSV[0].',"s":'.$ValueHSV[1].',"v":'.$ValueHSV[2].'}';
+					$payload = [ 'code' => 'colour_data'.$version , 'value' => $val ];
 	 			 	$ret = $this->CPost($payload);
 				 }
 				 else 
 				 {
-				 	$payload = [ 'code' => 'colour_data' , 'value' => $ValueHex ];
+				 	$ValueHex = $this->colinttohex($Value);
+					$payload = [ 'code' => 'colour_data' , 'value' => $ValueHex ];
 	 			 	$ret = $this->CPost($payload);
 				 }
 				break;
@@ -193,11 +197,10 @@ class TuyaLEDRGBW extends TuyaGeneric
 			//SetValue($this->GetIDForIdent("Color"), (int)$temp/10 );			
 		}
 
-		
 		// int color to tuya hex value
-		private function colinttohex(int $intval)
+		private function colinttohsv(int $intval)
     		{
-    		$b = ($intval & 255);
+		$b = ($intval & 255);
     		$g = (($intval >> 8) & 255);
    		$r = (($intval >> 16) & 255);
 
@@ -215,9 +218,20 @@ class TuyaLEDRGBW extends TuyaGeneric
       		elseif ($delta_min_max !== 0 && $max === $b            ) $result_h = 60 * (($r - $g) / $delta_min_max) + 240;
       		$result_s = $max === 0 ? 0 : (1 - ($min / $max));
       		$result_v = $max;
-     		$result['h'] = "".substr("000000".dechex( (int)(round($result_h)) ),-4);
-      		$result['s'] = "".substr("000000".dechex( (int)($result_s * 100 * 10) ),-4);
-      		$result['v'] = "".substr("000000".dechex( (int)($result_v / 2.55) * 10 ),-4);
+		$h = (int)(round($result_h));
+		$s = (int)($result_s * 100 * 10) );
+		$v = (int)($result_v / 2.55) * 10 );
+
+		return ($h, $v, $s);
+		}
+		
+		// int color to tuya hex value
+		private function colinttohex(int $intval)
+    		{
+		$hsv = colinttohsv($intval);
+     		$result['h'] = "".substr("000000".dechex( (int)$hsv[0]) ),-4);
+      		$result['s'] = "".substr("000000".dechex( (int)$hsv[1] ),-4);
+      		$result['v'] = "".substr("000000".dechex( (int)$hsv[2] ),-4);
 
       		$value = $result['h'].$result['s'].$result['v'];
 		return $value;
