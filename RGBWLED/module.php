@@ -221,7 +221,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 		$h = (int)(round($result_h));
 		$s = (int)($result_s * 100 * 10) ;
 		$v = (int)($result_v / 2.55) * 10 ;
-
+		IPS_LogMessage("TuyaDevice","H=".$h." S=".$s." V=".$v );
 		return [$h, $v, $s];
 		}
 		
