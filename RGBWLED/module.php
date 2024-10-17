@@ -219,7 +219,7 @@ class TuyaLEDRGBW extends TuyaGeneric
       		$result_s = $max === 0 ? 0 : (1 - ($min / $max));
       		$result_v = $max;
 		$h = (int)(round($result_h));
-		$s = (int)($result_s * 100 * 10) ;
+		$s = 1000-(int)($result_s * 100 * 10) ;
 		$v = (int)($result_v / 2.55) * 10 ;
 		IPS_LogMessage("TuyaDevice","H=".$h." S=".$s." V=".$v );
 		return [$h, $v, $s];
