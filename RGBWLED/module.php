@@ -229,7 +229,7 @@ class TuyaLEDRGBW extends TuyaGeneric
 		private function colinttohex(int $intval)
     		{
 		$hsv = colinttohsv($intval);
-     		$result['h'] = "".substr("000000".dechex( (int)$hsv[0]) ),-4);
+     		$result['h'] = "".substr("000000".dechex( (int)$hsv[0] ),-4);
       		$result['s'] = "".substr("000000".dechex( (int)$hsv[1] ),-4);
       		$result['v'] = "".substr("000000".dechex( (int)$hsv[2] ),-4);
 
