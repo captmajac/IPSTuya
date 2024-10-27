@@ -187,6 +187,8 @@ class TuyaLEDRGBW extends TuyaGeneric
 			//temp
 			$key = array_search('temp_value', array_column($return->result, 'code'));
 			$temp = "".$return->result[$key]->value;
+			// prüfen in 190 string statt int. ggf. kommen hex werte zurück
+			IPS_LogMessage("TuyaDevice","temp=".$temp );
 			$temp = (int) ($temp / 1000 * (self::COLMAX - self::COLMIN) + self::COLMIN );
 			SetValue($this->GetIDForIdent("ColorTemperature"), $temp );
 
