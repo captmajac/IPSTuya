@@ -190,39 +190,55 @@ class TuyaGeneric extends IPSModule
 
     // status lesen
     public function getState()
-		{
-			$tuya = $this->getTuyaClass();
-			$token = $this->getToken();
-			$device_id = $this->ReadPropertyString("DeviceID");
-			//IPS_LogMessage("Generic","update ".$device_id);
-			
-			$return = $tuya->devices( $token )->get_status( $device_id );
+    {
+        $tuya = $this->getTuyaClass();
+        $token = $this->getToken();
+        $device_id = $this->ReadPropertyString("DeviceID");
 
-			return $return;
-		}
+        $return = $tuya->devices($token)->get_status($device_id);
 
-	public function updateState()
-	{
-		// nothing to update
-		$device_id = $this->ReadPropertyString("DeviceID");
-		$online = $this->GetOnlineStatus($device_id);
-		SetValue($this->GetIDForIdent("Online"), $online );
-	}
-	
-	// timer aufruf,
-	public function TimerEvent() {
-		$this->updateState();
+        $json = json_encode($return);
+        if ($json === false)
+        {
+            $this->SendDebug('getState', 'JSON encode failed: ' . json_last_error_msg(), 0);
+        }
+        else
+        {
+            try
+            {
+                $this->UpdateJsonToVariables($json, $this->InstanceID);
+            }
+            catch (\Exception $exception)
+            {
+                $this->SendDebug('getState', 'Variable update failed: ' . $exception->getMessage(), 0);
+            }
+        }
 
-		// workaround, starttimerzeit ändern weil getinstance in applychange nicht korrekt aufgerufen werden kann
-		$instance = IPS_GetInstance($this->InstanceID);
-        	$ret = IPS_GetConfiguration($instance['Interval']);
-        	$para = json_decode($ret);
-        	$Interval = $para->Interval; 
+        return $return;
+    }
 
-		$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
-		
-	} 
-	
+    public function updateState()
+    {
+        // nothing to update
+        $device_id = $this->ReadPropertyString("DeviceID");
+        $online = $this->GetOnlineStatus($device_id);
+        SetValue($this->GetIDForIdent("Online"), $online);
+    }
+
+    // timer aufruf,
+    public function TimerEvent()
+    {
+        $this->updateState();
+
+        // workaround, starttimerzeit ändern weil getinstance in applychange nicht korrekt aufgerufen werden kann
+        $instance = IPS_GetInstance($this->InstanceID);
+        $ret = IPS_GetConfiguration($instance['Interval']);
+        $para = json_decode($ret);
+        $Interval = $para->Interval;
+
+        $this->SetTimerInterval("UpdateTimer", $Interval);              // $this->ReadPropertyInteger("Interval")
+
+    }
     // online, offline
     private function CreateVarProfileModus()
     {
@@ -234,6 +250,122 @@ class TuyaGeneric extends IPSModule
             IPS_SetVariableProfileAssociation("Tuya.Online", 0, "offline", "", 0xFF2600); // todo farben setzen?
             IPS_SetVariableProfileAssociation("Tuya.Online", 1, "online", "", 0x00F900);
 
+        }
+    }
+
+    private function UpdateJsonToVariables(string $json, int $parentID = 0)
+    {
+        if ($parentID === 0)
+        {
+            $parentID = $this->InstanceID;
+        }
+
+        $data = json_decode($json, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE)
+        {
+            throw new \Exception('JSON-Fehler: ' . json_last_error_msg());
+        }
+
+        $this->ProcessNode($data, $parentID);
+    }
+
+    private function ProcessNode($data, int $parentID)
+    {
+        foreach ($data as $key => $value)
+        {
+            $ident = preg_replace('/[^A-Za-z0-9_]/', '_', (string) $key);
+            $name = (string) $key;
+
+            if (is_array($value))
+            {
+                $catID = $this->GetOrCreateCategory($parentID, $ident, $name);
+                $this->ProcessNode($value, $catID);
+            }
+            else
+            {
+                list($varType, $castValue) = $this->GetVarTypeAndValue($value);
+                $varID = $this->GetOrCreateVariable($parentID, $ident, $name, $varType);
+                $this->SetVariableValue($varID, $varType, $castValue);
+            }
+        }
+    }
+
+    private function GetOrCreateCategory(int $parentID, string $ident, string $name): int
+    {
+        $objID = @IPS_GetObjectIDByIdent($ident, $parentID);
+        if ($objID === false)
+        {
+            $objID = IPS_CreateCategory();
+            IPS_SetParent($objID, $parentID);
+            IPS_SetIdent($objID, $ident);
+            IPS_SetName($objID, $name);
+        }
+
+        return $objID;
+    }
+
+    private function GetOrCreateVariable(int $parentID, string $ident, string $name, int $varType): int
+    {
+        $varID = @IPS_GetObjectIDByIdent($ident, $parentID);
+        if ($varID === false)
+        {
+            $varID = IPS_CreateVariable($varType);
+            IPS_SetParent($varID, $parentID);
+            IPS_SetIdent($varID, $ident);
+            IPS_SetName($varID, $name);
+        }
+        else
+        {
+            $var = IPS_GetVariable($varID);
+            if ($var['VariableType'] !== $varType)
+            {
+                IPS_DeleteVariable($varID);
+                $varID = IPS_CreateVariable($varType);
+                IPS_SetParent($varID, $parentID);
+                IPS_SetIdent($varID, $ident);
+                IPS_SetName($varID, $name);
+            }
+        }
+
+        return $varID;
+    }
+
+    private function GetVarTypeAndValue($value): array
+    {
+        if (is_bool($value))
+        {
+            return [0, (bool) $value];
+        }
+        if (is_int($value))
+        {
+            return [1, (int) $value];
+        }
+        if (is_float($value))
+        {
+            return [2, (float) $value];
+        }
+
+        return [3, (string) $value];
+    }
+
+    private function SetVariableValue(int $varID, int $varType, $value)
+    {
+        switch ($varType)
+        {
+            case 0:
+                SetValueBoolean($varID, (bool) $value);
+                break;
+            case 1:
+                SetValueInteger($varID, (int) $value);
+                break;
+            case 2:
+                SetValueFloat($varID, (float) $value);
+                break;
+            case 3:
+            default:
+                SetValueString($varID, (string) $value);
+                break;
         }
     }
 
