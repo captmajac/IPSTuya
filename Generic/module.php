@@ -4,6 +4,10 @@ include_once __DIR__ . "/../libs/TuyaAPI.php";
 
 class TuyaGeneric extends IPSModule
 {
+    private const OBJECTTYPE_CATEGORY = 0;
+    private const OBJECTTYPE_INSTANCE = 1;
+    private const DUMMY_MODULE_GUID = '{485D0419-BE97-4548-AA9C-C083EB82E61E}';
+
     // erstellung
     public function Create()
     {
@@ -297,16 +301,61 @@ class TuyaGeneric extends IPSModule
 
     private function GetOrCreateCategory(int $parentID, string $ident, string $name): int
     {
-        $objID = @IPS_GetObjectIDByIdent($ident, $parentID);
-        if ($objID === false)
+        $existingID = @IPS_GetObjectIDByIdent($ident, $parentID);
+        $legacyChildren = [];
+        $legacyID = 0;
+
+        if ($existingID !== false)
         {
-            $objID = IPS_CreateCategory();
-            IPS_SetParent($objID, $parentID);
-            IPS_SetIdent($objID, $ident);
-            IPS_SetName($objID, $name);
+            $object = IPS_GetObject($existingID);
+            if ($object['ObjectType'] === self::OBJECTTYPE_INSTANCE)
+            {
+                $instance = IPS_GetInstance($existingID);
+                if ($instance['ModuleID'] === self::DUMMY_MODULE_GUID)
+                {
+                    if ($object['ObjectName'] !== $name)
+                    {
+                        IPS_SetName($existingID, $name);
+                    }
+                    return $existingID;
+                }
+            }
+
+            if ($object['ObjectType'] === self::OBJECTTYPE_CATEGORY)
+            {
+                $legacyChildren = IPS_GetChildrenIDs($existingID);
+            }
+
+            $legacyID = $existingID;
+            IPS_SetIdent($existingID, sprintf('%s_Legacy_%s', $ident, $existingID));
+            $existingID = false;
         }
 
-        return $objID;
+        if ($existingID === false)
+        {
+            $dummyID = IPS_CreateInstance(self::DUMMY_MODULE_GUID);
+            IPS_SetParent($dummyID, $parentID);
+            IPS_SetIdent($dummyID, $ident);
+            IPS_SetName($dummyID, $name);
+
+            if (($legacyID !== 0) && IPS_ObjectExists($legacyID))
+            {
+                foreach ($legacyChildren as $childID)
+                {
+                    IPS_SetParent($childID, $dummyID);
+                }
+
+                $legacyObject = IPS_GetObject($legacyID);
+                if ($legacyObject['ObjectType'] === self::OBJECTTYPE_CATEGORY)
+                {
+                    IPS_DeleteCategory($legacyID);
+                }
+            }
+
+            return $dummyID;
+        }
+
+        return $existingID;
     }
 
     private function GetOrCreateVariable(int $parentID, string $ident, string $name, int $varType): int
