@@ -165,13 +165,13 @@ class TuyaLEDRGBW extends TuyaGeneric
 
 			//bright
 			$key = array_search('bright_value', array_column($return->result, 'code'));
-			$intensity = "".$return->result[$key]->value;
-			SetValue($this->GetIDForIdent("Intensity"), (int)$intensity/10 );
+                        $intensity = (int)$return->result[$key]->value;
+                        SetValue($this->GetIDForIdent("Intensity"), $intensity / 10);
 
 			//temp
 			$key = array_search('temp_value', array_column($return->result, 'code'));
-			$temp = "".$return->result[$key]->value;
-			$temp = (int) ($temp / 1000 * (self::COLMAX - self::COLMIN) + self::COLMIN );
+                        $tempValue = (int)$return->result[$key]->value;
+                        $temp = (int) ($tempValue / 1000 * (self::COLMAX - self::COLMIN) + self::COLMIN );
 			SetValue($this->GetIDForIdent("ColorTemperature"), $temp );
 
 			//color
