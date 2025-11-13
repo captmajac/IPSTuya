@@ -1,7 +1,8 @@
 {
   "elements": [
     { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID" },
-    { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" }
+    { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" },
+    { "name": "AutoCreateVariables", "type": "CheckBox", "caption": "Anlage Variablen", "value": false }
   ],
   "actions": [
     {

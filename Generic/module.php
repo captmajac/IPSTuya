@@ -17,6 +17,7 @@ class TuyaGeneric extends IPSModule
         $this->RegisterPropertyString("DeviceID", "");
         //$this->RegisterPropertyString("DeviceName", "");
         $this->RegisterPropertyString("LocalKey", "");
+        $this->RegisterPropertyBoolean("AutoCreateVariables", false);
 
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);
 	
@@ -204,13 +205,16 @@ class TuyaGeneric extends IPSModule
         }
         else
         {
-            try
+            if ($this->ReadPropertyBoolean('AutoCreateVariables'))
             {
-                $this->UpdateJsonToVariables($json, $this->InstanceID);
-            }
-            catch (\Exception $exception)
-            {
-                $this->SendDebug('getState', 'Variable update failed: ' . $exception->getMessage(), 0);
+                try
+                {
+                    $this->UpdateJsonToVariables($json, $this->InstanceID);
+                }
+                catch (\Exception $exception)
+                {
+                    $this->SendDebug('getState', 'Variable update failed: ' . $exception->getMessage(), 0);
+                }
             }
         }
 
