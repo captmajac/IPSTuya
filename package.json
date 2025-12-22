@@ -1,0 +1,20 @@
+{
+  "name": "ipstuya",
+  "version": "1.0.0",
+  "description": "IPSymcon Module für Tuya Cloud Geräte",
+  "scripts": {
+    "pr": "echo 'IPSTuya Projekt Setup abgeschlossen. Bitte konfigurieren Sie die Tuya Cloud Parameter in den Modulen.'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/captmajac/IPSTuya"
+  },
+  "keywords": [
+    "ipsymcon",
+    "tuya",
+    "home-automation"
+  ],
+  "author": "captmajac",
+  "license": "MIT"
+}
+
