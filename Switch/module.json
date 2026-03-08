@@ -1,0 +1,14 @@
+{
+	"id": "{EBCE6DBD-5213-E3B0-6DF1-0BC34504F3F9}",
+	"name": "TuyaSwitch",
+	"type": 3,
+	"vendor": "Tuya",
+	"aliases": 
+	[
+		"TuyaSwitch"
+	],
+	"parentRequirements": ["{C459F3BF-8570-E12D-9B2A-14F0343C7F37}"],
+    	"childRequirements": [],
+   	"implemented": ["{018EF6B5-AB94-40C6-AA53-46943E824ACF}"],
+	"prefix": "Tuya"
+}
