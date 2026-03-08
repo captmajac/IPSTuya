@@ -1,7 +1,7 @@
 <?
 require_once __DIR__ . '/../Generic/module.php';  // Base Module.php
 
-class SimpleSwitch extends TuyaGeneric
+class TuyaSimpleSwitch extends TuyaGeneric
 	{
 		public function Create() 
 		{
