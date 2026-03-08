@@ -1,5 +1,6 @@
 {
   "elements": [
+    { "name": "ParentID", "type": "SelectInstance", "caption": "Tuya IO Instance", "moduleID": "{78ABC644-1134-F4E2-3E31-01E45483367B}", "instanceID": 0, "onlyDevices": false, "add": false },
     { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID" },
     { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" }
   ],
