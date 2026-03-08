@@ -11,10 +11,9 @@ class TuyaGeneric extends IPSModule
         parent::Create();
 
         // tuya socket notwendig für die parameter
-        // $this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}'); // Removed to allow manual selection
+        $this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
 
         $this->CreateVarProfileModus();    
-        // The ConnectionID is managed by IPS through the parent selection dialog
         $this->RegisterPropertyString("DeviceID", "");
         $this->RegisterPropertyString("LocalKey", "");
 
@@ -30,7 +29,6 @@ class TuyaGeneric extends IPSModule
         // Never delete this line!
         parent::ApplyChanges();
 
-        // Require that a parent IO instance is connected via the built-in dialog
         $this->RequireParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
         
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);   
