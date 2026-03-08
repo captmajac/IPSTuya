@@ -1,8 +1,6 @@
 
-Modul für Türschloss
+Modul für einfaches Relais
 
-Geprüft aktuell nur ein "noname" Schloss von einem chinesichem Anbieter. Dieses ist über ein Bluetooth Gateway zur Tuya Cloud angebunden.
+Da kein echter Aktor getestet werden kann ist dies ein POC für ein einfachen Schaltaktor mir einem Relais.
 
-bluetooth smart lock
-  Product Name: 智能门锁-T83
-  Product Category: ms
+
