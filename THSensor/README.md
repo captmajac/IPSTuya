@@ -1,7 +1,7 @@
-Modul für Wifi RGB(W) Lampe 
+Modul für Temperatursensor
 
-Geprüft aktuell nur ein Model
+Erstellt und geprüft durch thka 
 
-Hama RGB(W) GU10 Wifi
-- Product Name: 176582/176598
-- Product Category: dj
+Modell Name unbekannt
+
+
