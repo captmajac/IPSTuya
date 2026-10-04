@@ -4,14 +4,13 @@
     { "name": "SecretKey", "type": "PasswordTextBox", "caption": "SecretKey" },
     { "name": "BaseUrl", "type": "ValidationTextBox", "caption": "BaseUrl" },
     { "name": "AppID", "type": "ValidationTextBox", "caption": "AppID" },
-    { "name": "Interval", "type": "NumberSpinner", "caption": "Interval Update" }
-    ],
-    "actions":
-    [
-        
-    ],
-    "status":
-    [
-        
-    ]
+    { "name": "Interval", "type": "NumberSpinner", "caption": "Interval Update", "suffix": "min" }
+  ],
+  "actions": [
+    { "type": "Button", "caption": "Jetzt aktualisieren", "onClick": "Tuya_Update($id);" }
+  ],
+  "status": [
+    { "code": 104, "icon": "inactive", "caption": "AccessKey, SecretKey, BaseUrl und AppID ausfüllen" },
+    { "code": 201, "icon": "error", "caption": "Anmeldung bei Tuya fehlgeschlagen (Zugangsdaten prüfen)" }
+  ]
 }
