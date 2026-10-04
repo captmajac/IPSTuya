@@ -109,3 +109,39 @@ $tests['IO: Lib-Fehler kommt als error zurueck'] = function () {
     $res = $io->forward('get_does_not_exist');
     check(isset($res->error), 'Antwort: ' . json_encode($res));
 };
+
+// ---- Drosselung von Aktualisierungen durch Geraete
+
+$tests['IO: refresh innerhalb von 10 s fragt die Cloud nur einmal ab'] = function () {
+    $io = makeIO();
+    $io->forward('refresh');
+    $io->forward('refresh');
+    $io->forward('refresh');
+    check(count($io->requests) === 1, 'Requests: ' . count($io->requests));
+};
+
+$tests['IO: refresh nach 10 s fragt erneut ab'] = function () {
+    $io = makeIO();
+    $io->forward('refresh');
+    $io->buffers['LastUpdate'] = (string) (microtime(true) - 11);
+    $io->forward('refresh');
+    check(count($io->requests) === 2, 'Requests: ' . count($io->requests));
+};
+
+$tests['IO: Timer und Schaltflaeche fragen immer ab'] = function () {
+    $io = makeIO();
+    $io->forward('refresh');
+    $io->Update();
+    check(count($io->requests) === 2, 'Requests: ' . count($io->requests));
+};
+
+$tests['IO-Debug: get_openlogs als eine Zeile ohne Einzelfelder'] = function () {
+    $io = makeIO();
+    $io->responses = [(object) ['success' => true, 'result' => (object) ['logs' => [
+        (object) ['avatar' => 'https://cdn.example/avatar.png', 'update_time' => 1791136390000, 'status' => (object) ['code' => 'unlock_phone_remote', 'value' => 256]],
+    ], 'total' => 1]]];
+    $io->forward('get_openlogs', 'lock1', ['page_no' => 0]);
+    $text = json_encode($io->debug);
+    check(!str_contains($text, 'avatar'), 'Debug enthaelt Einzelfelder: ' . $text);
+    check(str_contains($text, 'lock1 | 1 Eintr'), 'Zusammenfassung fehlt: ' . $text);
+};
