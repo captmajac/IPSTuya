@@ -104,9 +104,22 @@ class IPSModule
     protected function GetBuffer($Name) { return $this->buffers[$Name] ?? ''; }
     protected function UpdateFormField($Field, $Parameter, $Value) {}
     protected function SendDebug($Message, $Data, $Format) { $this->debug[] = [$Message, $Data]; }
-    protected function SendDataToParent($Data) { return $this->testParent ? $this->testParent->ForwardData($Data) : ''; }
+    // wie Symcon: Buffer muss ein String sein
+    private static function checkPacket($Data)
+    {
+        $packet = json_decode($Data, true);
+        if (!is_string($packet['DataID'] ?? null) || !is_string($packet['Buffer'] ?? null)) {
+            throw new Exception('Required field Buffer is not of type string');
+        }
+    }
+    protected function SendDataToParent($Data)
+    {
+        self::checkPacket($Data);
+        return $this->testParent ? $this->testParent->ForwardData($Data) : '';
+    }
     protected function SendDataToChildren($Data)
     {
+        self::checkPacket($Data);
         foreach ($this->testChildren as $child) {
             if ($child->receiveFilter === '' || preg_match('/' . $child->receiveFilter . '/', $Data)) {
                 $child->ReceiveData($Data);
