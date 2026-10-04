@@ -7,6 +7,7 @@ include_once __DIR__ . "/../libs/TuyaAPI.php";
 class TuyaGeneric extends IPSModule
 {
     const PARENT_DATAID = '{C459F3BF-8570-E12D-9B2A-14F0343C7F37}';
+    const DEVICE_OFFLINE = 2001;        // tuya: device is offline
 
     // erstellung
     public function Create()
@@ -151,11 +152,25 @@ class TuyaGeneric extends IPSModule
         return $values;
     }
 
-    // kommando an das geraet senden
+    // kommando an das geraet senden, wirft TuyaApiException wenn das geraet offline ist oder tuya ablehnt
     public function CPost(array $payload)
     {
+        // als offline bekannt: erst aktuellen stand holen, statt ~8 s auf die ablehnung der cloud zu warten
+        if (!$this->GetValue("Online")) {
+            $this->RequestRefresh();
+            if (!$this->GetValue("Online")) {
+                throw new TuyaApiException("Gerät ist offline");
+            }
+        }
+
         $return = $this->api('post_commands', $this->ReadPropertyString("DeviceID"), ['commands' => [$payload]]);
-        return (bool) ($return->success ?? false);
+        if (empty($return->success)) {
+            if (($return->code ?? 0) == self::DEVICE_OFFLINE) {
+                $this->SetValue("Online", false);
+            }
+            throw new TuyaApiException($return->msg ?? "command failed");
+        }
+        return true;
     }
 
     // wert eines datenpunkts aus der status antwort, null wenn das geraet ihn nicht liefert

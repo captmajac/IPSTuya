@@ -2,6 +2,13 @@
 
 // Geraete-Module am IO: Status per Paket, Befehle ueber ForwardData
 
+// Geraet als online melden, danach Request-Liste leeren
+function online($m)
+{
+    push($m, true, []);
+    $m->testParent->requests = [];
+}
+
 // ---- Generic
 
 $tests['Generic: Online wird aus dem Paket gesetzt'] = function () {
@@ -35,6 +42,7 @@ $tests['Generic: offline setzt nur Online'] = function () {
 
 $tests['Generic: Befehl laeuft ueber das IO'] = function () {
     $m = make(TuyaSwitch::class);
+    online($m);
     $m->RequestAction('Power', true);
     $req = $m->testParent->requests[0];
     check($req[1] === 'post_commands' && $req[2] === ['dev1', ['commands' => [['code' => 'switch_1', 'value' => true]]]], 'Request: ' . json_encode($req));
@@ -102,6 +110,7 @@ $tests['THSensor: Werte und fehlender Datenpunkt'] = function () {
 
 $tests['RGBW V2: Farbe wird als h/s/v in richtiger Reihenfolge gesendet'] = function () {
     $m = make(TuyaLEDRGBW::class, ['Version' => '_v2']);
+    online($m);
     $m->RequestAction('Color', 0x008000); // Gruen, halbe Helligkeit
     $value = json_decode(sent($m)[0]['value'], true);
     check($value === ['h' => 120, 's' => 1000, 'v' => 500], 'gesendet: ' . sent($m)[0]['value']);
@@ -109,12 +118,14 @@ $tests['RGBW V2: Farbe wird als h/s/v in richtiger Reihenfolge gesendet'] = func
 
 $tests['RGBW alt: Farbe als Hex hhhhssssvvvv'] = function () {
     $m = make(TuyaLEDRGBW::class);
+    online($m);
     $m->RequestAction('Color', 0x008000);
     check(sent($m)[0]['value'] === '007803e801f4', 'gesendet: ' . sent($m)[0]['value']);
 };
 
 $tests['RGBW: Farbtemperatur ausserhalb des Bereichs wird vor dem Senden begrenzt'] = function () {
     $m = make(TuyaLEDRGBW::class);
+    online($m);
     $m->RequestAction('ColorTemperature', 10000);
     check(sent($m)[0]['value'] === 1000, 'gesendet: ' . sent($m)[0]['value']);
     check($m->value('ColorTemperature') === TuyaLEDRGBW::COLMAX, 'Variable: ' . $m->value('ColorTemperature'));
@@ -153,4 +164,80 @@ $tests['Lib: unbekannte API-Methode wirft eine Exception statt exit'] = function
         return;
     }
     check(false, 'keine TuyaApiException');
+};
+
+// ---- Offline-Geraete und abgelehnte Befehle
+
+function expectError(callable $fn, string $contains)
+{
+    try {
+        $fn();
+    } catch (TuyaApiException $e) {
+        check(str_contains($e->getMessage(), $contains), 'Meldung: ' . $e->getMessage());
+        return;
+    }
+    check(false, 'keine TuyaApiException');
+}
+
+$tests['Befehl: Geraet offline und weiter offline -> sofort Fehler, kein Befehl'] = function () {
+    $m = make(TuyaSwitch::class);
+    push($m, false, []);
+    $m->testParent->requests = [];
+    $m->testParent->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev1', false, [])]]];
+    expectError(fn () => $m->RequestAction('Power', true), 'offline');
+    check(methods($m) === ['get_app_list'], 'Requests: ' . json_encode(methods($m)));
+};
+
+$tests['Befehl: Geraet war offline, ist wieder online -> wird geschaltet'] = function () {
+    $m = make(TuyaSwitch::class);
+    push($m, false, []);
+    $m->testParent->requests = [];
+    $m->testParent->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev1', true, ['switch_1' => false])]]];
+    $m->RequestAction('Power', true);
+    check(methods($m) === ['get_app_list', 'post_commands'], 'Requests: ' . json_encode(methods($m)));
+    check($m->value('Power') === true && $m->value('Online') === true, 'Power/Online');
+};
+
+$tests['Befehl: Tuya meldet device is offline -> Fehler und Online aus'] = function () {
+    $m = make(TuyaSwitch::class);
+    push($m, true, ['switch_1' => false]);
+    $m->testParent->responses = [(object) ['success' => false, 'code' => 2001, 'msg' => 'device is offline']];
+    expectError(fn () => $m->RequestAction('Power', true), 'device is offline');
+    check($m->value('Online') === false && $m->value('Power') === false, 'Online/Power');
+};
+
+$tests['Befehl: andere Ablehnung -> Fehler mit Meldung, Online bleibt'] = function () {
+    $m = make(TuyaSwitch::class);
+    push($m, true, ['switch_1' => false]);
+    $m->testParent->responses = [(object) ['success' => false, 'code' => 2008, 'msg' => 'command or value not support']];
+    expectError(fn () => $m->RequestAction('Power', true), 'not support');
+    check($m->value('Online') === true, 'Online geaendert');
+};
+
+// ---- Debug ohne Schluessel und Standort
+
+$tests['IO-Debug: Durchlauf zeigt Zusammenfassung ohne local_key, IP, Standort'] = function () {
+    $io = makeIO();
+    $dev = cloudDevice('dev1', false, ['switch_led' => true, 'bright_value' => 10]);
+    $dev->name = 'EGL Lampe';
+    $dev->local_key = 'GEHEIM-KEY';
+    $dev->ip = '31.16.231.113';
+    $dev->lat = '52.3699';
+    $io->responses = [(object) ['success' => true, 'result' => [$dev]]];
+    $io->Update();
+    $text = json_encode($io->debug);
+    foreach (['GEHEIM-KEY', '31.16.231.113', '52.3699', 'local_key'] as $secret) {
+        check(!str_contains($text, $secret), "Debug enthaelt $secret");
+    }
+    check(str_contains($text, 'EGL Lampe | offline | 2 Datenpunkte'), 'Zusammenfassung fehlt: ' . $text);
+};
+
+$tests['IO-Debug: Geraetesuche ueber ForwardData ohne local_key'] = function () {
+    $io = makeIO();
+    $dev = cloudDevice('dev1', true, []);
+    $dev->local_key = 'GEHEIM-KEY';
+    $io->responses = [(object) ['success' => true, 'result' => [$dev]]];
+    $res = $io->forward('get_app_list', 'app');
+    check($res->result[0]->local_key === 'GEHEIM-KEY', 'Antwort an Instanz ohne local_key');
+    check(!str_contains(json_encode($io->debug), 'GEHEIM-KEY'), 'Debug enthaelt local_key');
 };
