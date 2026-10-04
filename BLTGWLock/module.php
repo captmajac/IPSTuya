@@ -47,7 +47,7 @@ class TuyaBLELock extends TuyaGeneric
         $this->EnableAction("Lock");
     }
 
-    public function RequestAction($Ident, $Value)
+    protected function handleAction($Ident, $Value)
     {
         switch ($Ident) {
             case "Lock":

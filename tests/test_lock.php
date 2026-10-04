@@ -173,3 +173,10 @@ $tests['Log: LogEvent nach dem Oeffnen liest Log'] = function () {
     $m->LogEvent();
     check(count(logRequests($m)) === 1 && $m->timers['LogTimer'][0] === 0, 'Log nicht gelesen');
 };
+
+$tests['Schloss: Fehler beim Entsperren wird abgefangen'] = function () {
+    $m = make(TuyaBLELock::class);
+    $m->testParent->requestError = new TuyaApiException('Netzwerk weg');
+    $m->RequestAction('Lock', false);
+    check($m->value('Lock') === true && count(TestRegistry::$log) === 1, 'Lock/Log');
+};
