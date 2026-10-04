@@ -1,0 +1,32 @@
+{
+    "translations": {
+        "de": {
+            "Device ID": "Geräte-ID",
+            "Local key": "Local Key",
+            "Search device": "Gerät suchen",
+            "Tuya devices": "Tuya-Geräte",
+            "Devices in the Tuya cloud": "Geräte in der Tuya-Cloud",
+            "ID": "ID",
+            "Online": "Online",
+            "Name": "Name",
+            "Model": "Modell",
+            "Apply selected": "Auswahl übernehmen",
+            "Apply selected enters Device ID and Local key in the form. Close this dialog and click Apply to save.": "„Auswahl übernehmen“ trägt Geräte-ID und Local Key ins Formular ein. Danach diesen Dialog schließen und mit „Übernehmen“ speichern.",
+            "offline": "offline",
+            "online": "online",
+            "Update failed: %s": "Aktualisierung fehlgeschlagen: %s",
+            "Command %s failed: %s": "Befehl %s fehlgeschlagen: %s",
+            "Power": "Status",
+            "Brightness": "Helligkeit",
+            "Mode": "Modus",
+            "Color temperature": "Farbtemperatur",
+            "Color": "Farbe",
+            "White": "Weiß",
+            "Scene": "Szene",
+            "Music": "Musik",
+            "Version": "Version",
+            "Standard": "Standard",
+            "V2": "V2"
+        }
+    }
+}

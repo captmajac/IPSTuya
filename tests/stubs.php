@@ -6,7 +6,8 @@
 class TestRegistry
 {
     public static array $values = [];      // VariableID => Wert
-    public static array $log = [];         // IPS_LogMessage
+    public static array $log = [];         // LogMessage / IPS_LogMessage
+    public static array $configCalls = []; // IPS_SetProperty / IPS_SetName / IPS_ApplyChanges
     public static array $sleeps = [];      // IPS_Sleep-Aufrufe
     public static array $parentConfig = [];
     public static int $nextID = 10000;
@@ -17,6 +18,7 @@ class TestRegistry
         self::$values = [];
         self::$log = [];
         self::$sleeps = [];
+        self::$configCalls = [];
         self::$runlevel = KR_READY;
         self::$parentConfig = ['AccessKey' => 'a', 'SecretKey' => 's', 'BaseUrl' => 'https://example.invalid', 'AppID' => 'app', 'Interval' => 15];
     }
@@ -26,6 +28,9 @@ const KR_CREATE = 10101;
 const KR_INIT = 10102;
 const KR_READY = 10103;
 const IPS_KERNELSTARTED = 10001;
+const KL_MESSAGE = 10201;
+const KL_WARNING = 10204;
+const KL_ERROR = 10206;
 
 class IPSModule
 {
@@ -34,6 +39,7 @@ class IPSModule
     public array $attributes = [];
     public string $receiveFilter = '';
     public array $messages = [];
+    public array $formFields = [];         // UpdateFormField: [Feld][Parameter] = Wert
 
     public int $InstanceID;
     public array $properties = [];
@@ -102,7 +108,9 @@ class IPSModule
     public function currentStatus() { return end($this->status) ?: 102; }
     protected function SetBuffer($Name, $Data) { $this->buffers[$Name] = $Data; }
     protected function GetBuffer($Name) { return $this->buffers[$Name] ?? ''; }
-    protected function UpdateFormField($Field, $Parameter, $Value) {}
+    protected function UpdateFormField($Field, $Parameter, $Value) { $this->formFields[$Field][$Parameter] = $Value; }
+    protected function LogMessage($Message, $Type) { TestRegistry::$log[] = $Message; }
+    protected function Translate($Text) { return $Text; }
     protected function SendDebug($Message, $Data, $Format) { $this->debug[] = [$Message, $Data]; }
     // wie Symcon: Buffer muss ein String sein
     private static function checkPacket($Data)
@@ -141,9 +149,9 @@ function IPS_SetIcon($ID, $Icon) {}
 function IPS_GetInstance($ID) { return ['ConnectionID' => 1]; }
 function IPS_GetConfiguration($ID) { return json_encode(TestRegistry::$parentConfig); }
 function IPS_GetName($ID) { return 'Test'; }
-function IPS_SetName($ID, $Name) {}
-function IPS_SetProperty($ID, $Name, $Value) {}
-function IPS_ApplyChanges($ID) {}
+function IPS_SetName($ID, $Name) { TestRegistry::$configCalls[] = "IPS_SetName"; }
+function IPS_SetProperty($ID, $Name, $Value) { TestRegistry::$configCalls[] = "IPS_SetProperty"; }
+function IPS_ApplyChanges($ID) { TestRegistry::$configCalls[] = "IPS_ApplyChanges"; }
 function IPS_VariableProfileExists($Name) { return true; }
 function IPS_CreateVariableProfile($Name, $Type) {}
 function IPS_SetVariableProfileText($Name, $Prefix, $Suffix) {}

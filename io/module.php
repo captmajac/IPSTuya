@@ -75,11 +75,11 @@ class TuyaClient extends IPSModule
         try {
             $return = $this->call('get_app_list', [$this->ReadPropertyString("AppID")]);
         } catch (TuyaApiException $e) {
-            IPS_LogMessage("TuyaClient", "Update Error: " . $e->getMessage());
+            $this->LogMessage(sprintf($this->Translate("Update failed: %s"), $e->getMessage()), KL_ERROR);
             return;
         }
         if (empty($return->success) || !is_array($return->result ?? null)) {
-            IPS_LogMessage("TuyaClient", "Update Error: " . ($return->msg ?? "invalid response"));
+            $this->LogMessage(sprintf($this->Translate("Update failed: %s"), $return->msg ?? "invalid response"), KL_ERROR);
             return;
         }
 

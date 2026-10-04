@@ -31,11 +31,11 @@ class TuyaLEDRGBW extends TuyaGeneric
         //Variablenprofil anlegen
         $this->CreateVarProfileLightMode();
 
-        $this->RegisterVariableBoolean("Power", "Power", "~Switch", 10);
-        $this->RegisterVariableInteger("Mode", "Mode", "Tuya.LightMode", 30);
-        $this->RegisterVariableInteger("Intensity", "Intensity", "~Intensity.100", 20);
-        $this->RegisterVariableInteger("ColorTemperature", "ColorTemperature", "~TWColor", 40);
-        $this->RegisterVariableInteger("Color", "Color", "~HexColor", 50);
+        $this->RegisterVariableBoolean("Power", $this->Translate("Power"), "~Switch", 10);
+        $this->RegisterVariableInteger("Mode", $this->Translate("Mode"), "Tuya.LightMode", 30);
+        $this->RegisterVariableInteger("Intensity", $this->Translate("Brightness"), "~Intensity.100", 20);
+        $this->RegisterVariableInteger("ColorTemperature", $this->Translate("Color temperature"), "~TWColor", 40);
+        $this->RegisterVariableInteger("Color", $this->Translate("Color"), "~HexColor", 50);
 
         IPS_SetIcon($this->GetIDForIdent("Mode"), "Menu");
 
@@ -174,10 +174,10 @@ class TuyaLEDRGBW extends TuyaGeneric
             IPS_SetVariableProfileText("Tuya.LightMode", "", "");
             IPS_SetVariableProfileValues("Tuya.LightMode", 0, 3, 1);
             IPS_SetVariableProfileIcon("Tuya.LightMode", "");
-            IPS_SetVariableProfileAssociation("Tuya.LightMode", 0, "white", "", -1);
-            IPS_SetVariableProfileAssociation("Tuya.LightMode", 1, "colour", "", -1);
-            IPS_SetVariableProfileAssociation("Tuya.LightMode", 2, "scene", "", -1);
-            IPS_SetVariableProfileAssociation("Tuya.LightMode", 3, "music", "", -1);
+            IPS_SetVariableProfileAssociation("Tuya.LightMode", 0, $this->Translate("White"), "", -1);
+            IPS_SetVariableProfileAssociation("Tuya.LightMode", 1, $this->Translate("Color"), "", -1);
+            IPS_SetVariableProfileAssociation("Tuya.LightMode", 2, $this->Translate("Scene"), "", -1);
+            IPS_SetVariableProfileAssociation("Tuya.LightMode", 3, $this->Translate("Music"), "", -1);
         }
     }
 }

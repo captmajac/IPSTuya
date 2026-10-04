@@ -14,7 +14,7 @@ class TuyaSwitch extends TuyaGeneric
         //Never delete this line!
         parent::ApplyChanges();
 
-        $this->RegisterVariableBoolean("Power", "Power", "~Switch", 10);
+        $this->RegisterVariableBoolean("Power", $this->Translate("Power"), "~Switch", 10);
         $this->EnableAction("Power");
     }
 

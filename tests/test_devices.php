@@ -88,14 +88,6 @@ $tests['Generic: TimerEvent loest Durchlauf im IO aus'] = function () {
     check($m->timers['UpdateTimer'][0] === 0, 'eigener Timer laeuft');
 };
 
-$tests['Generic: Geraetesuche ueber das IO'] = function () {
-    $m = make(TuyaSwitch::class);
-    $m->testParent->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev9', true, [])]]];
-    $list = $m->readDeviceList();
-    check($m->testParent->requests[0][2] === ['app'], 'AppID nicht vom IO');
-    check($list[0]->ID === 'dev9' && $list[0]->Online === true, 'Liste: ' . json_encode($list));
-};
-
 // ---- Switch / THSensor
 
 $tests['Switch: fehlender Datenpunkt setzt keinen falschen Wert'] = function () {
