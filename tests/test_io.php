@@ -2,64 +2,6 @@
 
 // TuyaClient (IO): Token-Cache, Durchlauf, ForwardData
 
-// IO ohne Netz: Lib-Aufrufe werden aufgezeichnet und aus einer Warteschlange beantwortet
-class FakeIO extends TuyaClient
-{
-    public array $requests = [];
-    public array $responses = [];
-    public int $tokenCalls = 0;
-    public $tokenResponse = null;
-    public ?Throwable $requestError = null;
-
-    protected function request(string $token, string $method, array $params)
-    {
-        $this->requests[] = [$token, $method, $params];
-        if ($this->requestError) {
-            throw $this->requestError;
-        }
-        return array_shift($this->responses) ?? (object) ['success' => true, 'result' => []];
-    }
-
-    protected function requestToken()
-    {
-        $this->tokenCalls++;
-        return $this->tokenResponse
-            ?? (object) ['success' => true, 'result' => (object) ['access_token' => 'tok' . $this->tokenCalls, 'expire_time' => 7200]];
-    }
-
-    public function forward(string $method, ...$params)
-    {
-        return json_decode($this->ForwardData(json_encode([
-            'DataID' => '{C459F3BF-8570-E12D-9B2A-14F0343C7F37}',
-            'Buffer' => ['method' => $method, 'params' => $params],
-        ])));
-    }
-}
-
-class CollectorChild extends IPSModule
-{
-    public array $received = [];
-    public function ReceiveData($JSONString) { $this->received[] = json_decode($JSONString, true); }
-}
-
-function makeIO(array $props = [])
-{
-    $io = new FakeIO(1);
-    $io->Create();
-    $io->properties = array_merge($io->properties, ['AccessKey' => 'a', 'SecretKey' => 's', 'BaseUrl' => 'https://example.invalid', 'AppID' => 'app'], $props);
-    $io->ApplyChanges();
-    return $io;
-}
-
-function cloudDevice(string $id, bool $online, array $dps)
-{
-    $status = [];
-    foreach ($dps as $code => $value) {
-        $status[] = (object) ['code' => $code, 'value' => $value];
-    }
-    return (object) ['id' => $id, 'name' => $id, 'online' => $online, 'local_key' => 'k', 'model' => 'm', 'status' => $status];
-}
-
 $tests['IO: Token wird zwischengespeichert'] = function () {
     $io = makeIO();
     $io->forward('get_status', 'dev1');

@@ -19,27 +19,20 @@ class THSensor extends TuyaGeneric
         $this->RegisterVariableString("Battery", "Battery", "", 30);
     }
 
-    public function updateState()
+    // datenpunkte aus dem status paket des IO
+    protected function applyStatus($state)
     {
-        parent::updateState();
-        $return = $this->getState();
-
-        if (!isset($return->result)) {
-            IPS_LogMessage("TuyaDevice", "State Error Device=" . $this->ReadPropertyString("DeviceID"));
-            return;
-        }
-
-        $temp = $this->getDP($return, 'va_temperature');
+        $temp = $this->getDP($state, 'va_temperature');
         if ($temp !== null) {
             $this->SetValue("Temperatur", (float) $temp / 10);
         }
 
-        $humidity = $this->getDP($return, 'va_humidity');
+        $humidity = $this->getDP($state, 'va_humidity');
         if ($humidity !== null) {
             $this->SetValue("Humidity", (float) $humidity);
         }
 
-        $battery = $this->getDP($return, 'battery_state');
+        $battery = $this->getDP($state, 'battery_state');
         if ($battery !== null) {
             $this->SetValue("Battery", (string) $battery);
         }

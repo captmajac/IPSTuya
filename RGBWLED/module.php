@@ -99,38 +99,31 @@ class TuyaLEDRGBW extends TuyaGeneric
         }
     }
 
-    // rgb spezifische werte
-    public function updateState()
+    // datenpunkte aus dem status paket des IO
+    protected function applyStatus($state)
     {
-        parent::updateState();
-        $return = $this->getState();
-
-        if (!isset($return->result)) {
-            IPS_LogMessage("TuyaDevice", "State Error Device=" . $this->ReadPropertyString("DeviceID"));
-            return;
-        }
         $version = $this->ReadPropertyString("Version");
 
         // state
-        $state = $this->getDP($return, 'switch_led');
-        if ($state !== null) {
-            $this->SetValue("Power", (bool) $state);
+        $power = $this->getDP($state, 'switch_led');
+        if ($power !== null) {
+            $this->SetValue("Power", (bool) $power);
         }
 
         //color modes
-        $mode = $this->getDP($return, 'work_mode');
+        $mode = $this->getDP($state, 'work_mode');
         if ($mode !== null && isset(self::CMODES[$mode])) {
             $this->SetValue("Mode", self::CMODES[$mode]);
         }
 
         //bright
-        $intensity = $this->getDP($return, 'bright_value' . $version);
+        $intensity = $this->getDP($state, 'bright_value' . $version);
         if ($intensity !== null) {
             $this->SetValue("Intensity", (int) round($intensity / 10));
         }
 
         //temp
-        $temp = $this->getDP($return, 'temp_value' . $version);
+        $temp = $this->getDP($state, 'temp_value' . $version);
         if ($temp !== null && $temp !== "") {
             $temp = (int) ($temp / 1000 * (self::COLMAX - self::COLMIN) + self::COLMIN);
             $this->SetValue("ColorTemperature", $temp);
