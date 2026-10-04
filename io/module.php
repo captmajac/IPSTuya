@@ -78,12 +78,12 @@ class TuyaClient extends IPSModule
         foreach ($return->result as $device) {
             $this->SendDataToChildren(json_encode([
                 'DataID' => self::CHILD_DATAID,
-                'Buffer' => [
+                'Buffer' => json_encode([           // Symcon verlangt Buffer als String
                     'type' => 'state',
                     'id' => $device->id,
                     'online' => (bool) $device->online,
                     'status' => $device->status ?? [],
-                ],
+                ]),
             ]));
         }
     }
@@ -91,9 +91,10 @@ class TuyaClient extends IPSModule
     // aufruf einer geraete-instanz: {"method": ..., "params": [...]}
     public function ForwardData($JSONString)
     {
-        $data = json_decode($JSONString, true);       // assoziativ, die lib erkennt payloads nur als array
-        $method = $data['Buffer']['method'] ?? '';
-        $params = $data['Buffer']['params'] ?? [];
+        $data = json_decode($JSONString, true);
+        $buffer = json_decode($data['Buffer'] ?? '', true);     // assoziativ, die lib erkennt payloads nur als array
+        $method = $buffer['method'] ?? '';
+        $params = $buffer['params'] ?? [];
 
         switch ($method) {
             case 'refresh':

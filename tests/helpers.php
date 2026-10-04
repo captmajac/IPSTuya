@@ -31,7 +31,7 @@ class FakeIO extends TuyaClient
     {
         return json_decode($this->ForwardData(json_encode([
             'DataID' => '{C459F3BF-8570-E12D-9B2A-14F0343C7F37}',
-            'Buffer' => ['method' => $method, 'params' => $params],
+            'Buffer' => json_encode(['method' => $method, 'params' => $params]),
         ])));
     }
 }
@@ -39,7 +39,12 @@ class FakeIO extends TuyaClient
 class CollectorChild extends IPSModule
 {
     public array $received = [];
-    public function ReceiveData($JSONString) { $this->received[] = json_decode($JSONString, true); }
+    public function ReceiveData($JSONString)
+    {
+        $packet = json_decode($JSONString, true);
+        $packet['Buffer'] = json_decode($packet['Buffer'], true);
+        $this->received[] = $packet;
+    }
 }
 
 function makeIO(array $props = [])

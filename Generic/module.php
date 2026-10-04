@@ -37,16 +37,16 @@ class TuyaGeneric extends IPSModule
         $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);
         $this->SetTimerInterval("UpdateTimer", 0);
 
-        // nur pakete fuer das eigene geraet empfangen
+        // nur pakete fuer das eigene geraet empfangen, der Buffer ist ein JSON-String: \"id\":\"<DeviceID>\"
         $device_id = $this->ReadPropertyString("DeviceID");
-        $this->SetReceiveDataFilter($device_id === "" ? '^$' : '.*"id":"' . preg_quote($device_id, '/') . '".*');
+        $this->SetReceiveDataFilter($device_id === "" ? '^$' : '.*\\\\"id\\\\":\\\\"' . preg_quote($device_id, '/') . '\\\\".*');
     }
 
     // status paket vom IO: {"type":"state","id":..,"online":..,"status":[..]}
     public function ReceiveData($JSONString)
     {
         $data = json_decode($JSONString);
-        $buffer = $data->Buffer ?? null;
+        $buffer = json_decode($data->Buffer ?? '');
         if (($buffer->type ?? '') !== 'state' || ($buffer->id ?? '') !== $this->ReadPropertyString("DeviceID")) {
             return;
         }
@@ -76,7 +76,7 @@ class TuyaGeneric extends IPSModule
         }
         $response = $this->SendDataToParent(json_encode([
             'DataID' => self::PARENT_DATAID,
-            'Buffer' => ['method' => $method, 'params' => $params],
+            'Buffer' => json_encode(['method' => $method, 'params' => $params]),     // Symcon verlangt Buffer als String
         ]));
         $return = json_decode((string) $response);
         if ($return === null) {
