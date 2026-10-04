@@ -15,7 +15,7 @@ Pro Durchlauf: 1 Cloud Aufruf für alle Geräte, dazu 1 je online Türschloss f�
 In den Modulen kann über Geräte Suche die Liste in der Tuya Cloud registrierten Geräte angezeigt und ausgewählt werden. Dabei findet aktuell keine Typ Prüfung statt.
 
 Ist ein Gerät laut Cloud offline, wird nur die Variable Online aktualisiert, die übrigen Werte bleiben stehen.
-Schaltbefehle an ein als offline bekanntes Gerät fragen zuerst den aktuellen Stand ab (höchstens ein Abruf je 10 s, auch bei Szenen mit mehreren Lampen) und melden sofort "Gerät ist offline", statt ca. 8 s auf die Ablehnung der Cloud zu warten. Lehnt Tuya einen Befehl ab, erscheint die Meldung von Tuya als Fehler.
+Schaltbefehle an ein offline Gerät (z. B. Lampe am ausgeschalteten Wandschalter in einer Szene) werden ohne Fehlermeldung ignoriert und nur im Debug vermerkt. Dabei prüft das IO den Stand mit einem schlanken Abruf (nur Geräteliste, ohne Öffnungslogs, höchstens einmal pro Minute). Ist das Gerät wieder online, werden Befehle wieder ausgeführt. Andere Ablehnungen von Tuya erscheinen als Fehler.
 Das Debug des IO zeigt pro Durchlauf eine Zeile je Gerät (Name, online/offline, Anzahl Datenpunkte), ohne local_key, IP und Standort; das Öffnungslog als eine Zeile je Schloss.
 Das Öffnungslog der Türschlösser wird in IP-Symcon dauerhaft gehalten (die letzten 50 Einträge), auch wenn die Cloud keine Einträge mehr liefert.
 

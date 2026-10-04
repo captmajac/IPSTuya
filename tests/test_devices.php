@@ -51,6 +51,7 @@ $tests['Generic: Befehl laeuft ueber das IO'] = function () {
 
 $tests['Generic: Fehlerantwort wirft TuyaApiException'] = function () {
     $m = make(TuyaSwitch::class);
+    online($m);
     $m->testParent->requestError = new TuyaApiException('Netzwerk weg');
     try {
         $m->RequestAction('Power', true);
@@ -179,28 +180,30 @@ function expectError(callable $fn, string $contains)
     check(false, 'keine TuyaApiException');
 }
 
-$tests['Befehl: Geraet offline und weiter offline -> sofort Fehler, kein Befehl'] = function () {
+$tests['Befehl: Geraet offline und weiter offline -> ignoriert, kein Fehler, kein Befehl'] = function () {
     $m = make(TuyaSwitch::class);
     push($m, false, []);
-    $m->testParent->buffers['LastUpdate'] = (string) (microtime(true) - 11);     // letzter Durchlauf aelter als 10 s
+    $m->testParent->buffers['LastUpdate'] = (string) (microtime(true) - 61);     // letzter Durchlauf aelter als 60 s
     $m->testParent->requests = [];
     $m->testParent->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev1', false, [])]]];
-    expectError(fn () => $m->RequestAction('Power', true), 'offline');
+    $m->RequestAction('Power', true);
     check(methods($m) === ['get_app_list'], 'Requests: ' . json_encode(methods($m)));
+    check($m->value('Power') === false, 'Power trotz offline gesetzt');
+    check(str_contains(json_encode($m->debug), 'offline'), 'kein Debug-Vermerk');
 };
 
 $tests['Befehl: Geraet gerade erst als offline gemeldet -> Stand von eben, kein neuer Abruf'] = function () {
     $m = make(TuyaSwitch::class);
     push($m, false, []);
     $m->testParent->requests = [];
-    expectError(fn () => $m->RequestAction('Power', true), 'offline');
+    $m->RequestAction('Power', true);
     check($m->testParent->requests === [], 'Requests: ' . json_encode(methods($m)));
 };
 
 $tests['Befehl: Geraet war offline, ist wieder online -> wird geschaltet'] = function () {
     $m = make(TuyaSwitch::class);
     push($m, false, []);
-    $m->testParent->buffers['LastUpdate'] = (string) (microtime(true) - 11);     // letzter Durchlauf aelter als 10 s
+    $m->testParent->buffers['LastUpdate'] = (string) (microtime(true) - 61);     // letzter Durchlauf aelter als 60 s
     $m->testParent->requests = [];
     $m->testParent->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev1', true, ['switch_1' => false])]]];
     $m->RequestAction('Power', true);
@@ -208,11 +211,11 @@ $tests['Befehl: Geraet war offline, ist wieder online -> wird geschaltet'] = fun
     check($m->value('Power') === true && $m->value('Online') === true, 'Power/Online');
 };
 
-$tests['Befehl: Tuya meldet device is offline -> Fehler und Online aus'] = function () {
+$tests['Befehl: Tuya meldet device is offline -> kein Fehler, Online aus'] = function () {
     $m = make(TuyaSwitch::class);
     push($m, true, ['switch_1' => false]);
     $m->testParent->responses = [(object) ['success' => false, 'code' => 2001, 'msg' => 'device is offline']];
-    expectError(fn () => $m->RequestAction('Power', true), 'device is offline');
+    $m->RequestAction('Power', true);
     check($m->value('Online') === false && $m->value('Power') === false, 'Online/Power');
 };
 
@@ -252,7 +255,7 @@ $tests['IO-Debug: Geraetesuche ueber ForwardData ohne local_key'] = function () 
     check(!str_contains(json_encode($io->debug), 'GEHEIM-KEY'), 'Debug enthaelt local_key');
 };
 
-$tests['Befehl: Szene mit mehreren Offline-Lampen -> nur ein Durchlauf'] = function () {
+$tests['Befehl: Szene mit mehreren Offline-Lampen -> ein schlanker Abruf, keine Fehler'] = function () {
     $io = makeIO();
     $lamps = [];
     foreach (['dev1', 'dev2', 'dev3'] as $i => $id) {
@@ -263,10 +266,15 @@ $tests['Befehl: Szene mit mehreren Offline-Lampen -> nur ein Durchlauf'] = funct
         $m->ApplyChanges();
         $lamps[] = $m;
     }
-    $io->testChildren = $lamps;
-    $io->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev1', false, []), cloudDevice('dev2', false, []), cloudDevice('dev3', false, [])]]];
+    $lock = new TuyaBLELock(20);
+    $lock->Create();
+    $lock->properties['DeviceID'] = 'lock1';
+    $lock->testParent = $io;
+    $lock->ApplyChanges();
+    $io->testChildren = array_merge($lamps, [$lock]);
+    $io->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev1', false, []), cloudDevice('dev2', false, []), cloudDevice('dev3', false, []), cloudDevice('lock1', true, [])]]];
     foreach ($lamps as $m) {
-        expectError(fn () => $m->RequestAction('Power', true), 'offline');
+        $m->RequestAction('Power', true);
     }
     check(array_column($io->requests, 1) === ['get_app_list'], 'Requests: ' . json_encode(array_column($io->requests, 1)));
 };

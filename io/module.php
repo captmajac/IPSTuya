@@ -9,7 +9,7 @@ class TuyaClient extends IPSModule
 {
     const CHILD_DATAID = '{018EF6B5-AB94-40C6-AA53-46943E824ACF}';
     const TOKEN_ERRORS = [1010, 1011];      // token invalid / expired
-    const REFRESH_MIN_SECONDS = 10;         // aktualisierungen durch geraete hoechstens so oft
+    const REFRESH_MIN_SECONDS = 60;         // aktualisierungen durch geraete hoechstens so oft
 
     // erstellung
     public function Create()
@@ -65,6 +65,12 @@ class TuyaClient extends IPSModule
     // ein durchlauf: alle geraete mit status holen und je geraet ein paket an die instanzen
     public function Update()
     {
+        $this->runUpdate(true);
+    }
+
+    // full = false: schlanker durchlauf (nur geraeteliste), schloesser lesen dabei kein log
+    private function runUpdate(bool $full)
+    {
         $this->SetBuffer("LastUpdate", (string) microtime(true));
         try {
             $return = $this->call('get_app_list', [$this->ReadPropertyString("AppID")]);
@@ -87,6 +93,7 @@ class TuyaClient extends IPSModule
                     'id' => $device->id,
                     'online' => (bool) $device->online,
                     'status' => $device->status ?? [],
+                    'full' => $full,
                 ]),
             ]));
         }
@@ -102,9 +109,9 @@ class TuyaClient extends IPSModule
 
         switch ($method) {
             case 'refresh':
-                // z.b. mehrere befehle an offline geraete in einer szene: nur ein durchlauf
+                // z.b. befehle einer szene an offline geraete: hoechstens ein schlanker durchlauf je minute
                 if (microtime(true) - (float) $this->GetBuffer("LastUpdate") >= self::REFRESH_MIN_SECONDS) {
-                    $this->Update();
+                    $this->runUpdate(false);
                 }
                 return json_encode(['success' => true]);
             case 'config':

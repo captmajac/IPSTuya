@@ -50,7 +50,7 @@ $tests['IO: Durchlauf = ein get_app_list, ein Paket je Geraet'] = function () {
     check(count($child->received) === 3, 'Pakete: ' . count($child->received));
     $p = $child->received[0];
     check($p['DataID'] === '{018EF6B5-AB94-40C6-AA53-46943E824ACF}', 'DataID: ' . $p['DataID']);
-    check($p['Buffer'] === ['type' => 'state', 'id' => 'dev1', 'online' => true, 'status' => [['code' => 'switch_1', 'value' => true]]], 'Buffer: ' . json_encode($p['Buffer']));
+    check($p['Buffer'] === ['type' => 'state', 'id' => 'dev1', 'online' => true, 'status' => [['code' => 'switch_1', 'value' => true]], 'full' => true], 'Buffer: ' . json_encode($p['Buffer']));
     check($child->received[1]['Buffer']['online'] === false, 'dev2 nicht offline');
 };
 
@@ -112,7 +112,7 @@ $tests['IO: Lib-Fehler kommt als error zurueck'] = function () {
 
 // ---- Drosselung von Aktualisierungen durch Geraete
 
-$tests['IO: refresh innerhalb von 10 s fragt die Cloud nur einmal ab'] = function () {
+$tests['IO: refresh innerhalb von 60 s fragt die Cloud nur einmal ab'] = function () {
     $io = makeIO();
     $io->forward('refresh');
     $io->forward('refresh');
@@ -120,10 +120,10 @@ $tests['IO: refresh innerhalb von 10 s fragt die Cloud nur einmal ab'] = functio
     check(count($io->requests) === 1, 'Requests: ' . count($io->requests));
 };
 
-$tests['IO: refresh nach 10 s fragt erneut ab'] = function () {
+$tests['IO: refresh nach 60 s fragt erneut ab'] = function () {
     $io = makeIO();
     $io->forward('refresh');
-    $io->buffers['LastUpdate'] = (string) (microtime(true) - 11);
+    $io->buffers['LastUpdate'] = (string) (microtime(true) - 61);
     $io->forward('refresh');
     check(count($io->requests) === 2, 'Requests: ' . count($io->requests));
 };
@@ -144,4 +144,17 @@ $tests['IO-Debug: get_openlogs als eine Zeile ohne Einzelfelder'] = function () 
     $text = json_encode($io->debug);
     check(!str_contains($text, 'avatar'), 'Debug enthaelt Einzelfelder: ' . $text);
     check(str_contains($text, 'lock1 | 1 Eintr'), 'Zusammenfassung fehlt: ' . $text);
+};
+
+$tests['IO: Durchlauf per Timer markiert Pakete als vollstaendig, refresh als schlank'] = function () {
+    $io = makeIO();
+    $child = new CollectorChild(2);
+    $io->testChildren = [$child];
+    $io->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev1', true, [])]]];
+    $io->Update();
+    $io->buffers['LastUpdate'] = (string) (microtime(true) - 61);
+    $io->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev1', true, [])]]];
+    $io->forward('refresh');
+    check($child->received[0]['Buffer']['full'] === true, 'Timer: ' . json_encode($child->received[0]['Buffer']));
+    check($child->received[1]['Buffer']['full'] === false, 'refresh: ' . json_encode($child->received[1]['Buffer']));
 };
