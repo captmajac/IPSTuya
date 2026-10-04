@@ -75,7 +75,9 @@ class TuyaClient extends IPSModule
             return;
         }
 
+        $this->SendDebug("Update", count($return->result) . " Geräte", 0);
         foreach ($return->result as $device) {
+            $this->SendDebug("Update", ($device->name ?? $device->id) . " | " . (!empty($device->online) ? "online" : "offline") . " | " . count($device->status ?? []) . " Datenpunkte", 0);
             $this->SendDataToChildren(json_encode([
                 'DataID' => self::CHILD_DATAID,
                 'Buffer' => json_encode([           // Symcon verlangt Buffer als String
@@ -135,7 +137,10 @@ class TuyaClient extends IPSModule
             $this->WriteAttributeString("Token", "");
             $return = $this->request($this->token(), $method, $params);
         }
-        $this->SendDebug($method, $return, 0);
+        // geraeteliste enthaelt local_key, ip und standort: nicht ins debug
+        if ($method !== 'get_app_list') {
+            $this->SendDebug($method, $return, 0);
+        }
         return $return;
     }
 
