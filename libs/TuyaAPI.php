@@ -11,6 +11,9 @@
  */
 
 
+class TuyaApiException extends \Exception
+{
+}
 
 class TuyaApi
 {
@@ -49,15 +52,9 @@ class TuyaApi
 
     protected function _checkConfig($config)
     {
-        try {
-            if (count(array_intersect_key(array_flip($this->_required),
-                $config)) !== count($this->_required)) {
-                $msg = 'Please set "accessKey", "secretKey" and "baseUrl", aborting!';
-                throw new \Exception($msg);
-            }
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-            exit;
+        if (count(array_intersect_key(array_flip($this->_required),
+            $config)) !== count($this->_required)) {
+            throw new TuyaApiException('Please set "accessKey", "secretKey" and "baseUrl"');
         }
     }
 }
@@ -97,12 +94,7 @@ class Caller
     public function send($name, $args = [])
     {
         if (!array_key_exists($name, $this->_endpoints)) {
-            try {
-                throw new \Exception('Method "'.$name.'" is not supported!');
-            } catch (\Exception $e) {
-                echo $e->getMessage();
-            }
-            exit;
+            throw new TuyaApiException('Method "'.$name.'" is not supported!');
         }
         $uri = $this->_endpoints[$name];
         preg_match('/put_|get_|post_|delete_/', (string) $name, $matches);
@@ -204,12 +196,15 @@ class Request
         
         $result = curl_exec($ch);
         if (curl_errno($ch)) {
-            $this->_debug->output('Curl error:', curl_error($ch));
+            $error = curl_error($ch);
+            $this->_debug->output('Curl error:', $error);
+            throw new TuyaApiException('Curl error: '.$error);
         }
-        //echo $result;
-        $return="";
-        if ($result <> "")
+        try {
             $return = json_decode($result, $this->_config['associative'], 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException $e) {
+            throw new TuyaApiException('Invalid response: '.$e->getMessage());
+        }
         $this->_debug->output('Result:', $return);
 
         return $return;

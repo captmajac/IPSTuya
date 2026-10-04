@@ -13,14 +13,12 @@ class TuyaGeneric extends IPSModule
         // tuya socket notwendig für die parameter
         $this->ConnectParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
 
-        $this->CreateVarProfileModus();    
+        $this->CreateVarProfileModus();
         $this->RegisterPropertyString("DeviceID", "");
         $this->RegisterPropertyString("LocalKey", "");
 
-	//$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");  
-	$Module = json_decode(file_get_contents(__DIR__ . "/module.json") , true) ["prefix"];
-	$this->RegisterTimer("UpdateTimer",0,$Module."_TimerEvent(\$_IPS['TARGET']);");  
-	    
+        $Module = json_decode(file_get_contents(__DIR__ . "/module.json"), true)["prefix"];
+        $this->RegisterTimer("UpdateTimer", 0, $Module . "_TimerEvent(\$_IPS['TARGET']);");
     }
 
     // changes der instanz
@@ -30,13 +28,13 @@ class TuyaGeneric extends IPSModule
         parent::ApplyChanges();
 
         $this->RequireParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
-        
-        $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);   
-		    
-	// update timer
-	// auslesen aus der IO parameter geht irgendwie nicht
-	$Interval = 2*60 * 1000; 		// starttimer weil getinstance in apply die instanz nicht erstellen lässt
-	$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
+
+        $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);
+
+        // update timer
+        // auslesen aus der IO parameter geht irgendwie nicht
+        $Interval = 2 * 60 * 1000;         // starttimer weil getinstance in apply die instanz nicht erstellen lässt
+        $this->SetTimerInterval("UpdateTimer", $Interval);
     }
 
     public function Send(string $Text)
@@ -53,47 +51,37 @@ class TuyaGeneric extends IPSModule
     // default debug message
     protected function SendDebug($Message, $Data, $Format)
     {
-        if (is_array($Data))
-        {
-            foreach ($Data as $Key => $DebugData)
-            {
+        if (is_array($Data)) {
+            foreach ($Data as $Key => $DebugData) {
                 $this->SendDebug($Message . ":" . $Key, $DebugData, 0);
             }
-        }
-        elseif (is_object($Data))
-        {
-            foreach ($Data as $Key => $DebugData)
-            {
+        } elseif (is_object($Data)) {
+            foreach ($Data as $Key => $DebugData) {
                 $this->SendDebug($Message . "." . $Key, $DebugData, 0);
             }
-        }
-        else
-        {
+        } else {
             parent::SendDebug($Message, $Data, $Format);
         }
     }
 
     // get online status for one device id	todo: besser wäre es einmalig für alle geräte zu lesen z.b. im socket
-    public function GetOnlineStatus(String $device_id)
+    public function GetOnlineStatus(string $device_id)
     {
         $instance = IPS_GetInstance($this->InstanceID);
         $ret = IPS_GetConfiguration($instance['ConnectionID']);
         $para = json_decode($ret);
 
         $appID = $para->AppID;
-	$token = $this->getToken();
+        $token = $this->getToken();
         $list = $this->readDeviceList($token, $appID);
-	
+
         $key = array_search($device_id, array_column($list, 'ID'));
-	$online = false;
-	if ($key!=0)
-	{
-		$online = (bool) $list[$key]->Online;
-	}
-	
-	return $online;
+        if ($key === false) {
+            return false;
+        }
+        return (bool) $list[$key]->Online;
     }
-	    
+
     // search device
     public function SearchModules()
     {
@@ -101,7 +89,6 @@ class TuyaGeneric extends IPSModule
         $ret = IPS_GetConfiguration($instance['ConnectionID']);
         $para = json_decode($ret);
 
-        //$appID = $this->ReadPropertyString("AppID");
         $appID = $para->AppID;
 
         $token = $this->getToken();
@@ -120,8 +107,7 @@ class TuyaGeneric extends IPSModule
         @$Name = $List["Name"]; // Kommt ein Error bei keiner Auswahl
         $this->SetBuffer("List", "");
 
-        if ($DevID != null)
-        {
+        if ($DevID != null) {
             IPS_SetProperty($this->InstanceID, "DeviceID", "" . $DevID);
             IPS_SetProperty($this->InstanceID, "LocalKey", "" . $LocalKey);
         }
@@ -137,13 +123,11 @@ class TuyaGeneric extends IPSModule
     public function readDeviceList(string $token, string $app_id)
     {
         $tuya = $this->getTuyaClass();
-        //$token = $tuya->getToken();
         $return = $tuya->devices($token)->get_app_list($app_id);
         $arr = $return->result;
 
         $values = [];
-        foreach ($arr as $value)
-        {
+        foreach ($arr as $value) {
             $newValue = new \stdClass();
             $newValue->ID = $value->id;
             $newValue->LocalKey = $value->local_key;
@@ -174,66 +158,82 @@ class TuyaGeneric extends IPSModule
 
         $config = ["accessKey" => $para->AccessKey, "secretKey" => $para->SecretKey, "baseUrl" => $para->BaseUrl];
 
-        /*
-        $config = [
-            "accessKey" => $this->ReadPropertyString("AccessKey"),
-            "secretKey" => $this->ReadPropertyString("SecretKey"),
-            "baseUrl" => $this->ReadPropertyString("BaseUrl"),
-        ];*/
         $tuya = new TuyaApi($config);
         return $tuya;
     }
 
     // status lesen
     public function getState()
-		{
-			$tuya = $this->getTuyaClass();
-			$token = $this->getToken();
-			$device_id = $this->ReadPropertyString("DeviceID");
-			//IPS_LogMessage("Generic","update ".$device_id);
-			
-			$return = $tuya->devices( $token )->get_status( $device_id );
+    {
+        $tuya = $this->getTuyaClass();
+        $token = $this->getToken();
+        $device_id = $this->ReadPropertyString("DeviceID");
 
-			return $return;
-		}
+        $return = $tuya->devices($token)->get_status($device_id);
 
-	public function updateState()
-	{
-		// nothing to update
-		$device_id = $this->ReadPropertyString("DeviceID");
-		$online = $this->GetOnlineStatus($device_id);
-		SetValue($this->GetIDForIdent("Online"), $online );
-	}
-	
-	// timer aufruf,
-	public function TimerEvent() {
-		$this->updateState();
+        return $return;
+    }
 
-		// workaround, starttimerzeit ändern weil getinstance in applychange nicht korrekt aufgerufen werden kann
-		$instance = IPS_GetInstance($this->InstanceID);
-        	$ret = IPS_GetConfiguration($instance['ConnectionID']);
-        	$para = json_decode($ret);
-        	$Interval = $para->Interval * 60 * 1000; 
-		//$Interval = 15 * 60 * 1000; 
+    // kommando an das geraet senden
+    public function CPost(array $payload)
+    {
+        $tuya = $this->getTuyaClass();
+        $token = $this->getToken();
+        $device_id = $this->ReadPropertyString("DeviceID");
 
-		$this->SetTimerInterval("UpdateTimer", $Interval);		// $this->ReadPropertyInteger("Interval")
-		
-	} 
-	
+        $return = $tuya->devices($token)->post_commands($device_id, ['commands' => [$payload]]);
+        return $return->success;
+    }
+
+    // wert eines datenpunkts aus der status antwort, null wenn das geraet ihn nicht liefert
+    protected function getDP($state, string $code)
+    {
+        if (!isset($state->result) || !is_array($state->result)) {
+            return null;
+        }
+        foreach ($state->result as $dp) {
+            if ($dp->code === $code) {
+                return $dp->value;
+            }
+        }
+        return null;
+    }
+
+    public function updateState()
+    {
+        // nothing to update
+        $device_id = $this->ReadPropertyString("DeviceID");
+        $online = $this->GetOnlineStatus($device_id);
+        $this->SetValue("Online", $online);
+    }
+
+    // timer aufruf,
+    public function TimerEvent()
+    {
+        try {
+            $this->updateState();
+        } catch (TuyaApiException $e) {
+            IPS_LogMessage("TuyaDevice", "Update Error Device=" . $this->ReadPropertyString("DeviceID") . ": " . $e->getMessage());
+        }
+
+        // workaround, starttimerzeit ändern weil getinstance in applychange nicht korrekt aufgerufen werden kann
+        $instance = IPS_GetInstance($this->InstanceID);
+        $ret = IPS_GetConfiguration($instance['ConnectionID']);
+        $para = json_decode($ret);
+        $Interval = $para->Interval * 60 * 1000;
+
+        $this->SetTimerInterval("UpdateTimer", $Interval);
+    }
+
     // online, offline
     private function CreateVarProfileModus()
     {
-        if (!IPS_VariableProfileExists("Tuya.Online"))
-        {
+        if (!IPS_VariableProfileExists("Tuya.Online")) {
             IPS_CreateVariableProfile("Tuya.Online", 0);
             IPS_SetVariableProfileText("Tuya.Online", "", "");
             IPS_SetVariableProfileIcon("Tuya.Online", "Information");
             IPS_SetVariableProfileAssociation("Tuya.Online", 0, "offline", "", 0xFF2600); // todo farben setzen?
             IPS_SetVariableProfileAssociation("Tuya.Online", 1, "online", "", 0x00F900);
-
         }
     }
-
 }
-
-?>
