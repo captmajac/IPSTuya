@@ -19,7 +19,13 @@ Bluetooth-Türschloss, das über ein Tuya Bluetooth Gateway mit der Cloud verbun
 - Batterie, Motorzustand, Signalton-Lautstärke, Meldung der letzten Öffnung
 - Online-Status
 
-Geprüftes Gerät: „bluetooth smart lock“, Tuya Produktname 智能门锁-T83, Kategorie `ms`.
+Geprüfte Geräte:
+
+| Gerät | Modell (Spalte *Modell* der Gerätesuche) | Tuya Produktname | Kategorie | Status |
+|---|---|---|---|---|
+| bluetooth smart lock | YSG_T83_RFID_7G | 智能门锁-T83 | ms | geprüft |
+
+Das Schloss braucht ein Tuya Bluetooth Gateway. Das Gateway erscheint in der Gerätesuche als eigenes Gerät („Bluetooth gateway“), dafür wird keine Instanz benötigt.
 
 ### 2. Voraussetzungen
 
@@ -40,7 +46,7 @@ Unter *Instanz hinzufügen* das Modul **TuyaBLELock** (Hersteller *Tuya*) auswä
 | Geräte-ID | ID des Geräts in der Tuya Cloud |
 | Local Key | Lokaler Schlüssel des Geräts (für die Cloud-Steuerung nicht nötig, wird nur gespeichert) |
 
-**Gerät suchen** zeigt alle Geräte des verknüpften App-Kontos. *Auswahl übernehmen* trägt Geräte-ID und Local Key ins Formular ein, gespeichert wird mit *Übernehmen*.
+**Gerät suchen** zeigt alle Geräte des verknüpften App-Kontos mit ID, Online-Status, Name und Modell; welches Modell zu welchem Modul passt, steht in der [Übersicht](../README.md#1-module). *Auswahl übernehmen* trägt Geräte-ID und Local Key ins Formular ein, gespeichert wird mit *Übernehmen*.
 
 ### 5. Statusvariablen und Profile
 

@@ -20,12 +20,11 @@ WLAN RGB(W) Lampe mit Farbe und Farbtemperatur.
 
 Geprüfte Geräte:
 
-| Gerät | Tuya Produktname / Modell | Kategorie | Version | Status |
-|---|---|---|---|---|
-| Hama RGB(W) GU10 WLAN | 176582/176598, Modell „Meka GU10 RGBCW“ | dj | Standard | geprüft |
-| Avatar RGB Lampe E14 | E14蜡烛灯 | dj | unbekannt | geprüft (frühere Version des Moduls) |
-
-Lampen mit Version *V2* (z. B. „Smart Bulb“) sind mit dieser Version des Moduls noch nicht geprüft.
+| Gerät | Modell (Spalte *Modell* der Gerätesuche) | Tuya Produktname | Kategorie | Version | Status |
+|---|---|---|---|---|---|
+| Hama RGB(W) GU10 WLAN (Art.-Nr. 176582/176598) | Meka GU10 RGBCW | 176582/176598 | dj | Standard | geprüft |
+| Smart Bulb | ALS22L-N | – | dj | V2 | mit dieser Version des Moduls noch nicht geprüft |
+| Avatar RGB Lampe E14 | – | E14蜡烛灯 | dj | unbekannt | geprüft (frühere Version des Moduls) |
 
 Welche Version eine Lampe nutzt, zeigt die Tuya Developer Platform beim Gerät: Datenpunkte mit `_v2` am Ende (z. B. `bright_value_v2`) bedeuten *V2*.
 
@@ -49,7 +48,7 @@ Unter *Instanz hinzufügen* das Modul **TuyaLEDRGBW** (Hersteller *Tuya*) auswä
 | Local Key | Lokaler Schlüssel des Geräts (für die Cloud-Steuerung nicht nötig, wird nur gespeichert) |
 | Version | *Standard* oder *V2* (Datenpunkte mit `_v2`) |
 
-**Gerät suchen** zeigt alle Geräte des verknüpften App-Kontos. *Auswahl übernehmen* trägt Geräte-ID und Local Key ins Formular ein, gespeichert wird mit *Übernehmen*.
+**Gerät suchen** zeigt alle Geräte des verknüpften App-Kontos mit ID, Online-Status, Name und Modell; welches Modell zu welchem Modul passt, steht in der [Übersicht](../README.md#1-module). *Auswahl übernehmen* trägt Geräte-ID und Local Key ins Formular ein, gespeichert wird mit *Übernehmen*.
 
 ### 5. Statusvariablen und Profile
 

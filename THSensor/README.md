@@ -38,7 +38,7 @@ Unter *Instanz hinzufügen* das Modul **THSensor** (Hersteller *Tuya*) auswähle
 | Geräte-ID | ID des Geräts in der Tuya Cloud |
 | Local Key | Lokaler Schlüssel des Geräts (für die Cloud-Steuerung nicht nötig, wird nur gespeichert) |
 
-**Gerät suchen** zeigt alle Geräte des verknüpften App-Kontos. *Auswahl übernehmen* trägt Geräte-ID und Local Key ins Formular ein, gespeichert wird mit *Übernehmen*.
+**Gerät suchen** zeigt alle Geräte des verknüpften App-Kontos mit ID, Online-Status, Name und Modell; welches Modell zu welchem Modul passt, steht in der [Übersicht](../README.md#1-module). *Auswahl übernehmen* trägt Geräte-ID und Local Key ins Formular ein, gespeichert wird mit *Übernehmen*.
 
 ### 5. Statusvariablen und Profile
 

@@ -26,6 +26,16 @@ Die Bibliothek nutzt die API der Tuya Cloud. Sie ist daher nicht cloudfrei und b
 | [THSensor](THSensor/README.md) | Temperatur- und Luftfeuchtesensor |
 | [TuyaGeneric](Generic/README.md) | Basis aller Gerätemodule, als Instanz nur mit Online-Status |
 
+Geprüfte Geräte und passendes Modul. Das Modell steht in der Gerätesuche einer Geräte-Instanz in der Spalte *Modell*:
+
+| Modell | Gerät | Modul |
+|---|---|---|
+| YSG_T83_RFID_7G | Bluetooth-Türschloss (über Tuya Bluetooth Gateway) | TuyaBLELock |
+| Meka GU10 RGBCW | Hama RGB(W) GU10 WLAN, Art.-Nr. 176582/176598 | TuyaLEDRGBW, Version *Standard* |
+| ALS22L-N | Smart Bulb | TuyaLEDRGBW, Version *V2* (noch nicht geprüft) |
+
+Schaltaktor und Temperatursensor wurden von thka geprüft, die Modelle sind nicht bekannt. Das Bluetooth Gateway selbst braucht keine Instanz.
+
 ### 2. Voraussetzungen
 
 - IP-Symcon ab Version 7.0
