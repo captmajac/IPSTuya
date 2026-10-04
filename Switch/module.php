@@ -34,19 +34,12 @@ class TuyaSwitch extends TuyaGeneric
         }
     }
 
-    public function updateState()
+    // datenpunkte aus dem status paket des IO
+    protected function applyStatus($state)
     {
-        parent::updateState();
-        $return = $this->getState();
-
-        if (!isset($return->result)) {
-            IPS_LogMessage("TuyaDevice", "State Error Device=" . $this->ReadPropertyString("DeviceID"));
-            return;
-        }
-
-        $state = $this->getDP($return, 'switch_1');
-        if ($state !== null) {
-            $this->SetValue("Power", (bool) $state);
+        $power = $this->getDP($state, 'switch_1');
+        if ($power !== null) {
+            $this->SetValue("Power", (bool) $power);
         }
     }
 }

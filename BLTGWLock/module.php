@@ -62,25 +62,23 @@ class TuyaBLELock extends TuyaGeneric
         $this->SetTimerInterval("LogTimer", 15 * 1000);        // wait for cloud update log
     }
 
-    // timer: status und log nach dem oeffnen nachlesen
+    // timer: log nach dem oeffnen nachlesen
     public function LogEvent()
     {
         $this->SetTimerInterval("LogTimer", 0);
         try {
-            $this->updateState();
+            $this->readLockLog();
         } catch (TuyaApiException $e) {
-            IPS_LogMessage("TuyaDevice", "Update Error Device=" . $this->ReadPropertyString("DeviceID") . ": " . $e->getMessage());
+            IPS_LogMessage("TuyaDevice", "Log Error Device=" . $this->ReadPropertyString("DeviceID") . ": " . $e->getMessage());
         }
     }
 
     public function unlock()
     {
         // 1. Ticket ID holen
-        $tuya = $this->getTuyaClass();
-        $token = $this->getToken();
         $device_id = $this->ReadPropertyString("DeviceID");
 
-        $return = $tuya->devices($token)->post_password_ticket($device_id);
+        $return = $this->api('post_password_ticket', $device_id);
         if (!isset($return->result->ticket_id)) {
             $this->SetValue("Message", $return->msg ?? "no ticket");
             return false;
@@ -89,7 +87,7 @@ class TuyaBLELock extends TuyaGeneric
 
         // 2. mit Ticket ID öffnen
         $payload = ['ticket_id' => $ticket_ID];
-        $return = $tuya->devices($token)->post_remote_unlocking($device_id, $payload);
+        $return = $this->api('post_remote_unlocking', $device_id, $payload);
 
         // Antwort prüfen ob msg vorhanden
         $this->SetValue("Message", $return->msg ?? "");
@@ -97,29 +95,23 @@ class TuyaBLELock extends TuyaGeneric
         return (bool) ($return->success ?? false);
     }
 
-    // lock spezifische werte
-    public function updateState()
+    // lock spezifische werte aus dem status paket des IO
+    protected function applyStatus($state)
     {
-        parent::updateState();
-
-        $return = $this->getState();
-        if (!isset($return->result)) {
-            IPS_LogMessage("TuyaDevice", "State Error Device=" . $this->ReadPropertyString("DeviceID"));
-            return;
+        // motor maybe block state
+        $motorstate = $this->getDP($state, 'lock_motor_state');
+        if ($motorstate !== null) {
+            $this->SetValue("MotorState", (bool) $motorstate);       // false = locked
         }
 
-        // motor maybe block state
-        $motorstate = $this->getDP($return, 'lock_motor_state');
-        $this->SetValue("MotorState", !($motorstate === null || $motorstate === ""));        // leer = locked
-
         // info sound volume
-        $sound = $this->getDP($return, 'beep_volume');
+        $sound = $this->getDP($state, 'beep_volume');
         if ($sound !== null) {
             $this->SetValue("Sound", (string) $sound);
         }
 
         // bat level
-        $battery = $this->getDP($return, 'residual_electricity');
+        $battery = $this->getDP($state, 'residual_electricity');
         if ($battery !== null) {
             $this->SetValue("Battery", (int) $battery);
         }
@@ -130,15 +122,12 @@ class TuyaBLELock extends TuyaGeneric
 
     public function readLockLog()
     {
-        $tuya = $this->getTuyaClass();
-        $token = $this->getToken();
-
         $start_time = time() - 7 * 24 * 60 * 60;
         $end_time = time();
 
         $device_id = $this->ReadPropertyString("DeviceID");
         $payload = ['page_no' => 0, 'page_size' => 20, 'start_time' => $start_time, 'end_time' => $end_time];
-        $return = $tuya->devices($token)->get_openlogs($device_id, $payload);
+        $return = $this->api('get_openlogs', $device_id, $payload);
         if (!isset($return->result->logs)) {
             return;
         }

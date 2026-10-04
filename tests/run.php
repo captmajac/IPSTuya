@@ -10,72 +10,7 @@ require_once __DIR__ . '/../RGBWLED/module.php';
 require_once __DIR__ . '/../Switch/module.php';
 require_once __DIR__ . '/../THSensor/module.php';
 
-// Cloud-Antwort wie von /v1.0/devices/{id}/status
-function status(array $dps)
-{
-    $result = [];
-    foreach ($dps as $code => $value) {
-        $result[] = (object) ['code' => $code, 'value' => $value];
-    }
-    return (object) ['success' => true, 'result' => $result];
-}
-
-function devices(array $online)
-{
-    $list = [];
-    foreach ($online as $id => $state) {
-        $list[] = (object) ['ID' => $id, 'Online' => $state, 'Name' => $id, 'Model' => '', 'LocalKey' => ''];
-    }
-    return $list;
-}
-
-// Gemeinsame Cloud-Ersetzung fuer alle Testklassen
-trait FakeCloud
-{
-    public array $sent = [];
-    public $stateResponse = null;
-    public array $deviceList = [];
-    public ?Throwable $cloudError = null;
-
-    public function CPost(array $payload)
-    {
-        if ($this->cloudError) {
-            throw $this->cloudError;
-        }
-        $this->sent[] = $payload;
-        return true;
-    }
-    public function getState()
-    {
-        if ($this->cloudError) {
-            throw $this->cloudError;
-        }
-        return $this->stateResponse;
-    }
-    public function getToken() { return 'token'; }
-    public function readDeviceList(string $token, string $app_id) { return $this->deviceList; }
-}
-
-class TestLock extends TuyaBLELock
-{
-    use FakeCloud;
-    public int $unlockCalls = 0;
-    public function unlock() { $this->unlockCalls++; return true; }
-    public function readLockLog() {}
-}
-class TestRGBW extends TuyaLEDRGBW { use FakeCloud; }
-class TestSwitch extends TuyaSwitch { use FakeCloud; }
-class TestTH extends THSensor { use FakeCloud; }
-
-function make(string $class, array $props = [])
-{
-    $m = new $class(1);
-    $m->Create();
-    $m->properties = array_merge($m->properties, ['DeviceID' => 'dev1'], $props);
-    $m->ApplyChanges();
-    $m->deviceList = devices(['dev1' => true]);
-    return $m;
-}
+require_once __DIR__ . '/helpers.php';
 
 // ---------------------------------------------------------------- Tests
 
