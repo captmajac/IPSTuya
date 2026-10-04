@@ -3,10 +3,16 @@ require_once __DIR__ . '/../Generic/module.php';  // Base Module.php
 
 class TuyaBLELock extends TuyaGeneric
 {
+    const LOG_MAX = 50;             // eintraege im dauerhaften log
+    const LOG_FIRST_DAYS = 7;       // zeitraum der ersten abfrage
+
     public function Create()
     {
         //Never delete this line!
         parent::Create();
+
+        // dauerhaftes oeffnungslog [{t: ms, code, value}], neueste zuerst
+        $this->RegisterAttributeString("LogEntries", "[]");
 
         // da nur kurz aufgeschlossen wird Status nach 2 Sek. wieder auf geschlossen setzen, danach log nachlesen
         $this->RegisterTimer("RelockTimer", 0, "Tuya_RelockEvent(\$_IPS['TARGET']);");
@@ -67,7 +73,7 @@ class TuyaBLELock extends TuyaGeneric
     {
         $this->SetTimerInterval("LogTimer", 0);
         try {
-            $this->readLockLog();
+            $this->RefreshLog();
         } catch (TuyaApiException $e) {
             IPS_LogMessage("TuyaDevice", "Log Error Device=" . $this->ReadPropertyString("DeviceID") . ": " . $e->getMessage());
         }
@@ -117,27 +123,49 @@ class TuyaBLELock extends TuyaGeneric
         }
 
         // log nachlesen
-        $this->readLockLog();
+        $this->RefreshLog();
     }
 
-    public function readLockLog()
+    // neue eintraege aus der cloud an das dauerhafte log anhaengen
+    public function RefreshLog()
     {
-        $start_time = time() - 7 * 24 * 60 * 60;
-        $end_time = time();
+        $entries = json_decode($this->ReadAttributeString("LogEntries"), true) ?: [];
 
-        $device_id = $this->ReadPropertyString("DeviceID");
-        $payload = ['page_no' => 0, 'page_size' => 20, 'start_time' => $start_time, 'end_time' => $end_time];
-        $return = $this->api('get_openlogs', $device_id, $payload);
-        if (!isset($return->result->logs)) {
-            return;
+        $start_time = time() - self::LOG_FIRST_DAYS * 24 * 60 * 60;
+        if ($entries) {
+            $start_time = max($start_time, intdiv($entries[0]['t'], 1000));     // ab letztem eintrag, duplikate fallen unten raus
+        }
+        $payload = ['page_no' => 0, 'page_size' => 20, 'start_time' => $start_time, 'end_time' => time()];
+        $return = $this->api('get_openlogs', $this->ReadPropertyString("DeviceID"), $payload);
+
+        $known = [];
+        foreach ($entries as $entry) {
+            $known[$entry['t'] . '|' . $entry['code']] = true;
+        }
+        $added = false;
+        foreach ($return->result->logs ?? [] as $log) {
+            if (!isset($log->update_time, $log->status->code)) {
+                continue;
+            }
+            $key = $log->update_time . '|' . $log->status->code;
+            if (isset($known[$key])) {
+                continue;
+            }
+            $known[$key] = true;
+            $entries[] = ['t' => (int) $log->update_time, 'code' => $log->status->code, 'value' => $log->status->value ?? null];
+            $added = true;
+        }
+        if (!$added) {
+            return;     // leere antwort aendert nichts
         }
 
+        usort($entries, fn ($a, $b) => $b['t'] <=> $a['t']);
+        $entries = array_slice($entries, 0, self::LOG_MAX);
+        $this->WriteAttributeString("LogEntries", json_encode($entries));
+
         $out = "";
-        foreach ($return->result->logs as $value) {
-            $msg = $value->status->code;                    // message
-            $tmsp = $value->update_time;                    // timestamp
-            $tmspf = date("d.m.Y H:i:s", ($tmsp / 1000));   // format
-            $out = $out . $tmspf . " - " . $msg . "<br>";   // html cr
+        foreach ($entries as $entry) {
+            $out .= date("d.m.Y H:i:s", intdiv($entry['t'], 1000)) . " - " . $entry['code'] . "<br>";   // html cr
         }
         $this->SetValue("Log", $out);
     }

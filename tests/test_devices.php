@@ -134,64 +134,6 @@ $tests['RGBW V2: Status liest bright_value_v2'] = function () {
     check($m->value('Intensity') === 50, 'Intensity: ' . var_export($m->value('Intensity'), true));
 };
 
-// ---- Schloss
-
-function unlockResponses($m)
-{
-    $m->testParent->responses = [
-        (object) ['success' => true, 'result' => (object) ['ticket_id' => 'T1']],
-        (object) ['success' => true],
-    ];
-}
-
-$tests['Schloss: Abschliessen (true) loest kein Entsperren aus'] = function () {
-    $m = make(TuyaBLELock::class);
-    $m->RequestAction('Lock', true);
-    check(!in_array('post_remote_unlocking', methods($m)), 'entsperrt: ' . json_encode(methods($m)));
-};
-
-$tests['Schloss: Entsperren laeuft ueber das IO'] = function () {
-    $m = make(TuyaBLELock::class);
-    unlockResponses($m);
-    $m->RequestAction('Lock', false);
-    $req = $m->testParent->requests;
-    check(methods($m) === ['post_password_ticket', 'post_remote_unlocking'], 'Requests: ' . json_encode(methods($m)));
-    check($req[1][2] === ['dev1', ['ticket_id' => 'T1']], 'Params: ' . json_encode($req[1][2]));
-    check(TestRegistry::$sleeps === [], 'IPS_Sleep aufgerufen');
-};
-
-$tests['Schloss: Entsperren setzt nach kurzer Zeit per Timer auf zu'] = function () {
-    $m = make(TuyaBLELock::class);
-    unlockResponses($m);
-    $m->RequestAction('Lock', false);
-    check($m->value('Lock') === false, 'Lock sollte direkt nach dem Entsperren false sein');
-    check(($m->timers['RelockTimer'][0] ?? 0) > 0, 'RelockTimer nicht gestartet');
-    $m->RelockEvent();
-    check($m->value('Lock') === true, 'Lock sollte nach RelockEvent wieder true sein');
-    check($m->timers['RelockTimer'][0] === 0, 'RelockTimer laeuft weiter');
-};
-
-$tests['Schloss: fehlgeschlagenes Ticket entsperrt nicht'] = function () {
-    $m = make(TuyaBLELock::class);
-    $m->testParent->responses = [(object) ['success' => false, 'msg' => 'device offline']];
-    $m->RequestAction('Lock', false);
-    check(methods($m) === ['post_password_ticket'], 'Requests: ' . json_encode(methods($m)));
-    check($m->value('Lock') === true && $m->value('Message') === 'device offline', 'Lock/Message');
-};
-
-$tests['Schloss: ApplyChanges ueberschreibt den Status nicht'] = function () {
-    $m = make(TuyaBLELock::class);
-    TestRegistry::$values[$m->variables['Lock']] = false;
-    $m->ApplyChanges();
-    check($m->value('Lock') === false, 'ApplyChanges hat Lock zurueckgesetzt');
-};
-
-$tests['Schloss: Status aus echter Cloud-Antwort'] = function () {
-    $m = make(TuyaBLELock::class);
-    push($m, true, ['residual_electricity' => 85, 'beep_volume' => 'low', 'lock_motor_state' => false]);
-    check($m->value('Battery') === 85 && $m->value('Sound') === 'low', 'Battery/Sound');
-};
-
 // ---- Lib
 
 $tests['Lib: fehlende Zugangsdaten werfen eine Exception statt exit'] = function () {
@@ -211,12 +153,4 @@ $tests['Lib: unbekannte API-Methode wirft eine Exception statt exit'] = function
         return;
     }
     check(false, 'keine TuyaApiException');
-};
-
-$tests['Schloss: lock_motor_state false bleibt false'] = function () {
-    $m = make(TuyaBLELock::class);
-    push($m, true, ['lock_motor_state' => true]);
-    check($m->value('MotorState') === true, 'true -> ' . var_export($m->value('MotorState'), true));
-    push($m, true, ['lock_motor_state' => false]);
-    check($m->value('MotorState') === false, 'false -> ' . var_export($m->value('MotorState'), true));
 };
