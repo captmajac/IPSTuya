@@ -35,7 +35,7 @@ class TuyaGeneric extends IPSModule
 
         $this->RequireParent('{78ABC644-1134-F4E2-3E31-01E45483367B}');
 
-        $this->RegisterVariableBoolean("Online", "Online", "Tuya.Online", 100);
+        $this->RegisterVariableBoolean("Online", $this->Translate("Online"), "Tuya.Online", 100);
         $this->SetTimerInterval("UpdateTimer", 0);
 
         // nur pakete fuer das eigene geraet empfangen, der Buffer ist ein JSON-String: \"id\":\"<DeviceID>\"
@@ -60,7 +60,7 @@ class TuyaGeneric extends IPSModule
         try {
             $this->applyStatus((object) ['result' => $buffer->status, 'full' => $buffer->full ?? true]);
         } catch (TuyaApiException $e) {
-            IPS_LogMessage("TuyaDevice", "Update Error Device=" . $buffer->id . ": " . $e->getMessage());
+            $this->LogMessage(sprintf($this->Translate("Update failed: %s"), $e->getMessage()), KL_ERROR);
         }
     }
 
@@ -80,7 +80,7 @@ class TuyaGeneric extends IPSModule
             $this->SendDebug("Error", $Ident . ": " . $e->getMessage(), 0);
             if ($this->GetBuffer("LastError") !== $e->getMessage()) {
                 $this->SetBuffer("LastError", $e->getMessage());
-                IPS_LogMessage("TuyaDevice", "Device=" . $this->ReadPropertyString("DeviceID") . " " . $Ident . ": " . $e->getMessage());
+                $this->LogMessage(sprintf($this->Translate("Command %s failed: %s"), $Ident, $e->getMessage()), KL_WARNING);
             }
         }
     }
@@ -130,32 +130,21 @@ class TuyaGeneric extends IPSModule
     public function SearchModules()
     {
         $jsValues = json_encode($this->readDeviceList());
-        $this->SetBuffer("List", $jsValues);
         $this->UpdateFormField("Devices", "values", $jsValues);
     }
 
-    // auswahl aus der search liste
+    // auswahl aus der search liste: traegt die werte nur ins formular ein, uebernommen wird mit "Uebernehmen"
+    // (best practice: ein modul konfiguriert sich nicht selbst)
     public function SetSelectedModul(object $List)
     {
-        @$DevID = $List["ID"]; // Kommt ein Error bei keiner Auswahl
-        @$LocalKey = $List["LocalKey"]; // Kommt ein Error bei keiner Auswahl
-        @$Name = $List["Name"]; // Kommt ein Error bei keiner Auswahl
-        $this->SetBuffer("List", "");
-
-        if ($DevID != null) {
-            IPS_SetProperty($this->InstanceID, "DeviceID", "" . $DevID);
-            IPS_SetProperty($this->InstanceID, "LocalKey", "" . $LocalKey);
+        if (!isset($List["ID"]) || $List["ID"] === "") {
+            return;     // keine zeile ausgewaehlt
         }
-        $oldname = IPS_GetName($this->InstanceID);
-        $pos = strpos($oldname, "(");
-        if ($pos <> false) $oldname = substr($oldname, 0, $pos); // alten namen entfernen
-        IPS_SetName($this->InstanceID, $oldname . " (" . $Name . ")");
-
-        // Apply schliesst auch popup
-        IPS_ApplyChanges($this->InstanceID);
+        $this->UpdateFormField("DeviceID", "value", (string) $List["ID"]);
+        $this->UpdateFormField("LocalKey", "value", (string) ($List["LocalKey"] ?? ""));
     }
 
-    public function readDeviceList()
+    protected function readDeviceList()
     {
         $appID = $this->api('config')->AppID;
         $return = $this->api('get_app_list', $appID);
@@ -176,7 +165,7 @@ class TuyaGeneric extends IPSModule
     // kommando an das geraet senden
     // offline geraete: befehl wird ohne fehler ignoriert (z.b. lampen am wandschalter in einer szene),
     // andere ablehnungen von tuya werfen TuyaApiException
-    public function CPost(array $payload)
+    protected function CPost(array $payload)
     {
         // als offline bekannt: stand ueber das IO pruefen (hoechstens ein schlanker abruf je minute),
         // statt ~8 s auf die ablehnung der cloud zu warten
@@ -226,7 +215,7 @@ class TuyaGeneric extends IPSModule
         try {
             $this->RequestRefresh();
         } catch (TuyaApiException $e) {
-            IPS_LogMessage("TuyaDevice", "Refresh Error Device=" . $this->ReadPropertyString("DeviceID") . ": " . $e->getMessage());
+            $this->LogMessage(sprintf($this->Translate("Update failed: %s"), $e->getMessage()), KL_ERROR);
         }
     }
 
@@ -237,8 +226,8 @@ class TuyaGeneric extends IPSModule
             IPS_CreateVariableProfile("Tuya.Online", 0);
             IPS_SetVariableProfileText("Tuya.Online", "", "");
             IPS_SetVariableProfileIcon("Tuya.Online", "Information");
-            IPS_SetVariableProfileAssociation("Tuya.Online", 0, "offline", "", 0xFF2600); // todo farben setzen?
-            IPS_SetVariableProfileAssociation("Tuya.Online", 1, "online", "", 0x00F900);
+            IPS_SetVariableProfileAssociation("Tuya.Online", 0, $this->Translate("offline"), "", 0xFF2600);
+            IPS_SetVariableProfileAssociation("Tuya.Online", 1, $this->Translate("online"), "", 0x00F900);
         }
     }
 }

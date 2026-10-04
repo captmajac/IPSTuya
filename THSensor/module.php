@@ -14,9 +14,9 @@ class THSensor extends TuyaGeneric
         //Never delete this line!
         parent::ApplyChanges();
 
-        $this->RegisterVariableFloat("Temperatur", "Temperatur", "~Temperature", 10);
-        $this->RegisterVariableFloat("Humidity", "Humidity", "~Humidity.F", 20);
-        $this->RegisterVariableString("Battery", "Battery", "", 30);
+        $this->RegisterVariableFloat("Temperatur", $this->Translate("Temperature"), "~Temperature", 10);
+        $this->RegisterVariableFloat("Humidity", $this->Translate("Humidity"), "~Humidity.F", 20);
+        $this->RegisterVariableString("Battery", $this->Translate("Battery"), "", 30);
     }
 
     // datenpunkte aus dem status paket des IO

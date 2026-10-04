@@ -1,16 +1,50 @@
 {
   "elements": [
-    { "name": "AccessKey", "type": "PasswordTextBox", "caption": "AccessKey" },
-    { "name": "SecretKey", "type": "PasswordTextBox", "caption": "SecretKey" },
-    { "name": "BaseUrl", "type": "ValidationTextBox", "caption": "BaseUrl" },
-    { "name": "AppID", "type": "ValidationTextBox", "caption": "AppID" },
-    { "name": "Interval", "type": "NumberSpinner", "caption": "Interval Update", "suffix": "min" }
+    {
+      "name": "AccessKey",
+      "type": "PasswordTextBox",
+      "caption": "Access ID"
+    },
+    {
+      "name": "SecretKey",
+      "type": "PasswordTextBox",
+      "caption": "Access secret"
+    },
+    {
+      "name": "BaseUrl",
+      "type": "ValidationTextBox",
+      "caption": "Base URL (e.g. https://openapi.tuyaeu.com)"
+    },
+    {
+      "name": "AppID",
+      "type": "ValidationTextBox",
+      "caption": "App ID (user ID of the linked app account)"
+    },
+    {
+      "name": "Interval",
+      "type": "NumberSpinner",
+      "caption": "Update interval (0 = off)",
+      "suffix": "min",
+      "minimum": 0
+    }
   ],
   "actions": [
-    { "type": "Button", "caption": "Jetzt aktualisieren", "onClick": "Tuya_Update($id);" }
+    {
+      "type": "Button",
+      "caption": "Update now",
+      "onClick": "Tuya_Update($id);"
+    }
   ],
   "status": [
-    { "code": 104, "icon": "inactive", "caption": "AccessKey, SecretKey, BaseUrl und AppID ausfüllen" },
-    { "code": 201, "icon": "error", "caption": "Anmeldung bei Tuya fehlgeschlagen (Zugangsdaten prüfen)" }
+    {
+      "code": 104,
+      "icon": "inactive",
+      "caption": "Enter Access ID, Access secret, Base URL and App ID"
+    },
+    {
+      "code": 201,
+      "icon": "error",
+      "caption": "Login to the Tuya cloud failed (check the credentials)"
+    }
   ]
 }

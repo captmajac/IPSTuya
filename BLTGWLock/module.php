@@ -26,12 +26,12 @@ class TuyaBLELock extends TuyaGeneric
 
         $isNew = @$this->GetIDForIdent("Lock") === false;
 
-        $this->RegisterVariableBoolean("Lock", "Lock", "~Lock", 10);
-        $this->RegisterVariableString("Message", "Message", "", 30);
-        $this->RegisterVariableBoolean("MotorState", "MotorState", "~Lock.Reversed", 35);
-        $this->RegisterVariableInteger("Battery", "Battery", "~Battery.100", 20);
-        $this->RegisterVariableString("Sound", "Sound", "", 40);
-        $this->RegisterVariableString("Log", "Log", "~HTMLBox", 50);
+        $this->RegisterVariableBoolean("Lock", $this->Translate("Lock"), "~Lock", 10);
+        $this->RegisterVariableString("Message", $this->Translate("Message"), "", 30);
+        $this->RegisterVariableBoolean("MotorState", $this->Translate("Motor state"), "~Lock.Reversed", 35);
+        $this->RegisterVariableInteger("Battery", $this->Translate("Battery"), "~Battery.100", 20);
+        $this->RegisterVariableString("Sound", $this->Translate("Sound volume"), "", 40);
+        $this->RegisterVariableString("Log", $this->Translate("Open log"), "~HTMLBox", 50);
 
         //Default Values nur beim ersten Anlegen
         if ($isNew) {
@@ -75,11 +75,11 @@ class TuyaBLELock extends TuyaGeneric
         try {
             $this->RefreshLog();
         } catch (TuyaApiException $e) {
-            IPS_LogMessage("TuyaDevice", "Log Error Device=" . $this->ReadPropertyString("DeviceID") . ": " . $e->getMessage());
+            $this->LogMessage(sprintf($this->Translate("Reading the open log failed: %s"), $e->getMessage()), KL_ERROR);
         }
     }
 
-    public function unlock()
+    protected function unlock()
     {
         // 1. Ticket ID holen
         $device_id = $this->ReadPropertyString("DeviceID");
@@ -172,7 +172,7 @@ class TuyaBLELock extends TuyaGeneric
         $this->SetValue("Log", $out);
     }
 
-    public function setDefaults()
+    protected function setDefaults()
     {
         // default lock value
         $this->SetValue("Lock", true);

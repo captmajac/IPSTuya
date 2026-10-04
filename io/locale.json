@@ -1,0 +1,15 @@
+{
+    "translations": {
+        "de": {
+            "Access ID": "Access ID",
+            "Access secret": "Access Secret",
+            "Base URL (e.g. https://openapi.tuyaeu.com)": "Basis-URL (z. B. https://openapi.tuyaeu.com)",
+            "App ID (user ID of the linked app account)": "App-ID (User-ID des verknüpften App-Kontos)",
+            "Update interval (0 = off)": "Aktualisierungsintervall (0 = aus)",
+            "Update now": "Jetzt aktualisieren",
+            "Enter Access ID, Access secret, Base URL and App ID": "Access ID, Access Secret, Basis-URL und App-ID eintragen",
+            "Login to the Tuya cloud failed (check the credentials)": "Anmeldung an der Tuya-Cloud fehlgeschlagen (Zugangsdaten prüfen)",
+            "Update failed: %s": "Aktualisierung fehlgeschlagen: %s"
+        }
+    }
+}

@@ -1,27 +1,43 @@
 {
   "elements": [
-    { "name": "DeviceID", "type": "ValidationTextBox", "caption": "DeviceID" },
-    { "name": "LocalKey", "type": "ValidationTextBox", "caption": "LocalKey" },
-    { "name": "Version", "type": "Select", "caption": "Version",
-        "options": [
-            { "caption": "Standard", "value": "" },
-            { "caption": "V2", "value": "_v2" }
-        ]
+    {
+      "name": "DeviceID",
+      "type": "ValidationTextBox",
+      "caption": "Device ID"
+    },
+    {
+      "name": "LocalKey",
+      "type": "ValidationTextBox",
+      "caption": "Local key"
+    },
+    {
+      "name": "Version",
+      "type": "Select",
+      "caption": "Version",
+      "options": [
+        {
+          "caption": "Standard",
+          "value": ""
+        },
+        {
+          "caption": "V2",
+          "value": "_v2"
+        }
+      ]
     }
   ],
   "actions": [
     {
       "type": "PopupButton",
-      "caption": "Search Device",
+      "caption": "Search device",
       "onClick": "Tuya_SearchModules($id);",
-
       "popup": {
-        "caption": "Device List",
+        "caption": "Tuya devices",
         "items": [
           {
             "type": "List",
             "name": "Devices",
-            "caption": "Found Devices",
+            "caption": "Devices in the Tuya cloud",
             "rowCount": 10,
             "add": false,
             "delete": false,
@@ -48,20 +64,26 @@
                 "caption": "Model",
                 "name": "Model",
                 "width": "300px",
-                "visible": true,
                 "add": ""
               },
               {
-                "caption": "LocalKey",
+                "caption": "Local key",
                 "name": "LocalKey",
                 "width": "200px",
-                "visible": true,
                 "add": ""
               }
             ],
             "values": []
           },
-          { "type": "Button", "caption": "Apply selected", "onClick": "Tuya_SetSelectedModul($id, $Devices);" }
+          {
+            "type": "Button",
+            "caption": "Apply selected",
+            "onClick": "Tuya_SetSelectedModul($id, $Devices);"
+          },
+          {
+            "type": "Label",
+            "caption": "Apply selected enters Device ID and Local key in the form. Close this dialog and click Apply to save."
+          }
         ]
       }
     }
