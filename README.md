@@ -17,3 +17,8 @@ Im der Socket kann die Zeit für eine zyklische Statusabfrage festgelegt werden.
 known issues:
 - Der Status von Modulen ist auch nur als one direction. Also Aktionen über die Tuya App werden nicht nach IPS gehen.
 - Anstelle der Geräte Suche wäre eine Konfigurator Instanz die bessere Wahl 
+
+Tests (ohne IP-Symcon, mit Stub):
+```
+php tests/run.php
+```
