@@ -9,6 +9,7 @@ class TuyaClient extends IPSModule
 {
     const CHILD_DATAID = '{018EF6B5-AB94-40C6-AA53-46943E824ACF}';
     const TOKEN_ERRORS = [1010, 1011];      // token invalid / expired
+    const REFRESH_MIN_SECONDS = 10;         // aktualisierungen durch geraete hoechstens so oft
 
     // erstellung
     public function Create()
@@ -64,6 +65,7 @@ class TuyaClient extends IPSModule
     // ein durchlauf: alle geraete mit status holen und je geraet ein paket an die instanzen
     public function Update()
     {
+        $this->SetBuffer("LastUpdate", (string) microtime(true));
         try {
             $return = $this->call('get_app_list', [$this->ReadPropertyString("AppID")]);
         } catch (TuyaApiException $e) {
@@ -100,7 +102,10 @@ class TuyaClient extends IPSModule
 
         switch ($method) {
             case 'refresh':
-                $this->Update();
+                // z.b. mehrere befehle an offline geraete in einer szene: nur ein durchlauf
+                if (microtime(true) - (float) $this->GetBuffer("LastUpdate") >= self::REFRESH_MIN_SECONDS) {
+                    $this->Update();
+                }
                 return json_encode(['success' => true]);
             case 'config':
                 return json_encode(['AppID' => $this->ReadPropertyString("AppID")]);
@@ -137,8 +142,10 @@ class TuyaClient extends IPSModule
             $this->WriteAttributeString("Token", "");
             $return = $this->request($this->token(), $method, $params);
         }
-        // geraeteliste enthaelt local_key, ip und standort: nicht ins debug
-        if ($method !== 'get_app_list') {
+        // geraeteliste enthaelt local_key, ip und standort, das log viele einzelfelder: nur zusammenfassung
+        if ($method === 'get_openlogs') {
+            $this->SendDebug($method, ($params[0] ?? '') . " | " . count($return->result->logs ?? []) . " Einträge", 0);
+        } elseif ($method !== 'get_app_list') {
             $this->SendDebug($method, $return, 0);
         }
         return $return;
