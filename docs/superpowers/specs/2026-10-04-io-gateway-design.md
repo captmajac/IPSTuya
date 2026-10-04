@@ -39,7 +39,7 @@ Token-Abruf nur bei Ablauf.
   Start erst bei `KR_READY`; sonst Start über `MessageSink(IPS_KERNELSTARTED)`.
 - **Durchlauf `Update()`:** `get_app_list(AppID)`, dann pro Gerät ein Paket an die Kinder.
 - **Formular:** Schaltfläche „Jetzt aktualisieren“ (`Tuya_Update($id)`); AccessKey/SecretKey bleiben `PasswordTextBox`.
-- **Status:** 102 aktiv; 104 inaktiv, wenn AccessKey/SecretKey/BaseUrl/AppID leer; 201 Cloud-Fehler beim letzten Durchlauf.
+- **Status:** 102 aktiv; 104 inaktiv, wenn AccessKey/SecretKey/BaseUrl/AppID leer; 201 Anmeldung bei Tuya fehlgeschlagen (Token). Ein einzelner fehlgeschlagener Durchlauf ändert den Status nicht, weil Symcon an ein nicht aktives IO keine Befehle durchlässt.
 - Entfällt: öffentliches `getToken()`, `Send()`.
 
 ### Datenpakete
@@ -89,7 +89,7 @@ Erben implementieren nur `applyStatus($state)` (bisheriger Inhalt von `updateSta
 
 ## Fehlerbehandlung
 
-- IO-Durchlauf: Fehler → `IPS_LogMessage`, Status 201, kein Paket an Kinder. Nächster erfolgreicher Durchlauf → 102.
+- IO-Durchlauf: Fehler → `IPS_LogMessage`, kein Paket an Kinder. Token-Fehler → Status 201, nächste erfolgreiche Anmeldung → 102.
 - `ReceiveData` wirft nie; Fehler beim Log-Abruf werden geloggt.
 - `RequestAction`: `TuyaApiException` wird nicht abgefangen → Symcon zeigt die Meldung im WebFront/Konsole.
 
