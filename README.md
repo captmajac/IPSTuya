@@ -1,36 +1,82 @@
 # IPSTuya
-IPSymcon Module für Tuya Cloud Geräte (Türschloss, RGBW Lampe, Schalter, Temperatur/Feuchte Sensor). Gerne fork machen für weitere integration 
 
-Grundlage der Kommunikation war die Arbeit unter https://github.com/ground-creative/tuyapiphp
-Diese wurde in eine lib Klasse kopiert und einige API URLs ergänzt.
+IP-Symcon Bibliothek für Geräte, die über die **Tuya Cloud** angebunden sind (Smart Life / Tuya App): Türschlösser, RGBW-Lampen, Schalter und Temperatur-/Feuchtesensoren.
 
-Unterstützt und geprüft sind gerade zwei vorliegende Geräte. Ein BLE Türschloss eines chinesischen Anbieters und GU10 Wifi RGB Lampe von Hama. Die BLE Komponente sind mittels BLE/Wifi mit der Tuya Cloud verbunden.
+Die Bibliothek nutzt die API der Tuya Cloud. Sie ist daher nicht cloudfrei und benötigt ein Cloud-Projekt auf der [Tuya Developer Platform](https://platform.tuya.com).
 
-Dieses Modul nutzt die API der Tuya Cloud. Daher nicht Cloud free und es wird ein Developer Account benötigt. Anleitungen wie man die notwendigen Account Informationen besorgt gibt es viele.
+### Inhaltsverzeichnis
 
-Die IO Instanz (TuyaClient) ist die einzige Verbindung zur Tuya Cloud. Benötigt aus der Cloud werden folgende Parameter: accessKey, secretKey, baseUrl, appId.
-Das IO hält das Token, fragt im eingestellten Intervall (Minuten) mit einem einzigen Aufruf alle Geräte samt Status ab und verteilt das Ergebnis an die Geräte Instanzen. Schaltbefehle der Geräte laufen ebenfalls über das IO.
-Pro Durchlauf: 1 Cloud Aufruf für alle Geräte, dazu 1 je online Türschloss für das Öffnungslog.
+1. [Module](#1-module)
+2. [Voraussetzungen](#2-voraussetzungen)
+3. [Software-Installation](#3-software-installation)
+4. [Aufbau und Cloud-Aufrufe](#4-aufbau-und-cloud-aufrufe)
+5. [Verhalten bei Offline-Geräten und Fehlern](#5-verhalten-bei-offline-geräten-und-fehlern)
+6. [Bekannte Einschränkungen](#6-bekannte-einschränkungen)
+7. [Entwicklung und Tests](#7-entwicklung-und-tests)
+8. [Änderungen](#8-änderungen)
 
-In den Modulen kann über Geräte Suche die Liste in der Tuya Cloud registrierten Geräte angezeigt und ausgewählt werden. Dabei findet aktuell keine Typ Prüfung statt.
+### 1. Module
 
-Ist ein Gerät laut Cloud offline, wird nur die Variable Online aktualisiert, die übrigen Werte bleiben stehen.
-Schaltbefehle an ein offline Gerät (z. B. Lampe am ausgeschalteten Wandschalter in einer Szene) werden ohne Fehlermeldung ignoriert und nur im Debug vermerkt. Dabei prüft das IO den Stand mit einem schlanken Abruf (nur Geräteliste, ohne Öffnungslogs, höchstens einmal pro Minute). Ist das Gerät wieder online, werden Befehle wieder ausgeführt. Andere Fehler (Ablehnung durch Tuya, keine Verbindung, IO inaktiv) werden nicht an den Aufrufer (WebFront, Skript, Szene) weitergegeben, sondern im Debug und einmal je Fehler im Meldungsfenster protokolliert; der Wert der Variable bleibt dann unverändert.
-Das Debug des IO zeigt pro Durchlauf eine Zeile je Gerät (Name, online/offline, Anzahl Datenpunkte), ohne local_key, IP und Standort; das Öffnungslog als eine Zeile je Schloss.
-Das Öffnungslog der Türschlösser wird in IP-Symcon dauerhaft gehalten (die letzten 50 Einträge), auch wenn die Cloud keine Einträge mehr liefert.
+| Modul | Beschreibung |
+|---|---|
+| [TuyaClient](io/README.md) | IO-Instanz: Verbindung zur Tuya Cloud, fragt alle Geräte ab und verteilt den Status |
+| [TuyaBLELock](BLTGWLock/README.md) | Bluetooth-Türschloss über Tuya Bluetooth Gateway, mit dauerhaftem Öffnungsprotokoll |
+| [TuyaLEDRGBW](RGBWLED/README.md) | WLAN RGB(W) Lampe: Ein/Aus, Helligkeit, Farbtemperatur, Farbe, Modus |
+| [TuyaSwitch](Switch/README.md) | Schaltaktor, 1 Kanal |
+| [THSensor](THSensor/README.md) | Temperatur- und Luftfeuchtesensor |
+| [TuyaGeneric](Generic/README.md) | Basis aller Gerätemodule, als Instanz nur mit Online-Status |
 
-Funktionen:
-- `Tuya_Update($IO_ID)` sofort alle Geräte aktualisieren (auch Schaltfläche im IO)
-- `Tuya_RequestRefresh($ID)` bzw. `Tuya_TimerEvent($ID)` an einer Geräte Instanz löst ebenfalls einen Durchlauf im IO aus
-- `Tuya_RefreshLog($ID)` Öffnungslog eines Türschlosses nachlesen
+### 2. Voraussetzungen
 
-Seit Version 1.2 entfallen: `Tuya_getToken`, `Tuya_getTuyaClass`, `Tuya_getState`, `Tuya_updateState`, `Tuya_GetOnlineStatus`, `Tuya_readLockLog`. `Tuya_readDeviceList($ID)` hat keine Parameter mehr.
+- IP-Symcon ab Version 7.0
+- Cloud-Projekt auf der Tuya Developer Platform mit verknüpftem App-Konto (Smart Life oder Tuya Smart), in dem die Geräte angelernt sind
+- Internetzugang des IP-Symcon Servers
 
-known issues:
-- Der Status von Modulen ist auch nur als one direction. Also Aktionen über die Tuya App kommen erst mit der nächsten Abfrage nach IPS.
-- Anstelle der Geräte Suche wäre eine Konfigurator Instanz die bessere Wahl 
+### 3. Software-Installation
 
-Tests (ohne IP-Symcon, mit Stub):
+Über die Modulverwaltung folgende URL hinzufügen:
+
+```
+https://github.com/captmajac/IPSTuya
+```
+
+Danach eine Instanz **TuyaClient** anlegen und einrichten, anschließend die Geräte-Instanzen. Diese verbinden sich automatisch mit dem TuyaClient.
+
+### 4. Aufbau und Cloud-Aufrufe
+
+Der TuyaClient (IO) ist die einzige Verbindung zur Tuya Cloud. Er hält das Zugriffstoken, fragt im eingestellten Intervall mit **einem** Aufruf alle Geräte samt Status ab und verteilt das Ergebnis an die Geräte-Instanzen. Schaltbefehle der Geräte laufen ebenfalls über den TuyaClient.
+
+Pro Durchlauf: 1 Aufruf für alle Geräte, dazu 1 Aufruf je Türschloss (Öffnungsprotokoll). Das Token wird nur bei Ablauf (ca. alle 2 Stunden) erneuert. Den Verbrauch zeigt die Tuya Developer Platform unter *Cloud → Data Statistics → API Statistics*.
+
+### 5. Verhalten bei Offline-Geräten und Fehlern
+
+- Ist ein Gerät laut Tuya offline, wird nur die Variable *Online* aktualisiert, die übrigen Werte bleiben stehen.
+- Befehle an ein offline Gerät (z. B. Lampe am ausgeschalteten Wandschalter in einer Szene) werden ohne Fehlermeldung ignoriert und nur im Debug vermerkt. Dabei prüft der TuyaClient den Stand mit einem schlanken Abruf (nur Geräteliste, höchstens einmal pro Minute). Ist das Gerät wieder online, werden Befehle wieder ausgeführt.
+- Andere Fehler (Ablehnung durch Tuya, keine Verbindung, IO inaktiv) werden nicht an den Aufrufer (WebFront, Skript, Szene) weitergegeben. Sie stehen im Debug und je Fehler einmal im Meldungsfenster; der Wert der Variable bleibt unverändert.
+- Das Debug des TuyaClient zeigt je Durchlauf eine Zeile pro Gerät, ohne Local Key, IP-Adresse und Standort.
+
+### 6. Bekannte Einschränkungen
+
+- Keine Push-Benachrichtigungen: Änderungen über die Tuya App oder am Gerät kommen erst mit der nächsten Abfrage in IP-Symcon an.
+- Statt der Gerätesuche je Instanz wäre eine Konfigurator-Instanz komfortabler.
+- Bei der Gerätesuche findet keine Typprüfung statt.
+
+### 7. Entwicklung und Tests
+
+Grundlage der Kommunikation ist [tuyapiphp](https://github.com/ground-creative/tuyapiphp), übernommen nach `libs/TuyaAPI.php` und um weitere API-Aufrufe ergänzt. Gerne forken für weitere Geräte.
+
+Die Tests laufen ohne IP-Symcon gegen einen Stub:
+
 ```
 php tests/run.php
 ```
+
+### 8. Änderungen
+
+**1.2**
+- TuyaClient fragt zentral ab, Token-Cache, deutlich weniger Cloud-Aufrufe
+- Dauerhaftes Öffnungsprotokoll der Türschlösser
+- Offline-Geräte und Fehler blockieren keine Szenen mehr
+- Oberfläche englisch mit deutscher Übersetzung
+- Gerätesuche trägt die Auswahl nur ins Formular ein, die Instanz wird nicht mehr umbenannt
+- Entfallene Funktionen: `Tuya_getToken`, `Tuya_getTuyaClass`, `Tuya_getState`, `Tuya_updateState`, `Tuya_GetOnlineStatus`, `Tuya_readLockLog`, `Tuya_readDeviceList`, `Tuya_CPost`, `Tuya_unlock`, `Tuya_setDefaults`
