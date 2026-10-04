@@ -101,7 +101,7 @@ Lib-Aufrufe im IO über eine überschreibbare Methode, damit Tests ohne Netz lau
 
 Abzudecken:
 - IO: Token wird zwischengespeichert, bei Ablauf und bei Code 1010 erneuert (einmalige Wiederholung).
-- IO: ein Durchlauf = ein `get_app_list`, je Gerät ein Paket; Fehler → Status 201, keine Pakete.
+- IO: ein Durchlauf = ein `get_app_list`, je Gerät ein Paket; Fehler → keine Pakete; Token-Fehler → Status 201.
 - IO: Timer startet erst bei Kernel bereit.
 - Geräte: nur eigene Pakete; offline → nur `Online`; Status-Zuordnung je Modul (bestehende Tests umgestellt).
 - Geräte: Befehl läuft über IO; Fehlerantwort → `TuyaApiException`; ohne aktives IO → `TuyaApiException`.
