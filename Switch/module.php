@@ -18,7 +18,7 @@ class TuyaSwitch extends TuyaGeneric
         $this->EnableAction("Power");
     }
 
-    public function RequestAction($Ident, $Value)
+    protected function handleAction($Ident, $Value)
     {
         $ret = false;
         switch ($Ident) {

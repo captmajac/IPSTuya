@@ -69,6 +69,27 @@ class TuyaGeneric extends IPSModule
     {
     }
 
+    // befehle aus webfront, skripten und anderen modulen (z.b. szenen):
+    // fehler werden protokolliert statt an den aufrufer geworfen, im meldungsfenster je fehler nur einmal
+    public function RequestAction($Ident, $Value)
+    {
+        try {
+            $this->handleAction($Ident, $Value);
+            $this->SetBuffer("LastError", "");
+        } catch (TuyaApiException $e) {
+            $this->SendDebug("Error", $Ident . ": " . $e->getMessage(), 0);
+            if ($this->GetBuffer("LastError") !== $e->getMessage()) {
+                $this->SetBuffer("LastError", $e->getMessage());
+                IPS_LogMessage("TuyaDevice", "Device=" . $this->ReadPropertyString("DeviceID") . " " . $Ident . ": " . $e->getMessage());
+            }
+        }
+    }
+
+    // geraete spezifische befehle, wird von den modulen ueberschrieben
+    protected function handleAction($Ident, $Value)
+    {
+    }
+
     // cloud aufruf ueber das IO
     protected function api(string $method, ...$params)
     {

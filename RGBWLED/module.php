@@ -46,7 +46,7 @@ class TuyaLEDRGBW extends TuyaGeneric
         $this->EnableAction("Color");
     }
 
-    public function RequestAction($Ident, $Value)
+    protected function handleAction($Ident, $Value)
     {
         $ret = false;
         $version = $this->ReadPropertyString("Version");

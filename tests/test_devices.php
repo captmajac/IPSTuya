@@ -49,29 +49,36 @@ $tests['Generic: Befehl laeuft ueber das IO'] = function () {
     check($m->value('Power') === true, 'Power nicht gesetzt');
 };
 
-$tests['Generic: Fehlerantwort wirft TuyaApiException'] = function () {
+$tests['Generic: Fehlerantwort wird abgefangen und einmal gemeldet'] = function () {
     $m = make(TuyaSwitch::class);
     online($m);
     $m->testParent->requestError = new TuyaApiException('Netzwerk weg');
-    try {
-        $m->RequestAction('Power', true);
-    } catch (TuyaApiException $e) {
-        check($m->value('Power') === false, 'Power trotz Fehler gesetzt');
-        return;
-    }
-    check(false, 'keine TuyaApiException');
+    $m->RequestAction('Power', true);
+    $m->RequestAction('Power', true);
+    check($m->value('Power') === false, 'Power trotz Fehler gesetzt');
+    check(count(TestRegistry::$log) === 1 && str_contains(TestRegistry::$log[0], 'Netzwerk weg'), 'Log: ' . json_encode(TestRegistry::$log));
+    check(substr_count(json_encode($m->debug), 'Netzwerk weg') === 2, 'Debug: ' . json_encode($m->debug));
 };
 
-$tests['Generic: ohne aktives IO wirft TuyaApiException'] = function () {
+$tests['Generic: nach Erfolg wird derselbe Fehler wieder gemeldet'] = function () {
     $m = make(TuyaSwitch::class);
+    online($m);
+    $m->testParent->requestError = new TuyaApiException('Netzwerk weg');
+    $m->RequestAction('Power', true);
+    $m->testParent->requestError = null;
+    $m->RequestAction('Power', true);
+    $m->testParent->requestError = new TuyaApiException('Netzwerk weg');
+    $m->RequestAction('Power', false);
+    check(count(TestRegistry::$log) === 2, 'Log: ' . json_encode(TestRegistry::$log));
+};
+
+$tests['Generic: ohne aktives IO kein Befehl, kein Fehler beim Aufrufer'] = function () {
+    $m = make(TuyaSwitch::class);
+    online($m);
     $m->testParent->status[] = 104;
-    try {
-        $m->RequestAction('Power', true);
-    } catch (TuyaApiException $e) {
-        check($m->testParent->requests === [], 'trotzdem gesendet');
-        return;
-    }
-    check(false, 'keine TuyaApiException');
+    $m->RequestAction('Power', true);
+    check($m->testParent->requests === [], 'trotzdem gesendet');
+    check($m->value('Power') === false && count(TestRegistry::$log) === 1, 'Power/Log');
 };
 
 $tests['Generic: TimerEvent loest Durchlauf im IO aus'] = function () {
@@ -219,12 +226,13 @@ $tests['Befehl: Tuya meldet device is offline -> kein Fehler, Online aus'] = fun
     check($m->value('Online') === false && $m->value('Power') === false, 'Online/Power');
 };
 
-$tests['Befehl: andere Ablehnung -> Fehler mit Meldung, Online bleibt'] = function () {
+$tests['Befehl: andere Ablehnung -> gemeldet, kein Fehler beim Aufrufer, Online bleibt'] = function () {
     $m = make(TuyaSwitch::class);
     push($m, true, ['switch_1' => false]);
     $m->testParent->responses = [(object) ['success' => false, 'code' => 2008, 'msg' => 'command or value not support']];
-    expectError(fn () => $m->RequestAction('Power', true), 'not support');
-    check($m->value('Online') === true, 'Online geaendert');
+    $m->RequestAction('Power', true);
+    check($m->value('Online') === true && $m->value('Power') === false, 'Online/Power');
+    check(count(TestRegistry::$log) === 1 && str_contains(TestRegistry::$log[0], 'not support'), 'Log: ' . json_encode(TestRegistry::$log));
 };
 
 // ---- Debug ohne Schluessel und Standort
