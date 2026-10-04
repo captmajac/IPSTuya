@@ -58,7 +58,7 @@ class TuyaGeneric extends IPSModule
         }
 
         try {
-            $this->applyStatus((object) ['result' => $buffer->status]);
+            $this->applyStatus((object) ['result' => $buffer->status, 'full' => $buffer->full ?? true]);
         } catch (TuyaApiException $e) {
             IPS_LogMessage("TuyaDevice", "Update Error Device=" . $buffer->id . ": " . $e->getMessage());
         }
@@ -152,14 +152,18 @@ class TuyaGeneric extends IPSModule
         return $values;
     }
 
-    // kommando an das geraet senden, wirft TuyaApiException wenn das geraet offline ist oder tuya ablehnt
+    // kommando an das geraet senden
+    // offline geraete: befehl wird ohne fehler ignoriert (z.b. lampen am wandschalter in einer szene),
+    // andere ablehnungen von tuya werfen TuyaApiException
     public function CPost(array $payload)
     {
-        // als offline bekannt: erst aktuellen stand holen, statt ~8 s auf die ablehnung der cloud zu warten
+        // als offline bekannt: stand ueber das IO pruefen (hoechstens ein schlanker abruf je minute),
+        // statt ~8 s auf die ablehnung der cloud zu warten
         if (!$this->GetValue("Online")) {
             $this->RequestRefresh();
             if (!$this->GetValue("Online")) {
-                throw new TuyaApiException("Gerät ist offline");
+                $this->SendDebug("Command", "device offline, ignored: " . json_encode($payload), 0);
+                return false;
             }
         }
 
@@ -167,6 +171,8 @@ class TuyaGeneric extends IPSModule
         if (empty($return->success)) {
             if (($return->code ?? 0) == self::DEVICE_OFFLINE) {
                 $this->SetValue("Online", false);
+                $this->SendDebug("Command", "device offline, ignored: " . json_encode($payload), 0);
+                return false;
             }
             throw new TuyaApiException($return->msg ?? "command failed");
         }

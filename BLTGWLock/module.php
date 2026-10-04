@@ -122,8 +122,10 @@ class TuyaBLELock extends TuyaGeneric
             $this->SetValue("Battery", (int) $battery);
         }
 
-        // log nachlesen
-        $this->RefreshLog();
+        // log nachlesen, nicht bei schlanken durchlaeufen (von befehlen an offline geraete angestossen)
+        if ($state->full ?? true) {
+            $this->RefreshLog();
+        }
     }
 
     // neue eintraege aus der cloud an das dauerhafte log anhaengen
