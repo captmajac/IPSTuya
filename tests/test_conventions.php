@@ -3,7 +3,7 @@
 // Symcon Best Practice / Store-Kriterien
 // https://gist.github.com/paresy/236bfbfcb26e6936eaae919b3cfdfc4f
 
-const MODULE_DIRS = ['io', 'Generic', 'Switch', 'THSensor', 'RGBWLED', 'BLTGWLock'];
+const MODULE_DIRS = ['io', 'Generic', 'Switch', 'THSensor', 'RGBWLED', 'BLTGWLock', 'Configurator'];
 
 function moduleSource(string $dir): string
 {
@@ -34,6 +34,7 @@ $tests['Konvention: nur noetige oeffentliche Funktionen'] = function () {
         THSensor::class => ['Create', 'ApplyChanges'],
         TuyaLEDRGBW::class => ['Create', 'ApplyChanges'],
         TuyaBLELock::class => ['Create', 'ApplyChanges', 'RelockEvent', 'LogEvent', 'RefreshLog'],
+        TuyaConfigurator::class => ['Create', 'ApplyChanges', 'ReceiveData', 'GetConfigurationForm'],
     ];
     foreach ($allowed as $class => $names) {
         $public = [];
@@ -86,7 +87,7 @@ function formStrings($node): array
 function codeStrings(string $dir): array
 {
     $sources = [moduleSource($dir)];
-    if (!in_array($dir, ['io', 'Generic'], true)) {
+    if (!in_array($dir, ['io', 'Generic', 'Configurator'], true)) {
         $sources[] = moduleSource('Generic');
     }
     preg_match_all('/->Translate\("((?:[^"\\\\]|\\\\.)*)"\)/', implode("\n", $sources), $m);

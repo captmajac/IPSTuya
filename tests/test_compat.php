@@ -34,3 +34,9 @@ $tests['Kompatibilitaet: GUIDs in module.json unveraendert'] = function () {
         check($m['prefix'] === 'Tuya', "$dir prefix");
     }
 };
+
+$tests['Kompatibilitaet: Konfigurator haengt mit den Datenfluss-GUIDs der Geraete am IO'] = function () {
+    $m = json_decode(file_get_contents(__DIR__ . '/../Configurator/module.json'), true);
+    check($m['id'] === '{E038934B-3A6D-45E3-B6AB-CD85A315E3CD}' && $m['type'] === 4 && $m['prefix'] === 'Tuya', 'id/type/prefix');
+    check($m['parentRequirements'] === ['{C459F3BF-8570-E12D-9B2A-14F0343C7F37}'] && $m['implemented'] === ['{018EF6B5-AB94-40C6-AA53-46943E824ACF}'], 'Datenfluss');
+};

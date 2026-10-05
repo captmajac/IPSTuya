@@ -1,0 +1,17 @@
+{
+    "id": "{E038934B-3A6D-45E3-B6AB-CD85A315E3CD}",
+    "name": "TuyaConfigurator",
+    "type": 4,
+    "vendor": "Tuya",
+    "aliases": [
+        "Tuya Konfigurator"
+    ],
+    "parentRequirements": [
+        "{C459F3BF-8570-E12D-9B2A-14F0343C7F37}"
+    ],
+    "childRequirements": [],
+    "implemented": [
+        "{018EF6B5-AB94-40C6-AA53-46943E824ACF}"
+    ],
+    "prefix": "Tuya"
+}
