@@ -20,13 +20,14 @@ Die Bibliothek nutzt die API der Tuya Cloud. Sie ist daher nicht cloudfrei und b
 | Modul | Beschreibung |
 |---|---|
 | [TuyaClient](io/README.md) | IO-Instanz: Verbindung zur Tuya Cloud, fragt alle Geräte ab und verteilt den Status |
+| [TuyaConfigurator](Configurator/README.md) | Konfigurator: listet die Geräte der Tuya Cloud, legt Instanzen an und ordnet vorhandene zu |
 | [TuyaBLELock](BLTGWLock/README.md) | Bluetooth-Türschloss über Tuya Bluetooth Gateway, mit dauerhaftem Öffnungsprotokoll |
 | [TuyaLEDRGBW](RGBWLED/README.md) | WLAN RGB(W) Lampe: Ein/Aus, Helligkeit, Farbtemperatur, Farbe, Modus |
 | [TuyaSwitch](Switch/README.md) | Schaltaktor, 1 Kanal |
 | [THSensor](THSensor/README.md) | Temperatur- und Luftfeuchtesensor |
 | [TuyaGeneric](Generic/README.md) | Basis aller Gerätemodule, als Instanz nur mit Online-Status |
 
-Geprüfte Geräte und passendes Modul. Das Modell steht in der Gerätesuche einer Geräte-Instanz in der Spalte *Modell*:
+Geprüfte Geräte und passendes Modul. Der Konfigurator wählt das Modul selbst aus; das Modell steht dort in der Spalte *Modell*:
 
 | Modell | Gerät | Modul |
 |---|---|---|
@@ -50,7 +51,9 @@ Schaltaktor und Temperatursensor wurden von thka geprüft, die Modelle sind nich
 https://github.com/captmajac/IPSTuya
 ```
 
-Danach eine Instanz **TuyaClient** anlegen und einrichten, anschließend die Geräte-Instanzen. Diese verbinden sich automatisch mit dem TuyaClient.
+Danach eine Instanz **TuyaClient** anlegen und einrichten, anschließend eine Instanz **TuyaConfigurator**. Im Konfigurator die gewünschten Geräte auswählen und *Erstellen*; neue Instanzen landen in der Kategorie „Tuya“.
+
+Beim Update von einer früheren Version bleiben vorhandene Geräte-Instanzen unverändert. Nach dem Anlegen des Konfigurators erscheinen sie dort als bereits angelegt.
 
 ### 4. Aufbau und Cloud-Aufrufe
 
@@ -68,8 +71,7 @@ Pro Durchlauf: 1 Aufruf für alle Geräte, dazu 1 Aufruf je Türschloss (Öffnun
 ### 6. Bekannte Einschränkungen
 
 - Keine Push-Benachrichtigungen: Änderungen über die Tuya App oder am Gerät kommen erst mit der nächsten Abfrage in IP-Symcon an.
-- Statt der Gerätesuche je Instanz wäre eine Konfigurator-Instanz komfortabler.
-- Bei der Gerätesuche findet keine Typprüfung statt.
+- Mehrere TuyaClient-Instanzen (mehrere Tuya-Konten) werden vom Konfigurator nicht unterschieden.
 
 ### 7. Entwicklung und Tests
 
@@ -82,6 +84,11 @@ php tests/run.php
 ```
 
 ### 8. Änderungen
+
+**1.3**
+- Neues Modul TuyaConfigurator: Geräteliste der Cloud, Anlegen mit passendem Modul, Zuordnung vorhandener Instanzen über die Geräte-ID
+- Gerätesuche aus den Geräte-Instanzen entfernt, Geräte-ID, Local Key und Version bleiben änderbar
+- Entfallene Funktionen: `Tuya_SearchModules`, `Tuya_SetSelectedModul`
 
 **1.2**
 - TuyaClient fragt zentral ab, Token-Cache, deutlich weniger Cloud-Aufrufe

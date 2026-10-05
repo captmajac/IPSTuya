@@ -21,11 +21,11 @@ Bluetooth-Türschloss, das über ein Tuya Bluetooth Gateway mit der Cloud verbun
 
 Geprüfte Geräte:
 
-| Gerät | Modell (Spalte *Modell* der Gerätesuche) | Tuya Produktname | Kategorie | Status |
+| Gerät | Modell (Spalte *Modell* im Konfigurator) | Tuya Produktname | Kategorie | Status |
 |---|---|---|---|---|
 | bluetooth smart lock | YSG_T83_RFID_7G | 智能门锁-T83 | ms | geprüft |
 
-Das Schloss braucht ein Tuya Bluetooth Gateway. Das Gateway erscheint in der Gerätesuche als eigenes Gerät („Bluetooth gateway“), dafür wird keine Instanz benötigt.
+Das Schloss braucht ein Tuya Bluetooth Gateway. Das Gateway erscheint im Konfigurator als eigenes Gerät („Bluetooth gateway“), dafür wird keine Instanz benötigt.
 
 ### 2. Voraussetzungen
 
@@ -39,14 +39,14 @@ Das Schloss braucht ein Tuya Bluetooth Gateway. Das Gateway erscheint in der Ger
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
-Unter *Instanz hinzufügen* das Modul **TuyaBLELock** (Hersteller *Tuya*) auswählen. Die Instanz verbindet sich mit dem TuyaClient.
+Am einfachsten über den [TuyaConfigurator](../Configurator/README.md): Gerät auswählen und *Erstellen*. Die Instanz wird mit Geräte-ID, Local Key angelegt. Alternativ unter *Instanz hinzufügen* das Modul **TuyaBLELock** (Hersteller *Tuya*) auswählen und die Felder selbst ausfüllen.
 
 | Eigenschaft | Beschreibung |
 |---|---|
 | Geräte-ID | ID des Geräts in der Tuya Cloud |
 | Local Key | Lokaler Schlüssel des Geräts (für die Cloud-Steuerung nicht nötig, wird nur gespeichert) |
 
-**Gerät suchen** zeigt alle Geräte des verknüpften App-Kontos mit ID, Online-Status, Name und Modell; welches Modell zu welchem Modul passt, steht in der [Übersicht](../README.md#1-module). *Auswahl übernehmen* trägt Geräte-ID und Local Key ins Formular ein, gespeichert wird mit *Übernehmen*.
+Die Felder bleiben änderbar. Um eine Instanz einem anderen Gerät zuzuordnen, die Geräte-ID aus der Spalte *Geräte-ID* des Konfigurators kopieren und hier einfügen.
 
 ### 5. Statusvariablen und Profile
 
