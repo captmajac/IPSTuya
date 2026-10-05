@@ -20,7 +20,7 @@ WLAN RGB(W) Lampe mit Farbe und Farbtemperatur.
 
 Geprüfte Geräte:
 
-| Gerät | Modell (Spalte *Modell* der Gerätesuche) | Tuya Produktname | Kategorie | Version | Status |
+| Gerät | Modell (Spalte *Modell* im Konfigurator) | Tuya Produktname | Kategorie | Version | Status |
 |---|---|---|---|---|---|
 | Hama RGB(W) GU10 WLAN (Art.-Nr. 176582/176598) | Meka GU10 RGBCW | 176582/176598 | dj | Standard | geprüft |
 | Smart Bulb | ALS22L-N | – | dj | V2 | mit dieser Version des Moduls noch nicht geprüft |
@@ -40,7 +40,7 @@ Welche Version eine Lampe nutzt, zeigt die Tuya Developer Platform beim Gerät: 
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
-Unter *Instanz hinzufügen* das Modul **TuyaLEDRGBW** (Hersteller *Tuya*) auswählen. Die Instanz verbindet sich mit dem TuyaClient.
+Am einfachsten über den [TuyaConfigurator](../Configurator/README.md): Gerät auswählen und *Erstellen*. Die Instanz wird mit Geräte-ID, Local Key und Version angelegt. Alternativ unter *Instanz hinzufügen* das Modul **TuyaLEDRGBW** (Hersteller *Tuya*) auswählen und die Felder selbst ausfüllen.
 
 | Eigenschaft | Beschreibung |
 |---|---|
@@ -48,7 +48,7 @@ Unter *Instanz hinzufügen* das Modul **TuyaLEDRGBW** (Hersteller *Tuya*) auswä
 | Local Key | Lokaler Schlüssel des Geräts (für die Cloud-Steuerung nicht nötig, wird nur gespeichert) |
 | Version | *Standard* oder *V2* (Datenpunkte mit `_v2`) |
 
-**Gerät suchen** zeigt alle Geräte des verknüpften App-Kontos mit ID, Online-Status, Name und Modell; welches Modell zu welchem Modul passt, steht in der [Übersicht](../README.md#1-module). *Auswahl übernehmen* trägt Geräte-ID und Local Key ins Formular ein, gespeichert wird mit *Übernehmen*.
+Die Felder bleiben änderbar. Um eine Instanz einem anderen Gerät zuzuordnen, die Geräte-ID aus der Spalte *Geräte-ID* des Konfigurators kopieren und hier einfügen.
 
 ### 5. Statusvariablen und Profile
 
