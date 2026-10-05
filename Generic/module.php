@@ -1,12 +1,13 @@
 <?php
 //Tuya Klassen einbinden
-include_once __DIR__ . "/../libs/TuyaAPI.php";
+include_once __DIR__ . "/../libs/TuyaDataFlow.php";
 
 // Basis aller Tuya Geraete: Status kommt per Paket vom IO (TuyaClient),
 // Cloud-Aufrufe laufen ueber api() -> SendDataToParent -> TuyaClient::ForwardData
 class TuyaGeneric extends IPSModule
 {
-    const PARENT_DATAID = '{C459F3BF-8570-E12D-9B2A-14F0343C7F37}';
+    use TuyaDataFlow;
+
     const DEVICE_OFFLINE = 2001;        // tuya: device is offline
 
     // erstellung
@@ -90,26 +91,6 @@ class TuyaGeneric extends IPSModule
     {
     }
 
-    // cloud aufruf ueber das IO
-    protected function api(string $method, ...$params)
-    {
-        if (!$this->HasActiveParent()) {
-            throw new TuyaApiException("TuyaClient (IO) is not active");
-        }
-        $response = $this->SendDataToParent(json_encode([
-            'DataID' => self::PARENT_DATAID,
-            'Buffer' => json_encode(['method' => $method, 'params' => $params]),     // Symcon verlangt Buffer als String
-        ]));
-        $return = json_decode((string) $response);
-        if ($return === null) {
-            throw new TuyaApiException("No response from TuyaClient (IO)");
-        }
-        if (isset($return->error)) {
-            throw new TuyaApiException($return->error);
-        }
-        return $return;
-    }
-
     // default debug message
     protected function SendDebug($Message, $Data, $Format)
     {
@@ -124,42 +105,6 @@ class TuyaGeneric extends IPSModule
         } else {
             parent::SendDebug($Message, $Data, $Format);
         }
-    }
-
-    // search device
-    public function SearchModules()
-    {
-        $jsValues = json_encode($this->readDeviceList());
-        $this->UpdateFormField("Devices", "values", $jsValues);
-    }
-
-    // auswahl aus der search liste: traegt die werte nur ins formular ein, uebernommen wird mit "Uebernehmen"
-    // (best practice: ein modul konfiguriert sich nicht selbst)
-    public function SetSelectedModul(object $List)
-    {
-        if (!isset($List["ID"]) || $List["ID"] === "") {
-            return;     // keine zeile ausgewaehlt
-        }
-        $this->UpdateFormField("DeviceID", "value", (string) $List["ID"]);
-        $this->UpdateFormField("LocalKey", "value", (string) ($List["LocalKey"] ?? ""));
-    }
-
-    protected function readDeviceList()
-    {
-        $appID = $this->api('config')->AppID;
-        $return = $this->api('get_app_list', $appID);
-
-        $values = [];
-        foreach ($return->result ?? [] as $value) {
-            $newValue = new \stdClass();
-            $newValue->ID = $value->id;
-            $newValue->LocalKey = $value->local_key;
-            $newValue->Model = $value->model;
-            $newValue->Name = $value->name;
-            $newValue->Online = $value->online;
-            $values[] = $newValue;
-        }
-        return $values;
     }
 
     // kommando an das geraet senden

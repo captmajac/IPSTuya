@@ -29,7 +29,7 @@ $tests['Konvention: Modul konfiguriert und benennt sich nicht selbst'] = functio
 $tests['Konvention: nur noetige oeffentliche Funktionen'] = function () {
     $allowed = [
         TuyaClient::class => ['Create', 'ApplyChanges', 'MessageSink', 'Update', 'ForwardData'],
-        TuyaGeneric::class => ['Create', 'ApplyChanges', 'ReceiveData', 'RequestAction', 'SearchModules', 'SetSelectedModul', 'RequestRefresh', 'TimerEvent'],
+        TuyaGeneric::class => ['Create', 'ApplyChanges', 'ReceiveData', 'RequestAction', 'RequestRefresh', 'TimerEvent'],
         TuyaSwitch::class => ['Create', 'ApplyChanges'],
         THSensor::class => ['Create', 'ApplyChanges'],
         TuyaLEDRGBW::class => ['Create', 'ApplyChanges'],
@@ -47,26 +47,22 @@ $tests['Konvention: nur noetige oeffentliche Funktionen'] = function () {
     }
 };
 
-$tests['Geraetesuche: Auswahl fuellt nur das Formular'] = function () {
-    $m = make(TuyaSwitch::class, ['DeviceID' => '']);
-    $m->SetSelectedModul(new ArrayObject(['ID' => 'dev9', 'LocalKey' => 'k9', 'Name' => 'Lampe', 'Online' => true, 'Model' => 'm']));
-    check(TestRegistry::$configCalls === [], 'Konfiguration geaendert: ' . json_encode(TestRegistry::$configCalls));
-    check(($m->formFields['DeviceID']['value'] ?? null) === 'dev9' && ($m->formFields['LocalKey']['value'] ?? null) === 'k9', 'Formular: ' . json_encode($m->formFields));
+$tests['Konvention: Geraeteformulare ohne Suche'] = function () {
+    foreach (['Generic', 'Switch', 'THSensor', 'RGBWLED', 'BLTGWLock'] as $dir) {
+        $text = file_get_contents(__DIR__ . "/../$dir/form.json");
+        check(!str_contains($text, 'PopupButton') && !str_contains($text, 'Tuya_SearchModules'), "$dir hat noch eine Suche");
+        $names = array_column(json_decode($text, true)['elements'], 'name');
+        check($names === ($dir === 'RGBWLED' ? ['DeviceID', 'LocalKey', 'Version'] : ['DeviceID', 'LocalKey']), "$dir Felder: " . json_encode($names));
+    }
 };
 
-$tests['Geraetesuche: ohne Auswahl passiert nichts'] = function () {
-    $m = make(TuyaSwitch::class);
-    $m->SetSelectedModul(new ArrayObject([]));
-    check(TestRegistry::$configCalls === [] && !isset($m->formFields['DeviceID']), 'Formular: ' . json_encode($m->formFields));
-};
-
-$tests['Geraetesuche: Liste kommt ueber das IO ins Popup'] = function () {
-    $m = make(TuyaSwitch::class);
-    $m->testParent->responses = [(object) ['success' => true, 'result' => [cloudDevice('dev9', true, [])]]];
-    $m->SearchModules();
-    check($m->testParent->requests[0][2] === ['app'], 'AppID nicht vom IO');
-    $list = json_decode($m->formFields['Devices']['values'], true);
-    check($list[0]['ID'] === 'dev9' && $list[0]['Online'] === true, 'Liste: ' . json_encode($list));
+$tests['Konvention: keine ungenutzten Uebersetzungen in Geraeten'] = function () {
+    foreach (['Generic', 'Switch', 'THSensor', 'RGBWLED', 'BLTGWLock'] as $dir) {
+        $de = json_decode(file_get_contents(__DIR__ . "/../$dir/locale.json"), true)['translations']['de'];
+        $used = array_merge(formStrings(json_decode(file_get_contents(__DIR__ . "/../$dir/form.json"), true)), codeStrings($dir));
+        $unused = array_diff(array_keys($de), $used);
+        check($unused === [], "$dir: " . implode(' | ', $unused));
+    }
 };
 
 // ---- Sprache: Englisch als Basis, Deutsch ueber locale.json
