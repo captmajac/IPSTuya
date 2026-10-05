@@ -9,6 +9,7 @@ require_once __DIR__ . '/../BLTGWLock/module.php';
 require_once __DIR__ . '/../RGBWLED/module.php';
 require_once __DIR__ . '/../Switch/module.php';
 require_once __DIR__ . '/../THSensor/module.php';
+require_once __DIR__ . '/../Configurator/module.php';
 
 require_once __DIR__ . '/helpers.php';
 

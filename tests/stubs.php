@@ -8,6 +8,7 @@ class TestRegistry
     public static array $values = [];      // VariableID => Wert
     public static array $log = [];         // LogMessage / IPS_LogMessage
     public static array $configCalls = []; // IPS_SetProperty / IPS_SetName / IPS_ApplyChanges
+    public static array $instances = [];   // InstanzID => [moduleID, props, name]
     public static array $sleeps = [];      // IPS_Sleep-Aufrufe
     public static array $parentConfig = [];
     public static int $nextID = 10000;
@@ -19,6 +20,7 @@ class TestRegistry
         self::$log = [];
         self::$sleeps = [];
         self::$configCalls = [];
+        self::$instances = [];
         self::$runlevel = KR_READY;
         self::$parentConfig = ['AccessKey' => 'a', 'SecretKey' => 's', 'BaseUrl' => 'https://example.invalid', 'AppID' => 'app', 'Interval' => 15];
     }
@@ -146,9 +148,20 @@ function IPS_LogMessage($Sender, $Message) { TestRegistry::$log[] = "$Sender: $M
 function IPS_GetKernelRunlevel() { return TestRegistry::$runlevel; }
 function IPS_Sleep($ms) { TestRegistry::$sleeps[] = $ms; }
 function IPS_SetIcon($ID, $Icon) {}
-function IPS_GetInstance($ID) { return ['ConnectionID' => 1]; }
+function IPS_GetInstance($ID) { return ['ConnectionID' => 1, 'ModuleInfo' => ['ModuleID' => TestRegistry::$instances[$ID]['moduleID'] ?? '']]; }
 function IPS_GetConfiguration($ID) { return json_encode(TestRegistry::$parentConfig); }
-function IPS_GetName($ID) { return 'Test'; }
+function IPS_GetName($ID) { return TestRegistry::$instances[$ID]['name'] ?? 'Test'; }
+function IPS_GetInstanceListByModuleID($ModuleID)
+{
+    return array_keys(array_filter(TestRegistry::$instances, fn ($i) => $i['moduleID'] === $ModuleID));
+}
+function IPS_GetProperty($ID, $Name) { return TestRegistry::$instances[$ID]['props'][$Name]; }
+
+// Testhilfe: vorhandene Instanz im Objektbaum
+function registerInstance(int $id, string $moduleID, array $props, string $name)
+{
+    TestRegistry::$instances[$id] = ['moduleID' => $moduleID, 'props' => $props, 'name' => $name];
+}
 function IPS_SetName($ID, $Name) { TestRegistry::$configCalls[] = "IPS_SetName"; }
 function IPS_SetProperty($ID, $Name, $Value) { TestRegistry::$configCalls[] = "IPS_SetProperty"; }
 function IPS_ApplyChanges($ID) { TestRegistry::$configCalls[] = "IPS_ApplyChanges"; }

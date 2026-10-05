@@ -1,0 +1,21 @@
+{
+    "translations": {
+        "de": {
+            "Tuya devices": "Tuya-Geräte",
+            "Name": "Name",
+            "Model": "Modell",
+            "Module": "Modul",
+            "Online": "Online",
+            "Device ID": "Geräte-ID",
+            "Lock": "Türschloss",
+            "Light": "Lampe",
+            "Temperature/humidity sensor": "Temperatur-/Feuchtesensor",
+            "Switch": "Schalter",
+            "Generic": "Generisch",
+            "Yes": "Ja",
+            "No": "Nein",
+            "TuyaClient is not active, device list not available.": "TuyaClient ist nicht aktiv, Geräteliste nicht verfügbar.",
+            "Device list not available: %s": "Geräteliste nicht verfügbar: %s"
+        }
+    }
+}
